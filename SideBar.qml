@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
+//import Qt5Compat.GraphicalEffects
 
 Item {
     id: sideBar
@@ -9,7 +9,11 @@ Item {
     width: 105
     height: 700
     state: 'close'
-    anchors.centerIn: parent
+    //anchors.centerIn: parent
+
+    property int maxwidth: 200
+    property int minwidth: 50
+    property int index: -1
 
     states: [
         State {
@@ -17,7 +21,7 @@ Item {
 
             PropertyChanges {
                 target: sideBar
-                width: 270
+                width: maxwidth
             }
 
             PropertyChanges {
@@ -30,7 +34,7 @@ Item {
 
             PropertyChanges {
                 target: sideBar
-                width: 105
+                width: minwidth
             }
 
             PropertyChanges {
@@ -90,7 +94,7 @@ Item {
         interval: 10
 
         onTriggered: {
-            if (sideBar.state == 'open')
+            if (sideBar.state === 'open')
                 columnItems.itemAt(index).state = 'left';
             else
                 columnItems.itemAt(index).state = 'middle';
@@ -103,7 +107,7 @@ Item {
     Rectangle {
         id: body
 
-        radius: 10
+        //radius: 10
         color: '#FFFFFF'
         anchors.fill: parent
 
@@ -111,8 +115,8 @@ Item {
             id: buttonColumn
 
             width: parent.width
-            spacing: 20
-            anchors { top: parent.top; topMargin: 30 }
+            spacing: 0
+            anchors { top: parent.top; topMargin: 0 }
 
             Repeater {
                 id: columnItems
@@ -121,13 +125,24 @@ Item {
                 delegate: Rectangle {
                     id: button
 
-                    Layout.preferredWidth: 50
+                    width: body.width
                     Layout.preferredHeight: 50
-                    radius: 10
+                    Layout.fillWidth: true
+                    //radius: 10
                     color: buttonMouseArea.containsMouse ? '#f0f0f0' : '#ffffff'
-                    Layout.alignment: Qt.AlignLeft
-                    Layout.topMargin: model.index === 1 ? 20 : 0
+                    //Layout.alignment: Qt.AlignLeft
+                    Layout.topMargin: /*model.index === 1 ? 20 :*/ 0
                     state: 'middle'
+
+                    Rectangle {
+                        // The colored band
+                        id:band
+                        visible: false
+                        width: 3 // Set the width of the colored band
+                        height: parent.height
+                        anchors.left: parent.left // Align the right edge with the parent's right edge
+                        color: "blue" // Set the color of the band
+                    }
 
                     Behavior on color {
                         ColorAnimation {
@@ -141,7 +156,7 @@ Item {
 
                             PropertyChanges {
                                 target: button
-                                Layout.leftMargin: 10
+                                //Layout.leftMargin: 10
                                 Layout.preferredWidth: model.index !== 0 ? 240 : 50
                             }
 
@@ -155,7 +170,7 @@ Item {
 
                             PropertyChanges {
                                 target: button
-                                Layout.leftMargin: Math.ceil((sideBar.width - 50) / 2)
+                                Layout.leftMargin: 0// Math.ceil((sideBar.width - 50) / 2)
                                 Layout.preferredWidth: 50
                             }
 
@@ -197,10 +212,13 @@ Item {
 
                         onClicked: {
                             if (model.index === 0) {
-                                if (sideBar.state == 'close')
+                                if (sideBar.state === 'close')
                                     sideBar.state = 'open';
                                 else
                                     sideBar.state = 'close';
+                            }
+                            else {
+                                band.visible = true
                             }
                         }
                     }
@@ -226,13 +244,13 @@ Item {
         }
     }
 
-    DropShadow {
-        id: shadow
+//    DropShadow {
+//        id: shadow
 
-        anchors.fill: body
-        source: body
-        radius: 20
-        samples: radius * 2 + 1
-        color: Qt.rgba(0, 0, 0, 0.05)
-    }
+//        anchors.fill: body
+//        source: body
+//        radius: 20
+//        samples: radius * 2 + 1
+//        color: Qt.rgba(0, 0, 0, 0.05)
+//    }
 }
