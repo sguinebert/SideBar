@@ -211,6 +211,7 @@ Item {
                         anchors.fill: parent
 
                         onClicked: {
+
                             if (model.index === 0) {
                                 if (sideBar.state === 'close')
                                     sideBar.state = 'open';
@@ -219,7 +220,9 @@ Item {
                             }
                             else {
                                 band.visible = true
+                                //model[sidebar.index].band.visible = false
                             }
+                            sidebar.index = model.index
                         }
                     }
 
