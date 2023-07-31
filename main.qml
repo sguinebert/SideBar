@@ -1,7 +1,8 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick 6.5
+import QtQuick.Controls 6.5
 import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
+import Qt.labs.qmlmodels 1.0
 
 ApplicationWindow {
     id: window
@@ -127,31 +128,107 @@ ApplicationWindow {
 //                            text: qsTr("Content goes here!")
 //                        }
 //                    }
-                    GroupBox {
-                        id: control2
-                        title: qsTr("GroupBox")
 
-                        background: Rectangle {
-                            y: control2.topPadding - control2.bottomPadding
-                            width: parent.width
-                            height: parent.height - control2.topPadding + control2.bottomPadding
-                            color: "transparent"
-                            border.color: "#21be2b"
-                            radius: 2
-                        }
+                    HorizontalHeaderView {
+                        id: horizontalHeader
+                        anchors.left: tableView.left
+                        anchors.top: parent.top
+                        syncView: tableView
+                        clip: true
 
-                        label: Label {
-                            x: control2.leftPadding
-                            width: control2.availableWidth
-                            text: control2.title
-                            color: "#21be2b"
-                            elide: Text.ElideRight
-                        }
-
-                        Label {
-                            text: qsTr("Content goes here!")
+                        delegate : ColumnLayout {
+                            clip: true
+                            Text {
+                                id: headertxt
+                                Layout.fillWidth: true
+                                text: "tableView.model.display"
+                            }
+                            TextInput {
+                                id: search
+                                height: 30
+                                //width: headertxt.width
+                                Layout.fillWidth: true
+                                clip:true
+                                wrapMode: Text.WordWrap
+                            }
                         }
                     }
+
+                    VerticalHeaderView {
+                        id: verticalHeader
+                        anchors.top: tableView.top
+                        anchors.left: parent.left
+                        syncView: tableView
+                        clip: true
+                    }
+
+                    TableView {
+                        id: tableView
+                        anchors.left: verticalHeader.right
+                        anchors.top: horizontalHeader.bottom
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        columnSpacing: 1
+                        rowSpacing: 1
+                        clip: true
+                        resizableColumns :true
+
+                        model: TableModel {
+                            TableModelColumn { display: "name" }
+                            TableModelColumn { display: "color" }
+
+                            rows: [
+                                {
+                                    "name": "cat",
+                                    "color": "black"
+                                },
+                                {
+                                    "name": "dog",
+                                    "color": "brown"
+                                },
+                                {
+                                    "name": "bird",
+                                    "color": "white"
+                                }
+                            ]
+                        }
+
+                        delegate: Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 50
+                            border.width: 1
+
+                            Text {
+                                text: display
+                                anchors.centerIn: parent
+                            }
+                        }
+                    }
+//                    GroupBox {
+//                        id: control2
+//                        title: qsTr("GroupBox")
+
+//                        background: Rectangle {
+//                            y: control2.topPadding - control2.bottomPadding
+//                            width: parent.width
+//                            height: parent.height - control2.topPadding + control2.bottomPadding
+//                            color: "transparent"
+//                            border.color: "#21be2b"
+//                            radius: 2
+//                        }
+
+//                        label: Label {
+//                            x: control2.leftPadding
+//                            width: control2.availableWidth
+//                            text: control2.title
+//                            color: "#21be2b"
+//                            elide: Text.ElideRight
+//                        }
+
+//                        Label {
+//                            text: qsTr("Content goes here!")
+//                        }
+//                    }
                     GroupBox {
                         id: control
                         title: qsTr("GroupBox")
