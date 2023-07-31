@@ -12,5 +12,22 @@
         <file>icons/Profile.svg</file>
         <file>icons/Search.svg</file>
         <file>icons/Setting.svg</file>
+        <file>qml/CellView.qml</file>
+        <file>qml/RoundRect.qml</file>
+        <file>qml/delegate/CellBackground.qml</file>
+        <file>qml/delegate/CellBase.js</file>
+        <file>qml/delegate/CellBase.qml</file>
+        <file>qml/delegate/CellBaseEditor.qml</file>
+        <file>qml/delegate/CellBool.qml</file>
+        <file>qml/delegate/CellColor.qml</file>
+        <file>qml/delegate/CellColorEditor.qml</file>
+        <file>qml/delegate/CellDelegate.qml</file>
+        <file>qml/delegate/CellList.qml</file>
+        <file>qml/delegate/CellNumber.qml</file>
+        <file>qml/delegate/CellNumberEditor.qml</file>
+        <file>qml/delegate/CellPathEditor.qml</file>
+        <file>qml/delegate/CellText.qml</file>
+        <file>qml/delegate/CellTextEditor.qml</file>
+        <file>qml/Utils.js</file>
     </qresource>
 </RCC>

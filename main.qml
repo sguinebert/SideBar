@@ -154,17 +154,18 @@ ApplicationWindow {
                         }
                     }
 
-                    VerticalHeaderView {
-                        id: verticalHeader
-                        anchors.top: tableView.top
-                        anchors.left: parent.left
-                        syncView: tableView
-                        clip: true
-                    }
+//                    VerticalHeaderView {
+//                        id: verticalHeader
+//                        anchors.top: tableView.top
+//                        anchors.left: parent.left
+//                        syncView: tableView
+//                        clip: true
+//                    }
 
                     TableView {
                         id: tableView
-                        anchors.left: verticalHeader.right
+                        //anchors.left: verticalHeader.right
+                        anchors.left: parent.left
                         anchors.top: horizontalHeader.bottom
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
