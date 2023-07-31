@@ -141,7 +141,7 @@ ApplicationWindow {
                             Text {
                                 id: headertxt
                                 Layout.fillWidth: true
-                                text: "tableView.model.display"
+                                text: model.display
                             }
                             TextInput {
                                 id: search
