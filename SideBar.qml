@@ -118,10 +118,23 @@ Item {
             spacing: 0
             anchors { top: parent.top; topMargin: 0 }
 
+            ListModel {
+                id: sideBarModel
+                ListElement { name: "Menu"; selected: false }
+                ListElement { name: "Search"; selected: false }
+                ListElement { name: "Home"; selected: false }
+                ListElement { name: "Explore"; selected: false }
+                ListElement { name: "Notifications"; selected: false }
+                ListElement { name: "Bookmarks"; selected: false }
+                ListElement { name: "Messages"; selected: false }
+                ListElement { name: "Profile"; selected: false }
+                ListElement { name: "Setting"; selected: false }
+            }
+
             Repeater {
                 id: columnItems
 
-                model: ['Menu', 'Search', 'Home', 'Explore', 'Notifications', 'Bookmarks', 'Messages', 'Profile', 'Setting']
+                model: sideBarModel// ['Menu', 'Search', 'Home', 'Explore', 'Notifications', 'Bookmarks', 'Messages', 'Profile', 'Setting']
                 delegate: Rectangle {
                     id: button
 
@@ -137,7 +150,7 @@ Item {
                     Rectangle {
                         // The colored band
                         id:band
-                        visible: false
+                        visible: model.selected
                         width: 3 // Set the width of the colored band
                         height: parent.height
                         anchors.left: parent.left // Align the right edge with the parent's right edge
@@ -219,17 +232,19 @@ Item {
                                     sideBar.state = 'close';
                             }
                             else {
-                                band.visible = true
-                                //model[sidebar.index].band.visible = false
+                                model.selected = true
+                                sideBarModel.setProperty(sidebar.index, "selected", false)
+                                //model[sidebar.index].selected = false
+
+                                sidebar.index = model.index
                             }
-                            sidebar.index = model.index
                         }
                     }
 
                     Image {
                         id: icon
 
-                        source: 'icons/' + modelData + '.svg'
+                        source: 'icons/' + model.name + '.svg'
                         sourceSize: Qt.size(30, 30)
                         anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 10 }
                     }
@@ -237,7 +252,7 @@ Item {
                     Text {
                         id: title
 
-                        text: model.index === 0 ? '' : modelData
+                        text: model.index === 0 ? '' : model.name
                         font.family: sourceSansProFont.name
                         anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 55 }
 
