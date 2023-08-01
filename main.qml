@@ -1,8 +1,9 @@
-import QtQuick 6.5
-import QtQuick.Controls 6.5
+import QtQuick 6.4
+import QtQuick.Controls 6.4
 import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
 import Qt.labs.qmlmodels 1.0
+import "./qml/delegate"
 
 ApplicationWindow {
     id: window
@@ -172,7 +173,7 @@ ApplicationWindow {
                         columnSpacing: 1
                         rowSpacing: 1
                         clip: true
-                        resizableColumns :true
+                        //resizableColumns :true
 
                         model: TableModel {
                             TableModelColumn { display: "name" }
@@ -194,16 +195,16 @@ ApplicationWindow {
                             ]
                         }
 
-                        delegate: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 50
-                            border.width: 1
-
-                            Text {
-                                text: display
-                                anchors.centerIn: parent
-                            }
+                        delegate: CellText {
+                            value: model.cellData
+                            type: model.cellType
+                            option: model.cellOption
+                            flags: model.cellFlags
+                            readOnly: root.interactive ? cellFlags & Class.Property.ReadOnly : true
                         }
+
+                        ScrollBar.horizontal:   ScrollBar { orientation: Qt.Horizontal }
+                        ScrollBar.vertical:     ScrollBar { }
                     }
 //                    GroupBox {
 //                        id: control2
