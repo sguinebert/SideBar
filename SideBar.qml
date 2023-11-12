@@ -231,11 +231,10 @@ Item {
                                 else
                                     sideBar.state = 'close';
                             }
-                            else {
+                            else if (sidebar.index !== model.index) {
                                 model.selected = true
                                 sideBarModel.setProperty(sidebar.index, "selected", false)
                                 //model[sidebar.index].selected = false
-
                                 sidebar.index = model.index
                             }
                         }
