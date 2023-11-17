@@ -139,15 +139,36 @@ ApplicationWindow {
                         resizableColumns :true
 
 
+
                         delegate : ColumnLayout {
                             clip: true
-                            Text {
-                                id: headertxt
+                            Rectangle {
+                                id: headerdelegate
+                                color: "red"
                                 Layout.fillWidth: true
-                                text: model.display
+                                height: 30
+
+                                Text {
+                                    id: headertxt
+                                    anchors.fill: parent
+                                    text: model.display
+
+                                    MouseArea {
+                                        id: headermouse
+                                        anchors.fill: parent
+
+                                        onClicked: {
+                                            console.log("clicked__ç___")
+                                            model.sortColumn = index
+                                        }
+                                    }
+                                }
+
                             }
+
+
                             TextInput {
-                                id: search
+                                id: headersearch
                                 height: 30
                                 //width: headertxt.width
                                 Layout.fillWidth: true

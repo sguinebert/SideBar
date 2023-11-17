@@ -10,12 +10,14 @@ void HeaderList::addHeader(const QString &title, const QString &key, int positio
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_headers << header;
     endInsertRows();
+    if(header->visibility())
+        count_++;
 }
 
 int HeaderList::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return m_headers.count();
+    return count_;
 }
 
 QVariant HeaderList::data(const QModelIndex &index, int role) const

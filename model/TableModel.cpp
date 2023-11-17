@@ -92,7 +92,7 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 {
     if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal)
-            return  QString("hor-%1").arg(section);
+            return m_headers->data(m_headers->index(section), HeaderList::Title);
         else
             return QString("ver-%1").arg(section);
     }
@@ -123,7 +123,7 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
 
     if (index.row() < studies_.size()) {
         const Study* study = studies_[index.row()];
-        if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Name] ) || role == Name) //index.column() == 0
+        if ((role == Qt::DisplayRole) || role == Name) //index.column() == 0
             return study->name();
         else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Pid]) || role == Pid) //index.column() == 1
             return study->pid();

@@ -74,6 +74,7 @@ private:
 
 private:
     QList<Header*> m_headers;
+    int count_ = 0;
 
     QDateTime computedatetime(QString date, QString time);
     QDateTime computedatetime(QString datetime);

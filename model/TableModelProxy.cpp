@@ -86,6 +86,11 @@ void TableModelProxy::setFilterRole(const QByteArray &role)
     }
 }
 
+QVariant TableModelProxy::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    return m_source->headerData(section, orientation, role);
+}
+
 void TableModelProxy::selectRow(int row, bool shift, bool ctr)
 {
     int oldUp = selectedRowUp_;

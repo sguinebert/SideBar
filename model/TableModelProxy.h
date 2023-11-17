@@ -54,6 +54,8 @@ public:
     QByteArray filterRole() const;
     void setFilterRole(const QByteArray &role);
 
+    Q_INVOKABLE QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
 //    QString filterString() const;
 //    void setFilterString(const QString &filter);
 
