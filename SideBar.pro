@@ -1,6 +1,9 @@
+QT += core gui widgets
+QT += quick quickwidgets
+QT += opengl websockets network
 QT += quick svg
 
-CONFIG += c++17
+CONFIG += c++latest
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -8,8 +11,17 @@ CONFIG += c++17
 
 SOURCES += \
         Property.cpp \
-        TableModel.cpp \
-        main.cpp
+        main.cpp \
+        model/Filter.cpp \
+        model/FilterListProxy.cpp \
+        model/FiltersList.cpp \
+        model/Header.cpp \
+        model/HeaderList.cpp \
+        model/HeaderListProxy.cpp \
+        model/Studies.cpp \
+        model/Study.cpp \
+        model/TableModel.cpp \
+        model/TableModelProxy.cpp
 
 RESOURCES += qml.qrc
 
@@ -27,4 +39,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     MyType.h \
     Property.h \
-    TableModel.h
+    model/Filter.h \
+    model/FilterListProxy.h \
+    model/FiltersList.h \
+    model/Header.h \
+    model/HeaderList.h \
+    model/HeaderListProxy.h \
+    model/Studies.h \
+    model/Study.h \
+    model/TableModel.h \
+    model/TableModelProxy.h

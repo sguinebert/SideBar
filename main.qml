@@ -8,7 +8,7 @@ import "./qml/delegate"
 ApplicationWindow {
     id: window
 
-    width: 750
+    width: 1600
     height: 850
 //    height: 1440
 
@@ -136,6 +136,8 @@ ApplicationWindow {
                         anchors.top: parent.top
                         syncView: tableView
                         clip: true
+                        resizableColumns :true
+
 
                         delegate : ColumnLayout {
                             clip: true
@@ -175,28 +177,10 @@ ApplicationWindow {
                         clip: true
                         //resizableColumns :true
 
-                        model: TableModel {
-                            TableModelColumn { display: "name" }
-                            TableModelColumn { display: "color" }
-
-                            rows: [
-                                {
-                                    "name": "cat",
-                                    "color": "black"
-                                },
-                                {
-                                    "name": "dog",
-                                    "color": "brown"
-                                },
-                                {
-                                    "name": "bird",
-                                    "color": "white"
-                                }
-                            ]
-                        }
+                        model: studyproxy
 
                         delegate: CellText {
-                            value: model.cellData
+                            value: model.display
                             type: model.cellType
                             option: model.cellOption
                             flags: model.cellFlags
