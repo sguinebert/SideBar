@@ -17,8 +17,8 @@ public:
     enum StudyRoles {
         Uuid = Qt::UserRole + 1,
         Name,
-        PatientSex,
         Pid,
+        PatientSex,
         PatientBirthDate,
         Datetime,
         StudyID,

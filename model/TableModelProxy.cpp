@@ -28,6 +28,8 @@ void TableModelProxy::setSource(TableModel *source)
 {
     m_source = source;
     setSourceModel(source);
+    for(int i(0); i < m_source->columnCount(); i++)
+        columnOrder.append(i);
 }
 
 QByteArray TableModelProxy::sortRole() const
@@ -86,10 +88,7 @@ void TableModelProxy::setFilterRole(const QByteArray &role)
     }
 }
 
-QVariant TableModelProxy::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    return m_source->headerData(section, orientation, role);
-}
+
 
 void TableModelProxy::selectRow(int row, bool shift, bool ctr)
 {

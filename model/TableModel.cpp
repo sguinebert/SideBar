@@ -115,60 +115,219 @@ int TableModel::columnCount(const QModelIndex& parent) const
 
 QVariant TableModel::data(const QModelIndex& index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || index.row() >= studies_.size())
         return QVariant();
 
-//    if(index.column() > 3)
-//        return "";
-
-    if (index.row() < studies_.size()) {
-        const Study* study = studies_[index.row()];
-        if ((role == Qt::DisplayRole) || role == Name) //index.column() == 0
+    const Study* study = studies_[index.row()];
+    switch (role)
+    {
+    case Qt::DisplayRole:
+        switch (index.column() + Name)
+        {
+        case Name:
             return study->name();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Pid]) || role == Pid) //index.column() == 1
+            break;
+        case Pid:
             return study->pid();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Datetime]))
+            break;
+        case Datetime:
             return  study->datetime().toString(m_currentLocale.dateTimeFormat(QLocale::ShortFormat));
-        else if(role == Datetime)
-            return  study->datetime();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StudyDescription]) || role == StudyDescription)
+            break;
+        case StudyDescription:
             return study->description();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PatientSex]) || role == PatientSex)
+            break;
+        case PatientSex:
             return study->sex();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PatientBirthDate]))
+            break;
+        case PatientBirthDate:
             return study->birthDate().toString(m_currentLocale.dateFormat(QLocale::ShortFormat));
-        else if (role == PatientBirthDate)
-            return  study->birthDate();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StudyInstanceUID]) || role == StudyInstanceUID)
+            break;
+        case StudyInstanceUID:
             return study->studyInstanceUID();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[AccessionNumber]) || role == AccessionNumber)
+            break;
+        case AccessionNumber:
             return study->accessionNumber();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Modality]) || role == Modality)
+            break;
+        case Modality:
             return study->modality();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[InstitutionName]) || role == InstitutionName)
+            break;
+        case InstitutionName:
             return study->institutionName();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Manufacturer]) || role == Manufacturer)
+            break;
+        case Manufacturer:
             return study->manufacturer();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StationName]) || role == StationName)
+            break;
+        case StationName:
             return study->stationName();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[BodyPartExamined]) || role == BodyPartExamined)
+            break;
+        case BodyPartExamined:
             return study->bodyPartExamined();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[RequestedProcedureDescription]) || role == RequestedProcedureDescription)
+            break;
+        case RequestedProcedureDescription:
             return study->requestedProcedureDescription();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PerformingPhysicianName]) || role == PerformingPhysicianName)
+            break;
+        case PerformingPhysicianName:
             return study->performingPhysicianName();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[NameOfPhysiciansReadingStudy]) || role == NameOfPhysiciansReadingStudy)
-            return study->nameOfPhysiciansReadingStudy();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PerformedProcedureStepDescription]) || role == PerformedProcedureStepDescription)
+            break;
+        case PerformedProcedureStepDescription:
             return study->performedProcedureStepDescription();
-        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[ReferringPhysicianName]) || role == ReferringPhysicianName)
+            break;
+        case ReferringPhysicianName:
             return study->referringPhysicianName();
-        else if (role == Qt::DecorationRole && index.row() >= 0 && index.row() < rowCount() && index.column() >= 0 && index.column() < columnCount()) {
-            if (std::find(selectedRows_.begin(), selectedRows_.end(), index.row()) != selectedRows_.end()) //(selectedRowUp_ <= index.row() && index.row() <= selectedRowDown_) ||
-                return "#80DEEA";
-            return index.row() % 2 == 0 ? "white" : "#EEEEEE";
+            break;
+        default:
+            break;
         }
+
+        break;
+    case Name:
+        return study->name();
+        break;
+    case Pid:
+        return study->pid();
+        break;
+    case Datetime:
+        return  study->datetime();
+        break;
+    case StudyDescription:
+        return study->description();
+        break;
+    case PatientSex:
+        return study->sex();
+        break;
+    case PatientBirthDate:
+        return study->birthDate();
+        break;
+    case StudyInstanceUID:
+        return study->studyInstanceUID();
+        break;
+    case AccessionNumber:
+        return study->accessionNumber();
+        break;
+    case Modality:
+        return study->modality();
+        break;
+    case InstitutionName:
+        return study->institutionName();
+        break;
+    case Manufacturer:
+        return study->manufacturer();
+        break;
+    case StationName:
+        return study->stationName();
+        break;
+    case BodyPartExamined:
+        return study->bodyPartExamined();
+        break;
+    case RequestedProcedureDescription:
+        return study->requestedProcedureDescription();
+        break;
+    case PerformingPhysicianName:
+        return study->performingPhysicianName();
+        break;
+    case PerformedProcedureStepDescription:
+        return study->performedProcedureStepDescription();
+        break;
+    case ReferringPhysicianName:
+        return study->referringPhysicianName();
+        break;
+
+    case Qt::DecorationRole:
+        if (std::find(selectedRows_.begin(), selectedRows_.end(), index.row()) != selectedRows_.end()) //(selectedRowUp_ <= index.row() && index.row() <= selectedRowDown_) ||
+            return "#80DEEA";
+        return index.row() % 2 == 0 ? "white" : "#EEEEEE";
+        break;
+
+    case Qt::EditRole:
+        break;
+    case Qt::ToolTipRole:
+        break;
+    case Qt::StatusTipRole:
+        break;
+    case Qt::WhatsThisRole:
+        break;
+    case Qt::FontRole:
+        break;
+    case Qt::TextAlignmentRole:
+        break;
+    case Qt::BackgroundRole:
+        break;
+    case Qt::ForegroundRole:
+        break;
+    case Qt::CheckStateRole:
+        break;
+    case Qt::AccessibleTextRole:
+        break;
+    case Qt::AccessibleDescriptionRole:
+        break;
+    case Qt::SizeHintRole:
+        break;
+    case Qt::InitialSortOrderRole:
+        break;
+    // ... include other cases as needed
+    case Qt::DisplayPropertyRole:
+        break;
+    case Qt::DecorationPropertyRole:
+        break;
+    case Qt::ToolTipPropertyRole:
+        break;
+    case Qt::StatusTipPropertyRole:
+        break;
+    case Qt::WhatsThisPropertyRole:
+        break;
+    default:
+        break;
     }
+
+
+//    if (index.row() < studies_.size()) {
+//        const Study* study = studies_[index.row()];
+//        if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Name]) || role == Name) //index.column() == 0
+//            return study->name();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Pid]) || role == Pid) //index.column() == 1
+//            return study->pid();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Datetime]))
+//            return  study->datetime().toString(m_currentLocale.dateTimeFormat(QLocale::ShortFormat));
+//        else if(role == Datetime)
+//            return  study->datetime();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StudyDescription]) || role == StudyDescription)
+//            return study->description();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PatientSex]) || role == PatientSex)
+//            return study->sex();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PatientBirthDate]))
+//            return study->birthDate().toString(m_currentLocale.dateFormat(QLocale::ShortFormat));
+//        else if (role == PatientBirthDate)
+//            return  study->birthDate();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StudyInstanceUID]) || role == StudyInstanceUID)
+//            return study->studyInstanceUID();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[AccessionNumber]) || role == AccessionNumber)
+//            return study->accessionNumber();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Modality]) || role == Modality)
+//            return study->modality();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[InstitutionName]) || role == InstitutionName)
+//            return study->institutionName();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Manufacturer]) || role == Manufacturer)
+//            return study->manufacturer();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StationName]) || role == StationName)
+//            return study->stationName();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[BodyPartExamined]) || role == BodyPartExamined)
+//            return study->bodyPartExamined();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[RequestedProcedureDescription]) || role == RequestedProcedureDescription)
+//            return study->requestedProcedureDescription();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PerformingPhysicianName]) || role == PerformingPhysicianName)
+//            return study->performingPhysicianName();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[NameOfPhysiciansReadingStudy]) || role == NameOfPhysiciansReadingStudy)
+//            return study->nameOfPhysiciansReadingStudy();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PerformedProcedureStepDescription]) || role == PerformedProcedureStepDescription)
+//            return study->performedProcedureStepDescription();
+//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[ReferringPhysicianName]) || role == ReferringPhysicianName)
+//            return study->referringPhysicianName();
+//        else if (role == Qt::DecorationRole && index.row() >= 0 && index.row() < rowCount() && index.column() >= 0 && index.column() < columnCount()) {
+//            if (std::find(selectedRows_.begin(), selectedRows_.end(), index.row()) != selectedRows_.end()) //(selectedRowUp_ <= index.row() && index.row() <= selectedRowDown_) ||
+//                return "#80DEEA";
+//            return index.row() % 2 == 0 ? "white" : "#EEEEEE";
+//        }
+//    }
     return QVariant();
 }
 void findKey(const QString& query, const QJsonValue& value, std::vector<QString>& keys, std::vector<QJsonObject>& vec, const QString& oldkey) {

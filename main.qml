@@ -148,6 +148,8 @@ ApplicationWindow {
                                 Layout.fillWidth: true
                                 height: 30
 
+
+
                                 Text {
                                     id: headertxt
                                     anchors.fill: parent

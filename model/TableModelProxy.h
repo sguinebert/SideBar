@@ -54,7 +54,10 @@ public:
     QByteArray filterRole() const;
     void setFilterRole(const QByteArray &role);
 
-    Q_INVOKABLE QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Q_INVOKABLE QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override
+    {
+        return m_source->headerData(section, orientation, role);
+    }
 
 //    QString filterString() const;
 //    void setFilterString(const QString &filter);
@@ -93,6 +96,11 @@ public:
     Q_INVOKABLE int checktype(int column);
     Q_INVOKABLE void headerclick(int column);
 
+    void setColumnOrder(const QVector<int>& newOrder) {
+        columnOrder = newOrder;
+        invalidate(); // Refresh the proxy model
+    }
+
     enum FilterSyntax {
         RegExp,
         Wildcard,
@@ -125,6 +133,30 @@ protected:
     bool filterAcceptsColumn(int sourceColumn, const QModelIndex &sourceParent) const override;
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
+    int mapToSourceColumn(int proxyColumn) const {
+        if (proxyColumn >= 0 && proxyColumn < columnOrder.size())
+            return columnOrder[proxyColumn];
+        return proxyColumn; // Fallback to default order
+    }
+
+    QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override {
+        if (!proxyIndex.isValid())
+            return QVariant();
+
+        QModelIndex sourceIndex = mapToSource(this->index(proxyIndex.row(), mapToSourceColumn(proxyIndex.column())));
+        return sourceModel()->data(sourceIndex, role);
+    }
+
+    QModelIndex mapToSource(const QModelIndex &proxyIndex) const override {
+        return sourceModel()->index(proxyIndex.row(), mapToSourceColumn(proxyIndex.column()));
+    }
+
+    QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override {
+        int proxyColumn = columnOrder.indexOf(sourceIndex.column());
+        return index(sourceIndex.row(), proxyColumn >= 0 ? proxyColumn : sourceIndex.column());
+    }
+
+
 private:
     bool datetimeInRange(const QDateTime& datetime) const
     {
@@ -149,4 +181,6 @@ private:
 
     QDateTime m_minDate, m_maxDate;
     QDate m_date;
+
+    QVector<int> columnOrder;
 };
