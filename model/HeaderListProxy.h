@@ -33,34 +33,51 @@ public:
 
         qDebug() << "switchColumn : " << fromcolumn << " - " << toindex;
 
-        for(int i = 0; i < rowCount(); i++){
-            auto sourceindex = mapToSource(index(i, 0));
-            auto position = data(index(i, 0), HeaderList::Position).toInt();
-            qDebug() << "position : " << i << " - " << sourceindex.row();
-        }
+//        for(int i = 0; i < rowCount(); i++){
+//            auto sourceindex = mapToSource(index(i, 0));
+//            auto position = data(index(i, 0), HeaderList::Position).toInt();
+//            qDebug() << "position : " << i << " - " << sourceindex.row();
+//        }
+//        auto min = std::min(fromcolumn, toindex);
+//        auto max = std::max(fromcolumn, toindex);
 
-        setData(index(fromcolumn, 0), toindex, HeaderList::Position);
-        for(int i = toindex; i < rowCount(); i++){
-            auto visible = data(index(i, 0), HeaderList::Visibility).toBool();
-            if(visible){
-                setData(index(i, 0), i, HeaderList::Position);
+        //setData(index(fromcolumn, 0), toindex, HeaderList::Position);
+        if(toindex < fromcolumn) {
+            for(int i = toindex; i <= fromcolumn; i++) //i <= fromcolumn
+            {
+
+                auto visible = data(index(i, 0), HeaderList::Visibility).toBool();
+                if(visible){
+                    if(i == fromcolumn){
+                        setData(index(i, 0), toindex, HeaderList::Position);
+                    }
+                    else{
+                        setData(index(i, 0), i+1, HeaderList::Position);
+                    }
+                }
             }
-            //setData(index(fromcolumn, 0), toindex, HeaderList::Position);
-//            if(i != fromcolumn){
-//                auto position = data(index(i, 0), HeaderList::Position).toInt();
-//                if(position >= toindex){
-//                    setData(index(i, 0), position+1, HeaderList::Position);
-//                }
-//            }
         }
-
-        for(int i = 0; i < rowCount(); i++){
-            auto sourceindex = mapToSource(index(i, 0));
-            auto position = data(index(i, 0), HeaderList::Position).toInt();
-            qDebug() << "position : " << i << " - " << sourceindex.row();
+        else {
+            for(int i = toindex; i >= fromcolumn; i--)
+            {
+                auto visible = data(index(i, 0), HeaderList::Visibility).toBool();
+                if(visible){
+                    if(i == fromcolumn){
+                        setData(index(i, 0), toindex, HeaderList::Position);
+                    }
+                    else{
+                        setData(index(i, 0), i-1, HeaderList::Position);
+                    }
+                }
+            }
         }
 
         invalidate();
+//        for(int i = 0; i < rowCount(); i++){
+//            auto sourceindex = mapToSource(index(i, 0));
+//            auto position = data(index(i, 0), HeaderList::Position).toInt();
+//            qDebug() << "position : " << i << " - " << sourceindex.row() << " - pos : " << position;
+//        }
     }
 
     int mapToSourceColumn(int proxyColumn) const {

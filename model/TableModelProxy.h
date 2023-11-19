@@ -93,6 +93,7 @@ public:
     {
         m_headers->switchColumn(from, to);
 
+        invalidate();
     }
 
     Q_INVOKABLE void selectRow(int row, bool shift = false, bool ctr = false);

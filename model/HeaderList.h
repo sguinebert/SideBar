@@ -39,7 +39,7 @@ public:
             return true;
         }
         else if(role == Position){
-            qDebug() << "setData";
+            //qDebug() << "setData" << header->position() << " -> " << value.toInt();
             header->setPosition(value.toInt());
             return true;
         }
