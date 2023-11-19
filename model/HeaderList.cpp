@@ -54,9 +54,9 @@ void HeaderList::addHeader(const QString &title, const QString &key, int sourceI
     if(title == "Procedure Description") {
 
         qDebug() << m_columnOrder;
-//        for(auto head : m_headers) {
-//            qDebug() << head->title() << " - " << head->position();
-//        }
+        for(auto head : m_headers) {
+            qDebug() << head->title() << " - " << head->position();
+        }
     }
 
 }

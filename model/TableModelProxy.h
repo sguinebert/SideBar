@@ -72,9 +72,14 @@ public:
 //            }
 
             if (orientation == Qt::Horizontal)
-                return m_headers->data(m_headers->index(m_headers->mapToSourceColumn(section)), HeaderList::Title);
+                return m_headers->data(m_headers->index(section, 0), HeaderList::Title);
             else
                 return QString("ver-%1").arg(section);
+
+//            if (orientation == Qt::Horizontal)
+//                return m_headers->data(m_headers->index(m_headers->mapToSourceColumn(section)), HeaderList::Title);
+//            else
+//                return QString("ver-%1").arg(section);
         }
         return QVariant();
 
@@ -83,6 +88,12 @@ public:
 
 //    QString filterString() const;
 //    void setFilterString(const QString &filter);
+
+    Q_INVOKABLE void switchtest(int from, int to)
+    {
+        m_headers->switchColumn(from, to);
+
+    }
 
     Q_INVOKABLE void selectRow(int row, bool shift = false, bool ctr = false);
     Q_INVOKABLE void setFilters();
@@ -119,7 +130,7 @@ public:
     Q_INVOKABLE void headerclick(int column);
 
     void setColumnOrder(const QVector<int>& newOrder) {
-        m_headers->setColumnOrder(newOrder);
+        //m_headers->setColumnOrder(newOrder);
         invalidate(); // Refresh the proxy model
     }
 
@@ -155,12 +166,6 @@ protected:
     bool filterAcceptsColumn(int sourceColumn, const QModelIndex &sourceParent) const override;
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
-//    int mapToSourceColumn(int proxyColumn) const {
-//        if (proxyColumn >= 0 && proxyColumn < columnOrder.size())
-//            return columnOrder[proxyColumn];
-//        return proxyColumn; // Fallback to default order
-//    }
-
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override {
         if (!proxyIndex.isValid())
             return QVariant();
@@ -193,7 +198,7 @@ private:
 
 private:
     mutable TableModel* m_source = 0;
-    HeaderList* m_headers = 0;
+    HeaderListProxy* m_headers = 0;
     bool m_complete;
     bool search_;
     int selectedRowUp_, selectedRowDown_, baserow_;

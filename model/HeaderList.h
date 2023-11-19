@@ -25,20 +25,22 @@ public:
     void addHeader(const QString &title, const QString &key, int sourceIndex, int position, int width, Header::Type type, bool visibility);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-//    int columnCount(const QModelIndex& parent = QModelIndex()) const override {
-//        if (parent.isValid())
-//            return 0;
-//        return 5;
-//    }
 
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override{
         if (index.row() < 0 || index.row() >= m_headers.count())
             return false;
 
+
+
         Header* header = m_headers[index.row()];
         if(role == Filter){
             header->setFilter(value.toString());
+            return true;
+        }
+        else if(role == Position){
+            qDebug() << "setData";
+            header->setPosition(value.toInt());
             return true;
         }
         return false;

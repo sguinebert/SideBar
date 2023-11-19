@@ -27,7 +27,7 @@ int TableModelProxy::length() const
 void TableModelProxy::setSource(TableModel *source)
 {
     m_source = source;
-    m_headers = m_source->headers();
+    m_headers = m_source->headerproxy();
     setSourceModel(source);
 }
 

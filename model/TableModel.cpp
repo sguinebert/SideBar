@@ -132,7 +132,8 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 {
     if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal)
-            return m_headers->data(m_headers->index(section), HeaderList::Title);
+            return m_headerproxy->data(m_headerproxy->index(section, 0), HeaderList::Title);
+            //return m_headers->data(m_headers->index(section), HeaderList::Title);
         else
             return QString("ver-%1").arg(section);
     }

@@ -12,6 +12,8 @@ HeaderListProxy::HeaderListProxy(QObject *parent) : QSortFilterProxyModel(parent
 
     QSortFilterProxyModel::setSortRole(HeaderList::Position);
     sort(0, Qt::AscendingOrder);
+
+    invalidate();
     //qDebug() << "sortcolumn : " << sortColumn() << " - " << sortRole() << " - " << columnCount();
 
 }

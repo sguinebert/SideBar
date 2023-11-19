@@ -253,6 +253,21 @@ ApplicationWindow {
                             color: "transparent"
                             border.color: "#21be2b"
                             radius: 2
+
+
+                        }
+
+                        Button {
+                            id:testButton
+                            anchors.centerIn: parent
+                            text: qsTr("Click me!")
+                            onPressed: {
+                                console.log("Pressed!");
+                            }
+                            onClicked: {
+                                console.log("Clicked!");
+                                studyproxy.switchtest(6, 4);
+                            }
                         }
 
                         label: Rectangle {
