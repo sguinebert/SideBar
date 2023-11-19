@@ -147,6 +147,7 @@ ApplicationWindow {
                                 color: "red"
                                 Layout.fillWidth: true
                                 height: 30
+                                implicitWidth: 100
 
 
 

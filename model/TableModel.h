@@ -16,8 +16,8 @@ class TableModel : public QAbstractTableModel
 public:
     enum StudyRoles {
         Uuid = Qt::UserRole + 1,
-        Name,
-        Pid,
+        PatientName,
+        PatientID,
         PatientSex,
         PatientBirthDate,
         Datetime,
@@ -131,6 +131,45 @@ signals:
     void loadStudy(Study *study);
 private:
     void addStudy(Study* study, std::string uuid);
+    QString header2string(TableModel::StudyRoles role) {
+        switch (role) {
+        case TableModel::PatientName:
+            return tr("Name");
+        case TableModel::PatientID:
+            return tr("Patient ID");
+        case TableModel::Datetime:
+            return tr("Date");
+        case TableModel::StudyDescription:
+            return tr("Description");
+        case TableModel::PatientSex:
+            return tr("Patient Sex");
+        case TableModel::PatientBirthDate:
+            return tr("Birth Date");
+        case TableModel::Modality:
+            return tr("Modality");
+        case TableModel::StationName:
+            return tr("Station Name");
+        case TableModel::InstitutionName:
+            return tr("Institution Name");
+        case TableModel::AccessionNumber:
+            return tr("Accession Number");
+        case TableModel::PerformingPhysicianName:
+            return tr("Performing Physician");
+        case TableModel::NameOfPhysiciansReadingStudy:
+            return tr("Physicians Reading Study");
+        case TableModel::PerformedProcedureStepDescription:
+            return tr("Procedure Description");
+        case TableModel::Manufacturer:
+            return tr("Manufacturer");
+        case TableModel::BodyPartExamined:
+            return tr("Body Part Examined");
+        case TableModel::RequestedProcedureDescription:
+            return tr("Requested Procedure");
+        default:
+            break;
+        }
+        return "";
+    }
 private:
     QList<Study*> studies_;
     std::set<std::string> uuids_;

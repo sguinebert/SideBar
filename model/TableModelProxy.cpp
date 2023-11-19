@@ -27,9 +27,8 @@ int TableModelProxy::length() const
 void TableModelProxy::setSource(TableModel *source)
 {
     m_source = source;
+    m_headers = m_source->headers();
     setSourceModel(source);
-    for(int i(0); i < m_source->columnCount(); i++)
-        columnOrder.append(i);
 }
 
 QByteArray TableModelProxy::sortRole() const
@@ -156,8 +155,8 @@ Q_INVOKABLE void TableModelProxy::setFilters() //need to determine if the filter
     {
         QJsonObject obj;
         obj["query"] = "studies";
-        obj["name"] = m_source->filter(TableModel::Name);
-        obj["pid"] = m_source->filter(TableModel::Pid);
+        obj["name"] = m_source->filter(TableModel::PatientName);
+        obj["pid"] = m_source->filter(TableModel::PatientID);
         obj["datetime"] = m_source->filter(TableModel::Datetime);
         obj["description"] = m_source->filter(TableModel::StudyDescription);
         emit newRequest(obj);
@@ -266,9 +265,9 @@ bool TableModelProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceP
             case TableModel::StudyRoles::InstitutionName:
             case TableModel::StudyRoles::Manufacturer:
             case TableModel::StudyRoles::Modality:
-            case TableModel::StudyRoles::Name:
+            case TableModel::StudyRoles::PatientName:
             case TableModel::StudyRoles::PatientSex:
-            case TableModel::StudyRoles::Pid:
+            case TableModel::StudyRoles::PatientID:
             case TableModel::StudyRoles::StudyDescription:
             case TableModel::StudyRoles::PerformedProcedureStepDescription:
             case TableModel::StudyRoles::NameOfPhysiciansReadingStudy:

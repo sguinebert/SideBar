@@ -6,22 +6,48 @@
 
 #include <iostream>
 
-QString header2string(TableModel::StudyRoles role) {
 
+
+QString header2key(TableModel::StudyRoles role) {
     switch (role) {
-    case TableModel::Name:
-        return "Name";
-    case TableModel::Pid:
-        return "PatientID";
+    case TableModel::PatientName:
+        return "PatientName";
+    case TableModel::PatientID:
+        return "PatientId"; // Corrected to match the key in headtemplate
     case TableModel::Datetime:
-        return "Date";
+        return "Datetime";
     case TableModel::StudyDescription:
-        return "Description";
+        return "StudyDescription";
+    case TableModel::PatientSex:
+        return "PatientSex";
+    case TableModel::PatientBirthDate:
+        return "PatientBirthDate";
+    case TableModel::Modality:
+        return "Modality";
+    case TableModel::StationName:
+        return "StationName";
+    case TableModel::InstitutionName:
+        return "InstitutionName";
+    case TableModel::AccessionNumber:
+        return "AccessionNumber";
+    case TableModel::PerformingPhysicianName:
+        return "PerformingPhysicianName";
+    case TableModel::NameOfPhysiciansReadingStudy:
+        return "NameOfPhysiciansReadingStudy";
+    case TableModel::PerformedProcedureStepDescription:
+        return "PerformedProcedureStepDescription";
+    case TableModel::Manufacturer:
+        return "Manufacturer";
+    case TableModel::BodyPartExamined:
+        return "BodyPartExamined";
+    case TableModel::RequestedProcedureDescription:
+        return "RequestedProcedureDescription";
     default:
         break;
     }
     return "";
 }
+
 
 TableModel::TableModel(QObject* parent) : QAbstractTableModel(parent)
 {
@@ -36,10 +62,10 @@ TableModel::TableModel(QObject* parent) : QAbstractTableModel(parent)
 
     QJsonObject headtemplate;
     //headtemplate["AET"] = "caveo";
-    headtemplate["PatientName"] = QJsonArray({ Name, 0, 200, 0, true});
+    headtemplate["PatientName"] = QJsonArray({ PatientName, 0, 200, 0, true});
     headtemplate["PatientSex"] = QJsonArray({PatientSex, 4, 200, 0, true});
     headtemplate["PatientBirthDate"] = QJsonArray({PatientBirthDate, 5, 200, 1, true});
-    headtemplate["PatientId"] = QJsonArray({ Pid, 1, 200, 0, true});
+    headtemplate["PatientId"] = QJsonArray({ PatientID, 1, 200, 0, true});
     headtemplate["Datetime"] = QJsonArray({ Datetime, 2, 200, 2, true});
     headtemplate["Modality"] = QJsonArray({Modality, 6, 200, 0, true});
     headtemplate["StudyDescription"] = QJsonArray({StudyDescription, 3, 200, 0, true});
@@ -63,17 +89,31 @@ TableModel::TableModel(QObject* parent) : QAbstractTableModel(parent)
 //    {"Visibility", true},
 //    {"Type", 0},
 //    });
+    int hsize = ReferringPhysicianName - PatientName;
 
-    for(const QString& key : headtemplate.keys()) {
+    for(int i = 0; i < hsize; i++) {
+        auto role = (TableModel::StudyRoles)(PatientName + i);
+        auto key = header2key(role);
         const auto& value = headtemplate.value(key).toArray();
-        auto type = (TableModel::StudyRoles)value[0].toInt();
+        auto title = header2string(role);
 
-        auto cd = header2string(type);
+        if(!value.isEmpty())
+            m_headers->addHeader(title, //title
+                                 key,
+                                 i, //original index
+                                 value[1].toInt(), //position
+                                 value[2].toInt(), //width
+                                 (Header::Type)value[3].toInt(), //type
+                                 value[4].toBool()); //visibility
+        else
+            m_headers->addHeader(title, //title
+                                 key,
+                                 i, //original index
+                                 -1, //position
+                                 200, //width
+                                 Header::Type::Text, //type
+                                 false); //visibility
 
-        qDebug() << "json order : " << key << " - " << value[1].toInt();
-
-        m_headers->addHeader(!cd.isEmpty() ? cd : key, key, value[1].toInt(), value[2].toInt(), (Header::Type)value[3].toInt(), value[4].toBool());
-        m_columnOrder[type] = value[1].toInt();
     }
 
     QJsonObject obj;
@@ -122,12 +162,12 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
     switch (role)
     {
     case Qt::DisplayRole:
-        switch (index.column() + Name)
+        switch (index.column() + PatientName)
         {
-        case Name:
+        case PatientName:
             return study->name();
             break;
-        case Pid:
+        case PatientID:
             return study->pid();
             break;
         case Datetime:
@@ -180,10 +220,10 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
         }
 
         break;
-    case Name:
+    case PatientName:
         return study->name();
         break;
-    case Pid:
+    case PatientID:
         return study->pid();
         break;
     case Datetime:
@@ -403,9 +443,9 @@ QHash<int, QByteArray> TableModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::DisplayRole] = "display";
     roles[Qt::DecorationRole] = "style";
-    roles[Pid] = "pid";
+    roles[PatientID] = "pid";
     roles[Datetime] = "datetime";
-    roles[Name] = "name";
+    roles[PatientName] = "name";
     roles[Uuid] = "uuid";
     roles[StudyDescription] = "studyDescription";
     roles[PatientSex] = "patientSex";

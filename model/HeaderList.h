@@ -8,6 +8,7 @@
 class HeaderList : public QAbstractListModel
 {
     Q_OBJECT
+    friend class TableModelProxy;
 public:
     enum HeaderRoles {
         Type = Qt::UserRole + 1,
@@ -21,7 +22,7 @@ public:
 public:
     HeaderList(QObject* parent = nullptr);
 
-    void addHeader(const QString &title, const QString &key, int position, int width, Header::Type type, bool visibility);
+    void addHeader(const QString &title, const QString &key, int sourceIndex, int position, int width, Header::Type type, bool visibility);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 //    int columnCount(const QModelIndex& parent = QModelIndex()) const override {
@@ -68,6 +69,21 @@ public:
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
+    void setColumnOrder(const QVector<int>& newOrder) {
+        m_columnOrder = newOrder;
+        //invalidate(); // Refresh the proxy model
+    }
+
+    int mapToSourceColumn(int proxyColumn) const {
+        if (proxyColumn >= 0 && proxyColumn < m_columnOrder.size())
+            return m_columnOrder[proxyColumn];
+        return proxyColumn; // Fallback to default order
+    }
+
+    int mapFromSourceColumn(int sourceColumn) const {
+        return m_columnOrder.indexOf(sourceColumn);
+    }
+
 private:
 //    void addStudy(Header* header, QString uuid);
 //    void encode(QString& data);
@@ -75,6 +91,7 @@ private:
 private:
     QList<Header*> m_headers;
     int count_ = 0;
+    QVector<int> m_columnOrder;
 
     QDateTime computedatetime(QString date, QString time);
     QDateTime computedatetime(QString datetime);

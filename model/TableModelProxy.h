@@ -56,7 +56,29 @@ public:
 
     Q_INVOKABLE QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override
     {
-        return m_source->headerData(section, orientation, role);
+        if (role == Qt::DisplayRole) {
+
+//            auto cc =  m_headers->data(m_headers->index(m_headers->mapToSourceColumn(section)), HeaderList::Title).toString();
+//            if(cc.isEmpty()) {
+//                auto index = m_headers->mapToSourceColumn(section);
+//                auto ccin = m_headers->index(index);
+
+//                if(!ccin.isValid()) {
+//                    qDebug() << "ccin is not valid";
+//                }
+
+//                auto hh =  m_headers->m_headers[index];
+//                qDebug() << "cc : " << index << " - " << hh->title() << " - " << hh->key();
+//            }
+
+            if (orientation == Qt::Horizontal)
+                return m_headers->data(m_headers->index(m_headers->mapToSourceColumn(section)), HeaderList::Title);
+            else
+                return QString("ver-%1").arg(section);
+        }
+        return QVariant();
+
+        //return m_source->headerData(section, orientation, role);
     }
 
 //    QString filterString() const;
@@ -97,7 +119,7 @@ public:
     Q_INVOKABLE void headerclick(int column);
 
     void setColumnOrder(const QVector<int>& newOrder) {
-        columnOrder = newOrder;
+        m_headers->setColumnOrder(newOrder);
         invalidate(); // Refresh the proxy model
     }
 
@@ -133,29 +155,30 @@ protected:
     bool filterAcceptsColumn(int sourceColumn, const QModelIndex &sourceParent) const override;
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
-    int mapToSourceColumn(int proxyColumn) const {
-        if (proxyColumn >= 0 && proxyColumn < columnOrder.size())
-            return columnOrder[proxyColumn];
-        return proxyColumn; // Fallback to default order
-    }
+//    int mapToSourceColumn(int proxyColumn) const {
+//        if (proxyColumn >= 0 && proxyColumn < columnOrder.size())
+//            return columnOrder[proxyColumn];
+//        return proxyColumn; // Fallback to default order
+//    }
 
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override {
         if (!proxyIndex.isValid())
             return QVariant();
 
-        QModelIndex sourceIndex = mapToSource(this->index(proxyIndex.row(), mapToSourceColumn(proxyIndex.column())));
+
+        QModelIndex sourceIndex = mapToSource(proxyIndex);
+        //QModelIndex sourceIndex = mapToSource(this->index(proxyIndex.row(), mapToSourceColumn(proxyIndex.column())));
         return sourceModel()->data(sourceIndex, role);
     }
 
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override {
-        return sourceModel()->index(proxyIndex.row(), mapToSourceColumn(proxyIndex.column()));
+        return sourceModel()->index(proxyIndex.row(), m_headers->mapToSourceColumn(proxyIndex.column()));
     }
 
     QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override {
-        int proxyColumn = columnOrder.indexOf(sourceIndex.column());
+        int proxyColumn = m_headers->mapFromSourceColumn(sourceIndex.column());// columnOrder.indexOf(sourceIndex.column());
         return index(sourceIndex.row(), proxyColumn >= 0 ? proxyColumn : sourceIndex.column());
     }
-
 
 private:
     bool datetimeInRange(const QDateTime& datetime) const
@@ -170,6 +193,7 @@ private:
 
 private:
     mutable TableModel* m_source = 0;
+    HeaderList* m_headers = 0;
     bool m_complete;
     bool search_;
     int selectedRowUp_, selectedRowDown_, baserow_;
@@ -182,5 +206,5 @@ private:
     QDateTime m_minDate, m_maxDate;
     QDate m_date;
 
-    QVector<int> columnOrder;
+    //QVector<int> columnOrder;
 };

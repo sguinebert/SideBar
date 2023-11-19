@@ -4,47 +4,98 @@ HeaderList::HeaderList(QObject* parent) : QAbstractListModel(parent)
 {
 }
 
-void HeaderList::addHeader(const QString &title, const QString &key, int position, int width, Header::Type type, bool visibility)
+void HeaderList::addHeader(const QString &title, const QString &key, int sourceIndex, int position, int width, Header::Type type, bool visibility)
 {
     auto header = new Header(title, key, position, width, type, visibility, this);
+
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_headers << header;
+    m_headers.append(header);
     endInsertRows();
-    if(header->visibility())
+
+//    if(m_headers.size() <= sourceIndex) {
+//        m_headers.resize(sourceIndex, header);
+//        beginInsertRows(QModelIndex(), rowCount(), rowCount());
+//        m_headers.append(header);
+//        endInsertRows();
+//    }
+//    else {
+//        //beginInsertRows(QModelIndex(), sourceIndex, sourceIndex);
+//        m_headers[sourceIndex] = header;
+//        //endInsertRows();
+//    }
+
+    if(header->visibility()) {
         count_++;
+
+        //qDebug() <<title << " - " << key << " - " << sourceIndex << " - " << position;
+
+        bool inserted(false);
+
+        for(int i(0); i < m_columnOrder.size(); ++i) {
+
+            if(position < m_headers[m_columnOrder[i]]->position()) {
+                m_columnOrder.insert(i, sourceIndex);
+                inserted = true;
+                break;
+            }
+
+        }
+        if(!inserted)
+            m_columnOrder.push_back(sourceIndex);
+    }
+
+
+
+//    if(m_columnOrder.size() <= sourceIndex)
+//        m_columnOrder.resize(sourceIndex + 1, sourceIndex);
+
+//    m_columnOrder[sourceIndex] = position;
+
+    if(title == "Procedure Description") {
+
+        qDebug() << m_columnOrder;
+//        for(auto head : m_headers) {
+//            qDebug() << head->title() << " - " << head->position();
+//        }
+    }
+
 }
 
 int HeaderList::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return count_;
+    return m_headers.size();
+    //return count_;
 }
 
 QVariant HeaderList::data(const QModelIndex &index, int role) const
 {
-    if (index.row() < 0 || index.row() >= m_headers.count())
+    if (index.row() < 0 || index.row() >= m_headers.size())
         return QVariant();
 
     const Header* header = m_headers[index.row()];
-    if (role == Type)
+
+    switch (role) {
+    case Type:
         return header->type();
-    else if (role == Title)
+    case Title:
         return header->title();
-    else if (role == Width)
+    case Width:
         return header->width();
-    else if (role == Visibility)
+    case Visibility:
         return header->visibility();
-    else if(role == Position){
+    case Position:
         return header->position();
-    }
-    else if (role == Filter)
+    case Filter:
         return header->filter();
-    else if (role == RegexFilter)
+    case RegexFilter:
         return header->regexfilter();
-//    //else if (role == UuidRole)
-//    //    return volume->uuid();
-//    else if (role == series)
-//        return study->series();
+    default:
+        break;
+    }
+
+    //qDebug() << "HeaderList::data() - Invalid role";
+
     return QVariant();
 }
 
