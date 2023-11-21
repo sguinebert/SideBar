@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
 
     engine.rootContext()->setContextProperty("studymodel", &tablemodel_);
     engine.rootContext()->setContextProperty("studyproxy", &tablemodelproxy_);
+    engine.rootContext()->setContextProperty("headerproxy", tablemodel_.headerproxy());
 
 
     return app.exec();

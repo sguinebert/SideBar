@@ -29,5 +29,11 @@
         <file>qml/delegate/CellText.qml</file>
         <file>qml/delegate/CellTextEditor.qml</file>
         <file>qml/Utils.js</file>
+        <file>qml/DatePicker.qml</file>
+        <file>qml/DateTimePicker.qml</file>
+        <file>qml/HeaderDelegate.qml</file>
+        <file>qml/ResizableColumnHeader.qml</file>
+        <file>qml/TimePicker.qml</file>
+        <file>qml/TreeSelector.qml</file>
     </qresource>
 </RCC>

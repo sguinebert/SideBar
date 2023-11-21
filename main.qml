@@ -3,6 +3,7 @@ import QtQuick.Controls 6.4
 import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
 import Qt.labs.qmlmodels 1.0
+import "./qml"
 import "./qml/delegate"
 
 ApplicationWindow {
@@ -130,56 +131,99 @@ ApplicationWindow {
 //                        }
 //                    }
 
-                    HorizontalHeaderView {
+                    ResizableColumnHeader {             // COLUMN HEADER
                         id: horizontalHeader
-                        anchors.left: tableView.left
-                        anchors.top: parent.top
-                        syncView: tableView
-                        clip: true
-                        resizableColumns :true
-
-
-
-                        delegate : ColumnLayout {
-                            clip: true
-                            Rectangle {
-                                id: headerdelegate
-                                color: "red"
-                                Layout.fillWidth: true
-                                height: 30
-                                implicitWidth: 100
-
-
-
-                                Text {
-                                    id: headertxt
-                                    anchors.fill: parent
-                                    text: model.display
-
-                                    MouseArea {
-                                        id: headermouse
-                                        anchors.fill: parent
-
-                                        onClicked: {
-                                            console.log("clicked__ç___")
-                                            model.sortColumn = index
-                                        }
-                                    }
-                                }
-
-                            }
-
-
-                            TextInput {
-                                id: headersearch
-                                height: 30
-                                //width: headertxt.width
-                                Layout.fillWidth: true
-                                clip:true
-                                wrapMode: Text.WordWrap
+                        Layout.fillWidth: true
+                        height: 50
+                        width: tableView.width
+                        defaultWidth: 200
+                        spacing: 1
+                        model: headerproxy
+                        //anchors.left: tableView.left
+                        contentX: tableView.contentX
+                        contentWidth: tableView.width
+                        interactive: false
+                        onColumnWidthChanged: tableView.forceLayout()
+                        Layout.alignment: Qt.AlignTop
+                        //ScrollBar.horizontal: ScrollBar{}
+                        displaced: Transition {
+                            NumberAnimation {
+                                properties: "x,y"
+                                easing.type: Easing.OutQuad
                             }
                         }
                     }
+
+//                    ListView {
+//                        id: horizontalHeader
+//                        anchors.left: tableView.left
+//                        anchors.top: parent.top
+//                        //syncView: tableView
+//                        clip: true
+//                        //resizableColumns :true
+//                        model: headerproxy
+
+////                        transitions: [
+////                            ViewTransition {
+////                                item:ViewTransition.Displaced
+////                                NumberAnimation { properties: "x,y"; duration: 400; easing.type: Easing.OutBounce }
+////                            }
+////                        ]
+
+////                        Behavior on x {
+////                            NumberAnimation { duration: 300 }
+////                        }
+
+
+////                        displaced: Transition {
+////                            NumberAnimation {
+////                                properties: "x,y"
+////                                easing.type: Easing.OutQuad
+////                            }
+////                        }
+
+
+
+//                        delegate : ColumnLayout {
+//                            clip: true
+//                            Rectangle {
+//                                id: headerdelegate
+//                                color: "red"
+//                                Layout.fillWidth: true
+//                                height: 30
+//                                implicitWidth: 100
+
+
+
+//                                Text {
+//                                    id: headertxt
+//                                    anchors.fill: parent
+//                                    text: model.display
+
+//                                    MouseArea {
+//                                        id: headermouse
+//                                        anchors.fill: parent
+
+//                                        onClicked: {
+//                                            console.log("clicked__ç___")
+//                                            model.sortColumn = index
+//                                        }
+//                                    }
+//                                }
+
+//                            }
+
+
+//                            TextInput {
+//                                id: headersearch
+//                                height: 30
+//                                //width: headertxt.width
+//                                Layout.fillWidth: true
+//                                clip:true
+//                                wrapMode: Text.WordWrap
+//                            }
+//                        }
+//                    }
 
 //                    VerticalHeaderView {
 //                        id: verticalHeader
@@ -199,7 +243,10 @@ ApplicationWindow {
                         columnSpacing: 1
                         rowSpacing: 1
                         clip: true
+                        columnWidthProvider: horizontalHeader.columnWidthProvider
+                        contentWidth:horizontalHeader.contentWidth
                         //resizableColumns :true
+                        //onReboundChanged: horizontalHeader.rebound()
 
                         model: studyproxy
 

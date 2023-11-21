@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.12
 ListView {
     id:root
     property var len : [200,200]
-    property var count : root.model.length
+    property var count :  15//root.model.rowCount()
     property real defaultWidth : 150
     property real minimalWidth : 50
     signal  columnWidthChanged

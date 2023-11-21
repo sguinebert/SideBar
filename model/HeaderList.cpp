@@ -13,7 +13,7 @@ void HeaderList::addHeader(const QString &title, const QString &key, int sourceI
     endInsertRows();
 
 //    if(m_headers.size() <= sourceIndex) {
-//        m_headers.resize(sourceIndex, header);
+    //        m_headers.resize(sourceIndex, header);
 //        beginInsertRows(QModelIndex(), rowCount(), rowCount());
 //        m_headers.append(header);
 //        endInsertRows();
