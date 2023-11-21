@@ -123,57 +123,8 @@ ApplicationWindow {
                         width: tableView.width
                         defaultWidth: 200
                         spacing: 1
-                       //model: headerproxy
-                        model: DelegateModel {
-                            id:visualModel
-                            model: headerproxy
-                            delegate : DropArea {
-                                id: delegateRoot
+                        visualmodel: headerproxy
 
-
-                                property int visualIndex: DelegateModel.itemsIndex
-
-                                onEntered: function(drag) {
-                                    visualModel.items.move((drag.source as HeaderDelegate).visualIndex, header.visualIndex)
-                                }
-
-                                HeaderDelegate {
-                                    id: header
-                                    dragParent: horizontalHeader
-                                    visualIndex: delegateRoot.visualIndex
-                                    //        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
-                                    width:  horizontalHeader.len[index] ? horizontalHeader.len[index] : 200
-                                    height:  horizontalHeader.height
-                                    color:"#eec"
-                                    text: "<b>"+title+"</b>"
-                                    Rectangle {
-                                        id: resizeHandle
-                                        color: Qt.darker(parent.color, 1.05)
-                                        height: parent.height
-                                        width: 10
-                                        anchors.right: parent.right
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        MouseArea {
-                                            id: mouseHandle
-                                            anchors.fill: parent
-                                            drag{ target: parent; axis: Drag.XAxis }
-                                            hoverEnabled: true
-                                            cursorShape: Qt.SizeHorCursor
-                                            onMouseXChanged: {
-                                                if (drag.active) {
-                                                    var newWidth = header.width + mouseX
-                                                    if (newWidth >= horizontalHeader.minimalWidth) {
-                                                        header.width = newWidth
-                                                        horizontalHeader.len[index] = newWidth
-                                                        horizontalHeader.columnWidthChanged()
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
                         //anchors.left: tableView.left
                         contentX: tableView.contentX
                         contentWidth: tableView.width
@@ -181,12 +132,6 @@ ApplicationWindow {
                         onColumnWidthChanged: tableView.forceLayout()
                         Layout.alignment: Qt.AlignTop
                         //ScrollBar.horizontal: ScrollBar{}
-                        displaced: Transition {
-                            NumberAnimation {
-                                properties: "x,y"
-                                easing.type: Easing.OutQuad
-                            }
-                        }
                     }
 
 //                    HorizontalHeaderView {

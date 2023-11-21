@@ -24,12 +24,15 @@ Rectangle {
 
     DragHandler {
         id: dragHandler
+        yAxis.enabled:false
     }
 
     Drag.active: dragHandler.active
     Drag.source: icon
     Drag.hotSpot.x: 36
     Drag.hotSpot.y: 36
+    //DragAxis: Drag.XAxis
+
 
     states: [
         State {
