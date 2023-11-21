@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.12
 ListView {
     id:root
     property var len : [200,200]
-    property var count :  15//root.model.rowCount()
+    property var count :  visualmodel.length()
     property real defaultWidth : 150
     property real minimalWidth : 50
     required property var visualmodel
@@ -101,13 +101,14 @@ ListView {
 //            }
 //        }
 //    }
-    onCountChanged:        modelCountChanged()
+    onCountChanged: modelCountChanged()
 //    Component.onCompleted: resetColumns()
     displaced: Transition {
         NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
     }
 
     function columnWidthProvider(column) {
+        console.log("tes", len[column], count)
         return len[column]
     }
     function resetColumns() {
