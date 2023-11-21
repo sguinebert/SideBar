@@ -12,41 +12,44 @@ ListView {
 
     orientation: ListView.Horizontal
     clip: true
-    delegate: HeaderDelegate {
-        id: header
-//        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
-        width:  root.len[index] ? root.len[index] : defaultWidth
-        height:  root.height
-        color:"#eec"
-        text: "<b>"+modelData+"</b>"
-        Rectangle {
-            id: resizeHandle
-            color: Qt.darker(parent.color, 1.05)
-            height: parent.height
-            width: 10
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            MouseArea {
-                id: mouseHandle
-                anchors.fill: parent
-                drag{ target: parent; axis: Drag.XAxis }
-                hoverEnabled: true
-                cursorShape: Qt.SizeHorCursor
-                onMouseXChanged: {
-                    if (drag.active) {
-                        var newWidth = header.width + mouseX
-                        if (newWidth >= minimalWidth) {
-                            header.width = newWidth
-                            root.len[index] = newWidth
-                            root.columnWidthChanged()
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    delegate: HeaderDelegate {
+//        id: header
+////        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
+//        width:  root.len[index] ? root.len[index] : defaultWidth
+//        height:  root.height
+//        color:"#eec"
+//        text: "<b>"+modelData+"</b>"
+//        Rectangle {
+//            id: resizeHandle
+//            color: Qt.darker(parent.color, 1.05)
+//            height: parent.height
+//            width: 10
+//            anchors.right: parent.right
+//            anchors.verticalCenter: parent.verticalCenter
+//            MouseArea {
+//                id: mouseHandle
+//                anchors.fill: parent
+//                drag{ target: parent; axis: Drag.XAxis }
+//                hoverEnabled: true
+//                cursorShape: Qt.SizeHorCursor
+//                onMouseXChanged: {
+//                    if (drag.active) {
+//                        var newWidth = header.width + mouseX
+//                        if (newWidth >= minimalWidth) {
+//                            header.width = newWidth
+//                            root.len[index] = newWidth
+//                            root.columnWidthChanged()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     onCountChanged:        modelCountChanged()
 //    Component.onCompleted: resetColumns()
+    displaced: Transition {
+        NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
+    }
 
     function columnWidthProvider(column) {
         return len[column]

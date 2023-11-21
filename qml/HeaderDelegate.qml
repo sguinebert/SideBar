@@ -1,7 +1,11 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 Rectangle {
+    id: icon
+    required property Item dragParent
+    property int visualIndex: 0
+
     property alias text : label.text
     property alias textColor: label.color
     property alias horizontalAlignment: label.horizontalAlignment
@@ -17,4 +21,31 @@ Rectangle {
         leftPadding: 5
         font.bold: true
     }
+
+    DragHandler {
+        id: dragHandler
+    }
+
+    Drag.active: dragHandler.active
+    Drag.source: icon
+    Drag.hotSpot.x: 36
+    Drag.hotSpot.y: 36
+
+    states: [
+        State {
+            when: dragHandler.active
+            ParentChange {
+                target: icon
+                parent: icon.dragParent
+            }
+
+            AnchorChanges {
+                target: icon
+                anchors.horizontalCenter: undefined
+                anchors.verticalCenter: undefined
+            }
+        }
+    ]
+
+
 }

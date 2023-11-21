@@ -115,21 +115,6 @@ ApplicationWindow {
                 currentIndex: bar.currentIndex
                 Item {
                     id: homeTab
-        //            Rectangle {
-        //                anchors.fill: homeTab
-        //                color:'red'
-        //            }
-//                    Frame {
-//                        background: Rectangle {
-//                            color: "transparent"
-//                            border.color: "#21be2b"
-//                            radius: 2
-//                        }
-
-//                        Label {
-//                            text: qsTr("Content goes here!")
-//                        }
-//                    }
 
                     ResizableColumnHeader {             // COLUMN HEADER
                         id: horizontalHeader
@@ -138,7 +123,57 @@ ApplicationWindow {
                         width: tableView.width
                         defaultWidth: 200
                         spacing: 1
-                        model: headerproxy
+                       //model: headerproxy
+                        model: DelegateModel {
+                            id:visualModel
+                            model: headerproxy
+                            delegate : DropArea {
+                                id: delegateRoot
+
+
+                                property int visualIndex: DelegateModel.itemsIndex
+
+                                onEntered: function(drag) {
+                                    visualModel.items.move((drag.source as HeaderDelegate).visualIndex, header.visualIndex)
+                                }
+
+                                HeaderDelegate {
+                                    id: header
+                                    dragParent: horizontalHeader
+                                    visualIndex: delegateRoot.visualIndex
+                                    //        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
+                                    width:  horizontalHeader.len[index] ? horizontalHeader.len[index] : 200
+                                    height:  horizontalHeader.height
+                                    color:"#eec"
+                                    text: "<b>"+title+"</b>"
+                                    Rectangle {
+                                        id: resizeHandle
+                                        color: Qt.darker(parent.color, 1.05)
+                                        height: parent.height
+                                        width: 10
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        MouseArea {
+                                            id: mouseHandle
+                                            anchors.fill: parent
+                                            drag{ target: parent; axis: Drag.XAxis }
+                                            hoverEnabled: true
+                                            cursorShape: Qt.SizeHorCursor
+                                            onMouseXChanged: {
+                                                if (drag.active) {
+                                                    var newWidth = header.width + mouseX
+                                                    if (newWidth >= horizontalHeader.minimalWidth) {
+                                                        header.width = newWidth
+                                                        horizontalHeader.len[index] = newWidth
+                                                        horizontalHeader.columnWidthChanged()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         //anchors.left: tableView.left
                         contentX: tableView.contentX
                         contentWidth: tableView.width
@@ -154,7 +189,7 @@ ApplicationWindow {
                         }
                     }
 
-//                    ListView {
+//                    HorizontalHeaderView {
 //                        id: horizontalHeader
 //                        anchors.left: tableView.left
 //                        anchors.top: parent.top
@@ -173,16 +208,6 @@ ApplicationWindow {
 ////                        Behavior on x {
 ////                            NumberAnimation { duration: 300 }
 ////                        }
-
-
-////                        displaced: Transition {
-////                            NumberAnimation {
-////                                properties: "x,y"
-////                                easing.type: Easing.OutQuad
-////                            }
-////                        }
-
-
 
 //                        delegate : ColumnLayout {
 //                            clip: true
