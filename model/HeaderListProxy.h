@@ -26,12 +26,17 @@ public:
         invalidate();
     }
 
+    bool update = false;
+
     Q_INVOKABLE void switchColumn(int fromcolumn, int toindex)
     {
         auto sourceindex = mapToSource(index(fromcolumn, 0));
         auto source = (HeaderList*)sourceModel();
 
         qDebug() << "switchColumn : " << fromcolumn << " - " << toindex;
+
+        if(fromcolumn != toindex)
+            update = true;
 
 //        for(int i = 0; i < rowCount(); i++){
 //            auto sourceindex = mapToSource(index(i, 0));
@@ -72,12 +77,19 @@ public:
             }
         }
 
-        invalidate();
+        //invalidate();
 //        for(int i = 0; i < rowCount(); i++){
 //            auto sourceindex = mapToSource(index(i, 0));
 //            auto position = data(index(i, 0), HeaderList::Position).toInt();
 //            qDebug() << "position : " << i << " - " << sourceindex.row() << " - pos : " << position;
 //        }
+    }
+    Q_INVOKABLE void setval()
+    {
+        qDebug() << "setval()";
+        //if(update)
+        invalidate();
+        update = false;
     }
 
     int mapToSourceColumn(int proxyColumn) const {

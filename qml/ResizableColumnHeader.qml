@@ -10,6 +10,8 @@ ListView {
     property real minimalWidth : 50
     required property var visualmodel
     signal  columnWidthChanged
+    signal switchColumn(from: int, to: int)
+
 
     orientation: ListView.Horizontal
     clip: true
@@ -24,21 +26,34 @@ ListView {
             width: header.width
             height: header.height
 
+
             property int visualIndex: DelegateModel.itemsIndex
 
             onEntered: function(drag) {
+                if((drag.source as HeaderDelegate).visualIndex !== header.visualIndex) {
+
+                    header.from = (drag.source as HeaderDelegate).visualIndex
+                    header.to = header.visualIndex
+                    switchColumn(header.from, header.to)
+                    console.log("drag", header.from, header.to)
+                }
                 visualModel.items.move((drag.source as HeaderDelegate).visualIndex, header.visualIndex)
+//                if(delegateRoot.from !== delegateRoot.to)
+
             }
 
             HeaderDelegate {
                 id: header
                 dragParent: root
                 visualIndex: delegateRoot.visualIndex
+                property int from
+                property int to
                 //        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
                 width:  root.len[index] ? root.len[index] : 200
                 height:  root.height
                 color:"#eec"
                 text: "<b>"+title+"</b>"
+
                 Rectangle {
                     id: resizeHandle
                     color: Qt.darker(parent.color, 1.05)
@@ -104,11 +119,17 @@ ListView {
     onCountChanged: modelCountChanged()
 //    Component.onCompleted: resetColumns()
     displaced: Transition {
-        NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
+        //SequentialAnimation {
+        NumberAnimation {
+            properties: "x,y";
+            easing.type: Easing.OutQuad
+        }
+
+            //ScriptAction { script: console.log("ttttttttttttttttt")}
+        //}
     }
 
     function columnWidthProvider(column) {
-        console.log("tes", len[column], count)
         return len[column]
     }
     function resetColumns() {

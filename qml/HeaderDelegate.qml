@@ -25,14 +25,21 @@ Rectangle {
     DragHandler {
         id: dragHandler
         yAxis.enabled:false
+
+        onActiveChanged: {
+            if (!active) {
+                // Drag operation has ended or mouse released
+                console.log("Drag operation ended or mouse released");
+                studyproxy.invalidate()
+                headerproxy.invalidate()
+            }
+        }
     }
 
     Drag.active: dragHandler.active
     Drag.source: icon
     Drag.hotSpot.x: 36
     Drag.hotSpot.y: 36
-    //DragAxis: Drag.XAxis
-
 
     states: [
         State {
@@ -41,13 +48,21 @@ Rectangle {
                 target: icon
                 parent: icon.dragParent
             }
-
             AnchorChanges {
                 target: icon
                 anchors.horizontalCenter: undefined
                 anchors.verticalCenter: undefined
             }
+        },
+        State {
+            when: dragHandler.active
+
+            StateChangeScript {
+                name: "firstScript"
+                script: console.log("entering first state")
+            }
         }
+
     ]
 
 

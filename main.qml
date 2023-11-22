@@ -131,6 +131,11 @@ ApplicationWindow {
                         interactive: false
                         onColumnWidthChanged: tableView.forceLayout()
                         Layout.alignment: Qt.AlignTop
+                        onSwitchColumn: (from, to) => {
+                            console.log("tt : ", from, to)
+                            studyproxy.switchtest(from, to)
+                        }
+
                         //ScrollBar.horizontal: ScrollBar{}
                     }
 
