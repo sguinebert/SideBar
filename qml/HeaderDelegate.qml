@@ -31,7 +31,8 @@ Rectangle {
                 // Drag operation has ended or mouse released
                 console.log("Drag operation ended or mouse released");
                 studyproxy.invalidate()
-                headerproxy.invalidate()
+                headerproxy.setval()
+                //headerproxy.invalidate()
             }
         }
     }

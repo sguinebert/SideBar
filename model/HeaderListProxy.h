@@ -26,6 +26,12 @@ public:
         invalidate();
     }
 
+//    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override
+//    {
+
+//        return true;
+//    }
+
     bool update = false;
 
     Q_INVOKABLE void switchColumn(int fromcolumn, int toindex)
@@ -35,8 +41,9 @@ public:
 
         qDebug() << "switchColumn : " << fromcolumn << " - " << toindex;
 
-        if(fromcolumn != toindex)
-            update = true;
+        for(int i(0); i < 7; i++)
+            qDebug() << "setval()" << data(index(i, 0), HeaderList::Position)
+                     << " - " << data(index(i, 0), HeaderList::Title);
 
 //        for(int i = 0; i < rowCount(); i++){
 //            auto sourceindex = mapToSource(index(i, 0));
@@ -46,18 +53,35 @@ public:
 //        auto min = std::min(fromcolumn, toindex);
 //        auto max = std::max(fromcolumn, toindex);
 
+        std::vector<int> modified;
+
         //setData(index(fromcolumn, 0), toindex, HeaderList::Position);
         if(toindex < fromcolumn) {
             for(int i = toindex; i <= fromcolumn; i++) //i <= fromcolumn
             {
-
                 auto visible = data(index(i, 0), HeaderList::Visibility).toBool();
                 if(visible){
                     if(i == fromcolumn){
-                        setData(index(i, 0), toindex, HeaderList::Position);
+                        //setData(index(i, 0), toindex, HeaderList::Position);
+                        for(int ii(0); ii < rowCount(); ii++)
+                        {
+                            auto position = data(index(ii, 0), HeaderList::Position).toInt();
+                            if(position == i && std::find(modified.begin(), modified.end(), ii) == modified.end()) {
+                                modified.push_back(ii);
+                                setData(index(ii, 0), toindex, HeaderList::Position);
+                            }
+                        }
                     }
                     else{
-                        setData(index(i, 0), i+1, HeaderList::Position);
+                        //setData(index(i, 0), i+1, HeaderList::Position);
+                        for(int ii(0); ii < rowCount(); ii++)
+                        {
+                            auto position = data(index(ii, 0), HeaderList::Position).toInt();
+                            if(position == i && std::find(modified.begin(), modified.end(), ii) == modified.end()) {
+                                modified.push_back(ii);
+                                setData(index(ii, 0), i+1, HeaderList::Position);
+                            }
+                        }
                     }
                 }
             }
@@ -68,16 +92,37 @@ public:
                 auto visible = data(index(i, 0), HeaderList::Visibility).toBool();
                 if(visible){
                     if(i == fromcolumn){
-                        setData(index(i, 0), toindex, HeaderList::Position);
+                        //setData(index(i, 0), toindex, HeaderList::Position);
+                        for(int ii(0); ii < rowCount(); ii++)
+                        {
+                            auto position = data(index(ii, 0), HeaderList::Position).toInt();
+                            if(position == i && std::find(modified.begin(), modified.end(), ii) == modified.end()) {
+                                modified.push_back(ii);
+                                setData(index(ii, 0), toindex, HeaderList::Position);
+                            }
+                        }
                     }
                     else{
-                        setData(index(i, 0), i-1, HeaderList::Position);
+                        //setData(index(i, 0), i-1, HeaderList::Position);
+                        for(int ii(0); ii < rowCount(); ii++)
+                        {
+                            auto position = data(index(ii, 0), HeaderList::Position).toInt();
+                            if(position == i && std::find(modified.begin(), modified.end(), ii) == modified.end()) {
+                                modified.push_back(ii);
+                                setData(index(ii, 0), i-1, HeaderList::Position);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        //invalidate();
+
+        for(int i(0); i < 7; i++)
+            qDebug() << "corrected val()" << data(index(i, 0), HeaderList::Position)
+                     << " - " << data(index(i, 0), HeaderList::Title);
+
+//        invalidate();
 //        for(int i = 0; i < rowCount(); i++){
 //            auto sourceindex = mapToSource(index(i, 0));
 //            auto position = data(index(i, 0), HeaderList::Position).toInt();
@@ -86,10 +131,14 @@ public:
     }
     Q_INVOKABLE void setval()
     {
-        qDebug() << "setval()";
-        //if(update)
+
+
         invalidate();
-        update = false;
+
+//        for(int i(0); i < 7; i++)
+//            qDebug() << "setval()" << data(index(i, 0), HeaderList::Position)
+//                     << " - " << data(index(i, 0), HeaderList::Title);
+
     }
 
     int mapToSourceColumn(int proxyColumn) const {

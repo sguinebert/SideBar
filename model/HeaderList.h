@@ -39,8 +39,14 @@ public:
             return true;
         }
         else if(role == Position){
-            //qDebug() << "setData" << header->position() << " -> " << value.toInt();
+//            for(auto header : m_headers) {
+//                if(header->position() == index.row()) {
+
+//                }
+//            }
             header->setPosition(value.toInt());
+            //qDebug() << "setData" << header->position() << " -> " << value.toInt();
+
             return true;
         }
         return false;

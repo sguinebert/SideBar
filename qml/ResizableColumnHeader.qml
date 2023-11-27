@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.12
 ListView {
     id:root
     property var len : [200,200]
-    property var count :  visualmodel.length()
+    property var count :  headerproxy.length()
     property real defaultWidth : 150
     property real minimalWidth : 50
     required property var visualmodel
