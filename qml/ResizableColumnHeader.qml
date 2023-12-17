@@ -62,6 +62,8 @@ ListView {
                 onColumnSwitched: {
                     //console.log("switched")
                     tablemodel.updateColumn()
+                    //tablemodel.invalidate()
+                    //headermodel.invalidate()
                 }
 
                 Rectangle {
