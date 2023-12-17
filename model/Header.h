@@ -11,6 +11,7 @@ class Header : public QObject
     Q_OBJECT
     Q_PROPERTY(bool visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
     Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
+    Q_PROPERTY(int width READ width WRITE setWidth NOTIFY widthChanged)
     Q_PROPERTY(QString filter READ filter WRITE setFilter NOTIFY filterChanged)
 //    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 //    Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
@@ -44,6 +45,7 @@ public:
 
     void setVisibility(bool visibility);
     void setPosition(int visibility);
+    void setWidth(int width);
     void setFilter(const QString& filter);
 
     QRegularExpression regexfilter() const {
@@ -54,6 +56,7 @@ signals:
     void visibilityChanged();
     void positionChanged();
     void filterChanged();
+    void widthChanged();
 
 private:
     QString m_title, m_key;

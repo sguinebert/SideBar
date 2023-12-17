@@ -27,27 +27,25 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override{
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override
+    {
         if (index.row() < 0 || index.row() >= m_headers.count())
             return false;
 
-
-
         Header* header = m_headers[index.row()];
-        if(role == Filter){
+
+        switch (role) {
+        case Filter:
             header->setFilter(value.toString());
             return true;
-        }
-        else if(role == Position){
-//            for(auto header : m_headers) {
-//                if(header->position() == index.row()) {
-
-//                }
-//            }
+        case Position:
             header->setPosition(value.toInt());
-            //qDebug() << "setData" << header->position() << " -> " << value.toInt();
-
             return true;
+        case Width:
+            header->setWidth(value.toInt());
+            return true;
+        default:
+            break;
         }
         return false;
     }

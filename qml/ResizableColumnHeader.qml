@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.12
 ListView {
     id:root
     property var len : [200,200]
-    property var count :  headerproxy.length()
+    property var count :  visualmodel.length()
     property real defaultWidth : 150
     property real minimalWidth : 50
     required property var visualmodel
@@ -49,7 +49,7 @@ ListView {
                 property int from
                 property int to
                 //        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
-                width:  root.len[index] ? root.len[index] : 200
+                width: columnWidth // root.len[index] ? root.len[index] : 200
                 height:  root.height
                 color:"#eec"
                 text: "<b>"+title+"</b>"
@@ -68,10 +68,12 @@ ListView {
                         hoverEnabled: true
                         cursorShape: Qt.SizeHorCursor
                         onMouseXChanged: {
+                            //console.log('width : ', headerproxy)
                             if (drag.active) {
                                 var newWidth = header.width + mouseX
                                 if (newWidth >= root.minimalWidth) {
                                     header.width = newWidth
+                                    columnWidth = newWidth
                                     root.len[index] = newWidth
                                     root.columnWidthChanged()
                                 }
@@ -130,7 +132,11 @@ ListView {
     }
 
     function columnWidthProvider(column) {
-        return len[column]
+        //console.log('columnWidthProvider : ', column, headerproxy.columnWidthProvider(column))
+        return visualmodel.columnWidthProvider(column);
+        //return visualmodel ? visualmodel.columnWidthProvider(column) : len[column];
+
+        //return len[column]
     }
     function resetColumns() {
         len=[]

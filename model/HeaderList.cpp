@@ -55,7 +55,7 @@ void HeaderList::addHeader(const QString &title, const QString &key, int sourceI
 
         qDebug() << m_columnOrder;
         for(auto head : m_headers) {
-            qDebug() << head->title() << " - " << head->position();
+            qDebug() << head->title() << " - " << head->position() << " - " << head->width();
         }
     }
 
@@ -128,7 +128,7 @@ QHash<int, QByteArray> HeaderList::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Type] = "type";
     roles[Title] = "title";
-    roles[Width] = "width";
+    roles[Width] = "columnWidth";
     roles[Visibility] = "visibility";
     roles[Position] = "position";
     roles[Filter] = "filter";

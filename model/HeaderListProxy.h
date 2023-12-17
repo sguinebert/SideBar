@@ -26,19 +26,23 @@ public:
         invalidate();
     }
 
+    Q_INVOKABLE void setColumnWidth(int column, int width)
+    {
+        setData(index(column, 0), width, HeaderList::Width);
+    }
+
+    Q_INVOKABLE int columnWidthProvider(int column) const
+    {
+        return data(index(column, 0), HeaderList::Width).toInt();
+    }
+
 //    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override
 //    {
-
-//        return true;
+//        return false;
 //    }
-
-    bool update = false;
 
     Q_INVOKABLE void switchColumn(int fromcolumn, int toindex)
     {
-        auto sourceindex = mapToSource(index(fromcolumn, 0));
-        auto source = (HeaderList*)sourceModel();
-
         qDebug() << "switchColumn : " << fromcolumn << " - " << toindex;
 
         for(int i(0); i < 7; i++)
@@ -159,16 +163,6 @@ public:
 protected:
     int roleKey(const QByteArray &role) const;
     QHash<int, QByteArray> roleNames() const override;
-
-//    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
-//    {
-//        // Custom comparison logic here
-//        auto position = data(left, HeaderList::Position).toInt() < data(right, HeaderList::Position).toInt();
-//        return position;
-//    }
-
-
-
     //bool filterAcceptsColumn(int sourceColumn, const QModelIndex &sourceParent) const override;
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 };

@@ -29,6 +29,16 @@ void Header::setPosition(int position)
     emit positionChanged();
 }
 
+void Header::setWidth(int width)
+{
+    //qDebug() << "setWidth()" << width;
+    if(m_width == width)
+        return;
+
+    m_width = width;
+    emit widthChanged();
+}
+
 void Header::setFilter(const QString& filter)
 {
     if(m_filter == filter)
