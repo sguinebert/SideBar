@@ -29,9 +29,13 @@ Rectangle {
         onActiveChanged: {
             if (!active) {
                 // Drag operation has ended or mouse released
-                console.log("Drag operation ended or mouse released");
-                studyproxy.invalidate()
-                headerproxy.setval()
+                //console.log("Drag operation ended or mouse released");
+
+                columnSwitched()
+                //studyproxy.updateColumn()
+
+                //icon.dragParent.visualmodel.setVal()
+                //headerproxy.setval()
                 //headerproxy.invalidate()
             }
         }

@@ -4,21 +4,25 @@ import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.12
 ListView {
     id:root
+    required property var headermodel //proxy model for header
+    required property var tablemodel //proxy model for table
     property var len : [200,200]
-    property var count :  visualmodel.length()
+    property var count :  headermodel.length()
     property real defaultWidth : 150
     property real minimalWidth : 50
-    required property var visualmodel
     signal  columnWidthChanged
     signal switchColumn(from: int, to: int)
 
+    onSwitchColumn: (from, to) => {
+        tablemodel.switchColumn(from, to)
+    }
 
     orientation: ListView.Horizontal
     clip: true
 
-    model: DelegateModel {
+    model: DelegateModel { //visual delegate model for header
         id:visualModel
-        model: visualmodel
+        model: headermodel
         delegate :
         DropArea {
             id: delegateRoot
@@ -35,7 +39,7 @@ ListView {
                     header.from = (drag.source as HeaderDelegate).visualIndex
                     header.to = header.visualIndex
                     switchColumn(header.from, header.to)
-                    console.log("drag", header.from, header.to)
+                    //console.log("drag", header.from, header.to)
                 }
                 visualModel.items.move((drag.source as HeaderDelegate).visualIndex, header.visualIndex)
 //                if(delegateRoot.from !== delegateRoot.to)
@@ -48,11 +52,17 @@ ListView {
                 visualIndex: delegateRoot.visualIndex
                 property int from
                 property int to
+                signal columnSwitched
                 //        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
                 width: columnWidth // root.len[index] ? root.len[index] : 200
                 height:  root.height
                 color:"#eec"
                 text: "<b>"+title+"</b>"
+
+                onColumnSwitched: {
+                    //console.log("switched")
+                    tablemodel.updateColumn()
+                }
 
                 Rectangle {
                     id: resizeHandle
@@ -121,21 +131,15 @@ ListView {
     onCountChanged: modelCountChanged()
 //    Component.onCompleted: resetColumns()
     displaced: Transition {
-        //SequentialAnimation {
         NumberAnimation {
             properties: "x,y";
             easing.type: Easing.OutQuad
         }
-
-            //ScriptAction { script: console.log("ttttttttttttttttt")}
-        //}
     }
 
     function columnWidthProvider(column) {
         //console.log('columnWidthProvider : ', column, headerproxy.columnWidthProvider(column))
-        return visualmodel.columnWidthProvider(column);
-        //return visualmodel ? visualmodel.columnWidthProvider(column) : len[column];
-
+        return headermodel.columnWidthProvider(column);
         //return len[column]
     }
     function resetColumns() {

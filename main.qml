@@ -123,7 +123,8 @@ ApplicationWindow {
                         width: tableView.width
                         defaultWidth: 200
                         spacing: 1
-                        visualmodel: headerproxy
+                        headermodel: headerproxy
+                        tablemodel: studyproxy
 
                         //anchors.left: tableView.left
                         contentX: tableView.contentX
@@ -131,10 +132,9 @@ ApplicationWindow {
                         interactive: false
                         onColumnWidthChanged: tableView.forceLayout()
                         Layout.alignment: Qt.AlignTop
-                        onSwitchColumn: (from, to) => {
-                            console.log("tt : ", from, to)
-                            studyproxy.switchtest(from, to)
-                        }
+//                        onSwitchColumn: (from, to) => {
+//                            studyproxy.switchColumn(from, to)
+//                        }
 
                         //ScrollBar.horizontal: ScrollBar{}
                     }
@@ -288,7 +288,7 @@ ApplicationWindow {
                             }
                             onClicked: {
                                 console.log("Clicked!");
-                                studyproxy.switchtest(6, 4);
+                                studyproxy.switchColumn(6, 4);
                             }
                         }
 

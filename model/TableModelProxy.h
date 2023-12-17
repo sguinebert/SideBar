@@ -89,11 +89,14 @@ public:
 //    QString filterString() const;
 //    void setFilterString(const QString &filter);
 
-    Q_INVOKABLE void switchtest(int from, int to)
+    Q_INVOKABLE void switchColumn(int from, int to)
     {
         m_headers->switchColumn(from, to);
-
-        //invalidate();
+    }
+    Q_INVOKABLE void updateColumn()
+    {
+        invalidate();
+        m_headers->invalidate();
     }
 
     Q_INVOKABLE void selectRow(int row, bool shift = false, bool ctr = false);
