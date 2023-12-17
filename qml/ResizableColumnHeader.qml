@@ -14,7 +14,7 @@ ListView {
     signal switchColumn(from: int, to: int)
 
     onSwitchColumn: (from, to) => {
-        tablemodel.switchColumn(from, to)
+        headermodel.switchColumn(from, to)
     }
 
     orientation: ListView.Horizontal
@@ -27,8 +27,8 @@ ListView {
         DropArea {
             id: delegateRoot
 
-            width: header.width
-            height: header.height
+            width: headerlayout.width
+            height: headerlayout.height
 
 
             property int visualIndex: DelegateModel.itemsIndex
@@ -42,57 +42,122 @@ ListView {
                     //console.log("drag", header.from, header.to)
                 }
                 visualModel.items.move((drag.source as HeaderDelegate).visualIndex, header.visualIndex)
-//                if(delegateRoot.from !== delegateRoot.to)
-
             }
 
-            HeaderDelegate {
-                id: header
-                dragParent: root
-                visualIndex: delegateRoot.visualIndex
-                property int from
-                property int to
-                signal columnSwitched
-                //        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
-                width: columnWidth // root.len[index] ? root.len[index] : 200
-                height:  root.height
-                color:"#eec"
-                text: "<b>"+title+"</b>"
+            ColumnLayout {
+                id:headerlayout
+                spacing: 1
+                height: root.height
 
-                onColumnSwitched: {
-                    //console.log("switched")
-                    tablemodel.updateColumn()
-                    //tablemodel.invalidate()
-                    //headermodel.invalidate()
-                }
+                HeaderDelegate {
+                    id: header
+                    dragParent: root
+                    visualIndex: delegateRoot.visualIndex
+                    property int from
+                    property int to
+                    signal columnSwitched
 
-                Rectangle {
-                    id: resizeHandle
-                    color: Qt.darker(parent.color, 1.05)
-                    height: parent.height
-                    width: 10
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    MouseArea {
-                        id: mouseHandle
-                        anchors.fill: parent
-                        drag{ target: parent; axis: Drag.XAxis }
-                        hoverEnabled: true
-                        cursorShape: Qt.SizeHorCursor
-                        onMouseXChanged: {
-                            //console.log('width : ', headerproxy)
-                            if (drag.active) {
-                                var newWidth = header.width + mouseX
-                                if (newWidth >= root.minimalWidth) {
-                                    header.width = newWidth
-                                    columnWidth = newWidth
-                                    root.len[index] = newWidth
-                                    root.columnWidthChanged()
+                    //width: columnWidth // root.len[index] ? root.len[index] : 200
+                    //height:  root.height
+
+                    Layout.preferredWidth: columnWidth
+                    Layout.preferredHeight: root.height * 0.5
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    color:"#eec"
+                    text: "<b>"+title+"</b>"
+
+                    onColumnSwitched: {
+                        //console.log("switched")
+                        tablemodel.updateColumn()
+                        //tablemodel.invalidate()
+                        //headermodel.invalidate()
+                    }
+
+                    onXChanged: {
+                        //console.log('drag test', Drag.active)
+                        if (Drag.active) {
+                            // Update the corresponding FilterDelegate's position
+                            filterdelegate.x = header.x;
+                            filterdelegate.width = header.width;
+                            filterdelegate.z = 100
+                            //filterdelegate.y = header.y;
+                        }
+                    }
+
+
+                    Rectangle {
+                        id: resizeHandle
+                        color: Qt.darker(parent.color, 1.05)
+                        height: parent.height
+                        width: 10
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        MouseArea {
+                            id: mouseHandle
+                            anchors.fill: parent
+                            drag{ target: parent; axis: Drag.XAxis }
+                            hoverEnabled: true
+                            cursorShape: Qt.SizeHorCursor
+                            onMouseXChanged: {
+                                //console.log('width : ', headerproxy)
+                                if (drag.active) {
+                                    var newWidth = header.width + mouseX
+                                    if (newWidth >= root.minimalWidth) {
+                                        header.width = newWidth
+                                        columnWidth = newWidth
+                                        root.len[index] = newWidth
+                                        root.columnWidthChanged()
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                FilterDelegate {
+                    id:filterdelegate
+                    visible: true
+
+                    text: filter
+                    Layout.preferredHeight: root.height * 0.5
+                    Layout.preferredWidth: columnWidth
+
+//                    Behavior on x {
+//                        NumberAnimation { id: anim; duration: 3000; easing.type: Easing.InBack }
+//                        //enabled: false
+//                    }
+
+                    onTextChanged:{
+                        //table_model.setFilterStr(index, text);
+                    }
+                    onAccepted:{
+                        console.log("accepted")
+                        filter = text
+                        table_model.setFilters();
+                        tableView.forceLayout();
+                        tableView.returnToBounds();
+
+                    }
+
+//                    states: [
+//                        State {
+//                            when: header.Drag.active
+//                            ParentChange {
+//                                target: filterdelegate
+//                                parent: filterdelegate.dragParent
+//                            }
+//                            AnchorChanges {
+//                                target: filterdelegate
+//                                anchors.horizontalCenter: undefined
+//                                anchors.verticalCenter: undefined
+//                            }
+//                        }
+//                    ]
+
+                }
+
             }
         }
     }
@@ -134,6 +199,7 @@ ListView {
 //    Component.onCompleted: resetColumns()
     displaced: Transition {
         NumberAnimation {
+            target: header
             properties: "x,y";
             easing.type: Easing.OutQuad
         }

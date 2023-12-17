@@ -43,19 +43,17 @@ public:
 
     Q_INVOKABLE void switchColumn(int fromcolumn, int toindex)
     {
-        qDebug() << "switchColumn : " << fromcolumn << " - " << toindex;
+//        qDebug() << "switchColumn : " << fromcolumn << " - " << toindex;
 
-        for(int i(0); i < 7; i++)
-            qDebug() << "setval()" << data(index(i, 0), HeaderList::Position)
-                     << " - " << data(index(i, 0), HeaderList::Title);
+//        for(int i(0); i < 7; i++)
+//            qDebug() << "setval()" << data(index(i, 0), HeaderList::Position)
+//                     << " - " << data(index(i, 0), HeaderList::Title);
 
 //        for(int i = 0; i < rowCount(); i++){
 //            auto sourceindex = mapToSource(index(i, 0));
 //            auto position = data(index(i, 0), HeaderList::Position).toInt();
 //            qDebug() << "position : " << i << " - " << sourceindex.row();
 //        }
-//        auto min = std::min(fromcolumn, toindex);
-//        auto max = std::max(fromcolumn, toindex);
 
         std::vector<int> modified;
 
@@ -122,25 +120,8 @@ public:
         }
 
 
-        for(int i(0); i < 7; i++)
-            qDebug() << "corrected val()" << data(index(i, 0), HeaderList::Position)
-                     << " - " << data(index(i, 0), HeaderList::Title);
-
-//        invalidate();
-//        for(int i = 0; i < rowCount(); i++){
-//            auto sourceindex = mapToSource(index(i, 0));
-//            auto position = data(index(i, 0), HeaderList::Position).toInt();
-//            qDebug() << "position : " << i << " - " << sourceindex.row() << " - pos : " << position;
-//        }
-    }
-    Q_INVOKABLE void setval()
-    {
-
-
-        invalidate();
-
 //        for(int i(0); i < 7; i++)
-//            qDebug() << "setval()" << data(index(i, 0), HeaderList::Position)
+//            qDebug() << "corrected val()" << data(index(i, 0), HeaderList::Position)
 //                     << " - " << data(index(i, 0), HeaderList::Title);
 
     }

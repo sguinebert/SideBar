@@ -35,5 +35,7 @@
         <file>qml/ResizableColumnHeader.qml</file>
         <file>qml/TimePicker.qml</file>
         <file>qml/TreeSelector.qml</file>
+        <file>qml/FilterDelegate.qml</file>
+        <file>icons/clear.svg</file>
     </qresource>
 </RCC>

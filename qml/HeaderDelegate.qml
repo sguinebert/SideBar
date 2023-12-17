@@ -2,8 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 Rectangle {
-    id: icon
-    required property Item dragParent
+    id: headerdelegate
+    required property Item dragParent //Listview root
     property int visualIndex: 0
 
     property alias text : label.text
@@ -27,22 +27,18 @@ Rectangle {
         yAxis.enabled:false
 
         onActiveChanged: {
-            if (!active) {
-                // Drag operation has ended or mouse released
+            if (!active) { // Drag operation has ended or mouse released
                 //console.log("Drag operation ended or mouse released");
 
                 columnSwitched()
                 //studyproxy.updateColumn()
-
-                //icon.dragParent.visualmodel.setVal()
-                //headerproxy.setval()
                 //headerproxy.invalidate()
             }
         }
     }
 
     Drag.active: dragHandler.active
-    Drag.source: icon
+    Drag.source: headerdelegate
     Drag.hotSpot.x: 36
     Drag.hotSpot.y: 36
 
@@ -50,24 +46,15 @@ Rectangle {
         State {
             when: dragHandler.active
             ParentChange {
-                target: icon
-                parent: icon.dragParent
+                target: headerdelegate
+                parent: headerdelegate.dragParent
             }
             AnchorChanges {
-                target: icon
+                target: headerdelegate
                 anchors.horizontalCenter: undefined
                 anchors.verticalCenter: undefined
             }
-        },
-        State {
-            when: dragHandler.active
-
-            StateChangeScript {
-                name: "firstScript"
-                script: console.log("entering first state")
-            }
         }
-
     ]
 
 
