@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 
 TextField {
     id:filteredit
+    required property int type
     Layout.fillWidth: true
     Layout.fillHeight: false
     topPadding: 0
@@ -52,7 +53,7 @@ TextField {
         onClicked: {
 
             mouse.accepted = false
-            var type = table_model.checktype(index)
+            var type = filteredit.type //table_model.checktype(index)
             if(!type)
                 filteredit.forceActiveFocus()
             else if (type === 1){
