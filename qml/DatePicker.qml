@@ -1,12 +1,15 @@
 ﻿import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.14
-
+//pragma Singleton
 import "./delegate"
 
 Dialog {
+    id:datepicker
     modal: true
     standardButtons: DialogButtonBox.Ok | DialogButtonBox.Cancel
+
+    property var filterid
 
     property int max: 150
     property int column: -1
@@ -47,8 +50,10 @@ Dialog {
             var date = new Date(year, month, day)
 
             if(updatetable) {
-                headers.setText(column, date.toLocaleDateString(Qt.locale(), Locale.ShortFormat))
-                table_model.setDate(date)
+                filterid.dateselected(date)
+
+//                headers.setText(column, date.toLocaleDateString(Qt.locale(), Locale.ShortFormat))
+//                table_model.setDate(date)
             }
     }
     onRejected: close()

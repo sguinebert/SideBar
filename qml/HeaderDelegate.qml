@@ -4,6 +4,11 @@ import QtQuick.Layouts 1.12
 
 Rectangle {
     id: headerdelegate
+    signal filterChanged
+    signal ftextChanged(var newtext)
+    signal dateselected(var date)
+    signal dateRangeSelected(var datebottom, var datetop)
+
     required property Item dragParent //Listview root
     property int visualIndex: 0
     property int subheight: label.height
@@ -13,6 +18,7 @@ Rectangle {
     property alias horizontalAlignment: label.horizontalAlignment
     //    implicitWidth: 100
     //    implicitHeight: 30
+    property alias filterdelegate : filterdelegate
     property alias filtertext : filterdelegate.text
     property alias filtertype : filterdelegate.type
 
@@ -48,13 +54,25 @@ Rectangle {
 
             onTextChanged:{
                 //table_model.setFilterStr(index, text);
+                headerdelegate.ftextChanged(filterdelegate.text)
             }
+            onCleared: {
+                headerdelegate.filterChanged();
+            }
+
             onAccepted:{
                 console.log("accepted")
-                filter = text
-                table_model.setFilters();
-                tableView.forceLayout();
-                tableView.returnToBounds();
+                headerdelegate.filterChanged();
+            }
+            onDateselected: (date) => {
+                console.log("date selected");
+                filterdelegate.text = date.toLocaleDateString(Qt.locale(), Locale.ShortFormat);
+                headerdelegate.dateselected(date);
+            }
+            onDateRangeSelected: (datebottom, datetop, rangetext) => {
+                console.log("date range selected");
+                filterdelegate.text = rangetext;
+                headerdelegate.dateRangeSelected(datebottom, datetop);
             }
         }
     }

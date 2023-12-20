@@ -3,10 +3,11 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.14
 
 import "./delegate"
-import "./qml/delegate"
 
 Dialog {
     id: dateDialog
+    property var filterid
+
     title: "Filter by date and time"
     modal: true
     width: 300
@@ -46,7 +47,7 @@ Dialog {
     }
 
     onAccepted: {
-        if(view.currentIndex == 0){
+        if(view.currentIndex === 0){
 
             //dpicker
             var bdate = new Date(dpicker.year, dpicker.month, dpicker.day, 0, 0)
@@ -54,26 +55,36 @@ Dialog {
 
             console.log(bdate, fdate)
 
-            table_model.setDatetimeRange(bdate, fdate)
-            headers.setText(column, bdate.toLocaleDateString(Qt.locale(), Locale.ShortFormat) + ' - ' +  fdate.toLocaleDateString(Qt.locale(), Locale.ShortFormat))
+            let delegateText = bdate.toLocaleDateString(Qt.locale(), Locale.ShortFormat) + ' - ' +  fdate.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
+            filterid.dateRangeSelected(bdate, fdate, delegateText);
+
+//            table_model.setDatetimeRange(bdate, fdate)
+//            headers.setText(column, bdate.toLocaleDateString(Qt.locale(), Locale.ShortFormat) + ' - ' +  fdate.toLocaleDateString(Qt.locale(), Locale.ShortFormat))
 
         }
-        else if(view.currentIndex == 1){
+        else if(view.currentIndex === 1){
             if(bottomDate.date && floorDate.date) {
-                table_model.setDatetimeRange(bottomDate.date, floorDate.date)
-                headers.setText(column, bottomDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat) + ' - ' +  floorDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat))
+
+                let delegateText = bottomDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat) + ' - ' +  floorDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
+                filterid.dateRangeSelected(bottomDate.date, floorDate.date, delegateText);
+
+//                table_model.setDatetimeRange(bottomDate.date, floorDate.date)
+//                headers.setText(column, bottomDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat) + ' - ' +  floorDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat))
             }
             else
             {
-                table_model.clearDatetimeRange()
-                headers.setText(column, "")
+                filterid.cleared();
+//                table_model.clearDatetimeRange()
+//                headers.setText(column, "")
             }
         }
-        else if(view.currentIndex == 2){
+        else if(view.currentIndex === 2){
             //console.log(addDays(sinceDays.date, - sinceDays.text))
             if(sinceDays.text){
-                table_model.setDatetimeRange(addDays(sinceDays.date, - sinceDays.text), sinceDays.date)
-                headers.setText(column, sinceDays.text)
+                //let delegateText = bottomDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat) + ' - ' +  floorDate.date.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
+                filterid.dateRangeSelected(addDays(sinceDays.date, - sinceDays.text), sinceDays.date, sinceDays.text);
+//                table_model.setDatetimeRange(addDays(sinceDays.date, - sinceDays.text), sinceDays.date)
+//                headers.setText(column, sinceDays.text)
 
             }
 

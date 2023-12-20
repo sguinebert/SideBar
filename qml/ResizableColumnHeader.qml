@@ -2,6 +2,8 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.12
+
+
 ListView {
     id:root
     required property var headermodel //proxy model for header
@@ -35,7 +37,6 @@ ListView {
             }
         }
     }
-
     onContentXChanged: {
         //console.log('ListView contentXChanged', contentX, tableView.contentX)
         if(tableview.contentX !== contentX) {
@@ -44,6 +45,14 @@ ListView {
     }
     orientation: ListView.Horizontal
     clip: true
+
+    DatePicker {
+        id: datepicker
+    }
+
+    DateTimePicker {
+        id: datetimepicker
+    }
 
     model: DelegateModel { //visual delegate model for header
         id:visualModel
@@ -59,7 +68,6 @@ ListView {
 
             onEntered: function(drag) {
                 if((drag.source as HeaderDelegate).visualIndex !== header.visualIndex) {
-
                     header.from = (drag.source as HeaderDelegate).visualIndex
                     header.to = header.visualIndex
                     switchColumn(header.from, header.to)
@@ -76,6 +84,7 @@ ListView {
                 property int to
                 signal columnSwitched
 
+
                 width: columnWidth // root.len[index] ? root.len[index] : 200
                 height:  root.height
                 color:"#eec"
@@ -85,9 +94,43 @@ ListView {
 
                 onColumnSwitched: {
                     //console.log("switched")
-                    tablemodel.updateColumn()
-                    //tablemodel.invalidate()
-                    //headermodel.invalidate()
+                    //tablemodel.updateColumn()
+                    dragParent.headermodel.invalidate()
+                    dragParent.tablemodel.invalidate()
+                }
+
+                onFtextChanged: (newtext) => {
+                    console.log("text changed", newtext)
+                    filter = newtext
+                }
+
+                onDateselected: (date) => {
+                    console.log("date selected", date)
+                    //headers.setText(column, date.toLocaleDateString(Qt.locale(), Locale.ShortFormat))
+                    tablemodel.setDate(date)
+                    //filter = date
+                }
+
+                onDateRangeSelected: (from, to) => {
+                    tablemodel.setDatetimeRange(from, to);
+                }
+
+                onFilterChanged:{
+                    console.log('onFilterChanged', filtertext, filter)
+                    if(filtertext == filter) return;
+                    if(filtertext === ""){
+                        if(type === 1){
+                            tablemodel.clearDateRange()
+                        }
+                        if(type === 2){
+                            tablemodel.clearDatetimeRange()
+                        }
+                    }
+
+                    filter = filtertext
+                    tablemodel.setFilters();
+                    tableview.forceLayout();
+                    tableview.returnToBounds();
                 }
 
                 //                    onXChanged: {
