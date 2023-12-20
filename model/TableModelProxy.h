@@ -95,8 +95,9 @@ public:
     }
     Q_INVOKABLE void updateColumn()
     {
-        invalidate();
+        //invalidate(); //TODO: find correct workaround to fix this
         m_headers->invalidate();
+        invalidate(); //invalidate because of header change
     }
 
     Q_INVOKABLE void selectRow(int row, bool shift = false, bool ctr = false);
