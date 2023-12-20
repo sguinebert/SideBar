@@ -120,17 +120,12 @@ ApplicationWindow {
                         id: horizontalHeader
                         Layout.fillWidth: true
                         height: 50
-                        width: tableView.width
                         defaultWidth: 200
                         spacing: 1
                         headermodel: headerproxy
                         tablemodel: studyproxy
+                        tableview: tableView
 
-                        //anchors.left: tableView.left
-                        contentX: tableView.contentX
-                        contentWidth: tableView.width
-                        interactive: false
-                        onColumnWidthChanged: tableView.forceLayout()
                         Layout.alignment: Qt.AlignTop
 //                        onSwitchColumn: (from, to) => {
 //                            studyproxy.switchColumn(from, to)
@@ -220,6 +215,7 @@ ApplicationWindow {
                         clip: true
                         columnWidthProvider: horizontalHeader.columnWidthProvider
                         contentWidth:horizontalHeader.contentWidth
+
                         //resizableColumns :true
                         //onReboundChanged: horizontalHeader.rebound()
 
@@ -288,7 +284,8 @@ ApplicationWindow {
                             }
                             onClicked: {
                                 console.log("Clicked!");
-                                studyproxy.switchColumn(6, 4);
+                                //studyproxy.switchColumn(6, 4);
+
                             }
                         }
 

@@ -29,6 +29,8 @@ void TableModelProxy::setSource(TableModel *source)
     m_source = source;
     m_headers = m_source->headerproxy();
     setSourceModel(source);
+
+    //connect(this, &QSortFilterProxyModel::dynamicSortFilterChanged, m_headers, &TableModelProxy::invalidate);
 }
 
 QByteArray TableModelProxy::sortRole() const

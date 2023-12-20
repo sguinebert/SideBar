@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.14
 
 import "./delegate"
+import "./qml/delegate"
 
 Dialog {
     id: dateDialog

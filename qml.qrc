@@ -37,5 +37,7 @@
         <file>qml/TreeSelector.qml</file>
         <file>qml/FilterDelegate.qml</file>
         <file>icons/clear.svg</file>
+        <file>qml/delegate/DatetimeDialog.qml</file>
+        <file>qml/delegate/TumblerDelegate.qml</file>
     </qresource>
 </RCC>

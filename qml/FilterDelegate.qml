@@ -2,6 +2,14 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.12
 
+//import "./qml/DateTimePicker.qml" as DateTimePicker
+
+
+//DateTimePicker {
+//    id: datetimepicker
+//}
+
+
 TextField {
     id:filteredit
     required property int type
@@ -19,6 +27,10 @@ TextField {
 
 
     //                           text:ccc.filter
+
+    DatePicker {
+        id: datepicker
+    }
 
     MouseArea {
         id:textfieldmouse

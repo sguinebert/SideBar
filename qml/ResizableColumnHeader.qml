@@ -6,10 +6,18 @@ ListView {
     id:root
     required property var headermodel //proxy model for header
     required property var tablemodel //proxy model for table
+    required property var tableview //proxy model for table
+
+    width: tableview.width
+    contentWidth: tableview.width
+    onColumnWidthChanged: tableview.forceLayout()
+    interactive: false
+
     property var len : [200,200]
     property var count :  headermodel.length()
     property real defaultWidth : 150
     property real minimalWidth : 50
+    //property int name: value
     signal  columnWidthChanged
     signal switchColumn(from: int, to: int)
 
@@ -17,6 +25,23 @@ ListView {
         headermodel.switchColumn(from, to)
     }
 
+    Connections {
+        target: tableview  // Set this to the id of tableview
+        onContentXChanged: {
+            // This will be called whenever tableView's contentX changes
+            //console.log('TableView contentXChanged', contentX, horizontalHeader.contentX)
+            if(contentX !== tableview.contentX) {
+                contentX = tableview.contentX
+            }
+        }
+    }
+
+    onContentXChanged: {
+        //console.log('ListView contentXChanged', contentX, tableView.contentX)
+        if(tableview.contentX !== contentX) {
+            contentX = tableview.contentX
+        }
+    }
     orientation: ListView.Horizontal
     clip: true
 
