@@ -15,40 +15,9 @@ TextField {
     topPadding: 0
     bottomPadding: 0
     rightPadding: 5
+    clip: true
 
     Layout.alignment: Qt.AlignBottom
-
-//    property var datepicker: null
-    //width:  root.len[index] ? root.len[index] : defaultWidth
-//            height:  root.height
-//            Layout.preferredWidth: root.len[index] ? root.len[index] : defaultWidth
-
-
-    //                           text:ccc.filter
-
-//    DatePicker {
-//        id: datepicker
-//    }
-
-//    Component.onCompleted: {
-//       // if (!appWindow.genericDialog) {
-//        //console.log('it is ready')
-//            var component = Qt.createComponent("DatePicker.qml")
-//        component.createObject(window, {})
-//        console.log('it is ready', component)
-//            if (component.status === Component.Ready) {
-//                component.createObject(window, {})
-//                console.log('it is ready')
-//            } else {
-//                component.statusChanged.connect(function() {
-//                    if (component.status === Component.Ready) {
-//                        component.createObject(window, {})
-//                        console.log('it is ready')
-//                    }
-//                })
-//            }
-//        //}
-//    }
 
     MouseArea {
         id:textfieldmouse
@@ -126,20 +95,6 @@ TextField {
             onClicked: {
                 filteredit.text = "";
                 filteredit.cleared()
-//                var type = table_model.checktype(index)
-//                if(type === 1){
-//                    table_model.clearDateRange()
-//                    table_model.setFilters();
-//                    tableView.forceLayout();
-//                    tableView.returnToBounds();
-//                }
-//                if(type === 2){
-//                    table_model.clearDatetimeRange()
-//                    table_model.setFilters();
-//                    tableView.forceLayout();
-//                    tableView.returnToBounds();
-//                }
-                //lineEdit.forceActiveFocus()
             }
         }
     }

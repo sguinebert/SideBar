@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Controls 2.5
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.12
 
 
@@ -14,12 +14,14 @@ ListView {
     contentWidth: tableview.width
     onColumnWidthChanged: tableview.forceLayout()
     interactive: false
+    orientation: ListView.Horizontal
+    clip: true
+    spacing: 1
 
     property var len : [200,200]
     property var count :  headermodel.length()
     property real defaultWidth : 150
     property real minimalWidth : 50
-    //property int name: value
     signal  columnWidthChanged
     signal switchColumn(from: int, to: int)
 
@@ -43,8 +45,6 @@ ListView {
             contentX = tableview.contentX
         }
     }
-    orientation: ListView.Horizontal
-    clip: true
 
     DatePicker {
         id: datepicker
@@ -133,14 +133,19 @@ ListView {
                     tableview.returnToBounds();
                 }
 
-                //                    onXChanged: {
-                //                        //console.log('onXChanged : ', delegateRoot.x, filterdelegate.x, header.x)
-                //                        if (Drag.active) {
-                //                            // Update the corresponding FilterDelegate's position
-                //                            filterdelegate.x = header.x - delegateRoot.x;
-                //                            //filterdelegate.z = 1.8
-                //                        }
-                //                    }
+                MouseArea {
+                    id: headerarea
+                    height: parent.subheight
+                    width: parent.width - resizeHandle.width
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+
+                    onClicked: {
+                        console.log("header clicked", index, type)
+                        tablemodel.sort(index)
+                    }
+                }
+
 
                 Rectangle {
                     id: resizeHandle
@@ -174,39 +179,6 @@ ListView {
 
     }
 
-//    delegate: HeaderDelegate {
-//        id: header
-////        width:  root.len[index] ?? defaultWidth // only Qt>= 5.15
-//        width:  root.len[index] ? root.len[index] : defaultWidth
-//        height:  root.height
-//        color:"#eec"
-//        text: "<b>"+modelData+"</b>"
-//        Rectangle {
-//            id: resizeHandle
-//            color: Qt.darker(parent.color, 1.05)
-//            height: parent.height
-//            width: 10
-//            anchors.right: parent.right
-//            anchors.verticalCenter: parent.verticalCenter
-//            MouseArea {
-//                id: mouseHandle
-//                anchors.fill: parent
-//                drag{ target: parent; axis: Drag.XAxis }
-//                hoverEnabled: true
-//                cursorShape: Qt.SizeHorCursor
-//                onMouseXChanged: {
-//                    if (drag.active) {
-//                        var newWidth = header.width + mouseX
-//                        if (newWidth >= minimalWidth) {
-//                            header.width = newWidth
-//                            root.len[index] = newWidth
-//                            root.columnWidthChanged()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     onCountChanged: modelCountChanged()
 //    Component.onCompleted: resetColumns()
     displaced: Transition {
@@ -219,6 +191,7 @@ ListView {
 
     function columnWidthProvider(column) {
         //console.log('columnWidthProvider : ', column, headerproxy.columnWidthProvider(column))
+        //if (typeof headermodel.columnWidthProvider === 'function')
         return headermodel.columnWidthProvider(column);
         //return len[column]
     }

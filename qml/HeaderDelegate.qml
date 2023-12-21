@@ -47,8 +47,6 @@ Rectangle {
         FilterDelegate {
             id:filterdelegate
             visible: true
-
-            //text: filter
             Layout.preferredHeight: headerdelegate.height * 0.5
             Layout.preferredWidth: headerdelegate.width
 

@@ -95,7 +95,6 @@ public:
     }
     Q_INVOKABLE void updateColumn()
     {
-        //invalidate(); //TODO: find correct workaround to fix this
         m_headers->invalidate();
         invalidate(); //invalidate because of header change
     }
