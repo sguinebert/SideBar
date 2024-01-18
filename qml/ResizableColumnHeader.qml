@@ -9,7 +9,9 @@ ListView {
     required property var headermodel //proxy model for header
     required property var tablemodel //proxy model for table
     required property var tableview //proxy model for table
+    property bool withfilters: true
 
+    height: withfilters ? 60 : 30
     width: tableview.width
     contentWidth: tableview.width
     onColumnWidthChanged: tableview.forceLayout()

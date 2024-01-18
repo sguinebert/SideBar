@@ -119,7 +119,7 @@ ApplicationWindow {
                     ResizableColumnHeader {             // COLUMN HEADER
                         id: horizontalHeader
                         Layout.fillWidth: true
-                        height: 50
+                        height: 60
                         defaultWidth: 200
                         spacing: 1
                         headermodel: headerproxy
@@ -127,9 +127,6 @@ ApplicationWindow {
                         tableview: tableView
 
                         Layout.alignment: Qt.AlignTop
-//                        onSwitchColumn: (from, to) => {
-//                            studyproxy.switchColumn(from, to)
-//                        }
 
                         //ScrollBar.horizontal: ScrollBar{}
                     }

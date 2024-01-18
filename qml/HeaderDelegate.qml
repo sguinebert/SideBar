@@ -46,7 +46,7 @@ Rectangle {
 
         FilterDelegate {
             id:filterdelegate
-            visible: true
+            visible: root.withfilters
             Layout.preferredHeight: headerdelegate.height * 0.5
             Layout.preferredWidth: headerdelegate.width
 

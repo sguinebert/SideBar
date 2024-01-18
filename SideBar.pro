@@ -1,7 +1,15 @@
 QT += core gui widgets
-QT += quick quickwidgets
-QT += opengl websockets network
-QT += quick svg
+#QT -= gui
+QT += core qml quick #quickwidgets
+#QT += opengl
+#QT += svg
+#QT += websockets network
+
+
+#CONFIG += release  # Use release mode, which omits debugging symbols
+CONFIG += ltcg     # Use link-time code generation
+CONFIG += qtquickcompiler  # Precompile QML into C++
+#QMAKE_CXXFLAGS_RELEASE += -s
 
 CONFIG += c++latest
 
