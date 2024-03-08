@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QSurfaceFormat>
 #include <QQmlContext>
+//#include <QQuickStyle>
 
 //#include "TableModel.h"
 //#include "Property.h"
@@ -10,10 +11,19 @@
 
 #include "model/TableModelProxy.h"
 
+//#include <QtQml/qqmlextensionplugin.h>
+//#include "QWKWidgets/widgetwindowagent.h"
+#include "qwindowkit/src/widgets/widgetwindowagent.h"
+//#include <qwindowkit/src/widgets/widgetwindowagent.h>
+
 int main(int argc, char *argv[]) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
+   // qputenv("QT_QUICK_CONTROLS_STYLE", "Material");
+   //QQuickStyle::setStyle("Material");
+   // auto agent = new QWK::WidgetWindowAgent();
+
 
    QGuiApplication app(argc, argv);
 

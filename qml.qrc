@@ -39,5 +39,6 @@
         <file>icons/clear.svg</file>
         <file>qml/delegate/DatetimeDialog.qml</file>
         <file>qml/delegate/TumblerDelegate.qml</file>
+        <file>ribbonbar/ribbon.qml</file>
     </qresource>
 </RCC>

@@ -5,6 +5,8 @@ import QtQuick.Controls.Material 2.12
 import Qt.labs.qmlmodels 1.0
 import "./qml"
 import "./qml/delegate"
+import "./ribbonbar"
+
 
 ApplicationWindow {
     id: window
@@ -17,6 +19,7 @@ ApplicationWindow {
     title: 'SideBar'
     color: '#E0E2ED'
     //visibility: "FullScreen"
+    property bool modern_style: RibbonTheme.modern_style
 
     //Material.theme: Material.Dark
     //Material.theme: Material.Dark
@@ -29,7 +32,7 @@ ApplicationWindow {
 //    }
 
     Component.onCompleted: {
-        console.log(screenManager.screenCount());
+        //console.log(screenManager.screenCount());
         //screenManager.setScreen(mainWindow,1); // for a second screen
     }
 
@@ -39,6 +42,63 @@ ApplicationWindow {
         source: 'fonts/SourceSansPro-Regular.ttf'
         //name: 'SourceSansPro'
     }
+
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+
+
+
+    // RibbonBottomBar{
+    //     id: bottom_bar
+    //     anchors{
+    //         left: parent.left
+    //         right: parent.right
+    //         bottom: parent.bottom
+    //     }
+    //     right_content: RowLayout{
+    //         clip: true
+    //         spacing:1
+    //         Layout.preferredHeight: parent.height
+    //         layoutDirection: Qt.RightToLeft
+    //         RibbonSlider{
+    //             id: page_slider
+    //             slide_width: 80
+    //             show_filled_color: false
+    //             value: 70
+    //         }
+    //         RibbonButton{
+    //             text:"Test Button 3"
+    //             show_bg:false
+    //             adapt_height:true
+    //             icon_source: RibbonIcons.Airplane
+    //         }
+    //         RibbonButton{
+    //             text:"Test Button 4"
+    //             show_bg:false
+    //             adapt_height:true
+    //         }
+    //     }
+    //     RibbonButton{
+    //         text:"Test Button 5"
+    //         show_bg:false
+    //         adapt_height:true
+    //         icon_source: RibbonIcons.AccessTime
+    //         checkable: true
+    //     }
+    //     RibbonButton{
+    //         text:"Test Button 6"
+    //         show_bg:false
+    //         adapt_height:true
+    //     }
+    //     RibbonButton{
+    //         show_bg:false
+    //         adapt_height:true
+    //         icon_source: RibbonIcons.AppStore
+    //         checkable: true
+    //         tip_text: "Test Button 7"
+    //     }
+    // }
 
 //    TabBar {
 //        id: control
@@ -76,7 +136,9 @@ ApplicationWindow {
 //        }
 
     RowLayout {
-        anchors.fill: parent
+        Layout.fillWidth: true
+        Layout.fillHeight: true // Take up the remaining space
+
         width: window.width // Set the desired width of the RowLayout
         height: window.height // Set the desired height of the RowLayout
 
@@ -223,7 +285,7 @@ ApplicationWindow {
                             type: model.cellType
                             option: model.cellOption
                             flags: model.cellFlags
-                            readOnly: root.interactive ? cellFlags & Class.Property.ReadOnly : true
+                            readOnly: window.interactive ? cellFlags & Class.Property.ReadOnly : true
                         }
 
                         ScrollBar.horizontal:   ScrollBar { orientation: Qt.Horizontal }
@@ -312,4 +374,7 @@ ApplicationWindow {
             }
         }
     }
+
+
+    }//ColumnLayout
 }
