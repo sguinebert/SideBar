@@ -3,14 +3,14 @@
 #include <QObject>
 #include <QAbstractListModel>
 
-#include "model/Study.h"
+#include "model/Stock.h"
 
-class Studies : public QAbstractListModel
+class Stocks : public QAbstractListModel
 {
 	Q_OBJECT
 
 public:
-	enum StudiesRoles {
+    enum StocksRoles {
 		UuidRole = Qt::UserRole + 1,
 		pid,
 		datetime,
@@ -19,8 +19,8 @@ public:
 		StudyNumber,
         series,
 	};
-	Studies(QObject* parent = 0);
-	~Studies();
+    Stocks(QObject* parent = 0);
+    ~Stocks();
 
 
 //	void addSerie(Volume* volume, QString useruuid, QString studyuuid, QString serieuuid, QString studyDescription, QString report);
@@ -31,7 +31,7 @@ public:
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
 
-	Q_INVOKABLE Study* get(quint32 index) const;
+    Q_INVOKABLE Stock* get(quint32 index) const;
 
 	void clear();
 	Q_INVOKABLE bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex()) Q_DECL_OVERRIDE;
@@ -40,13 +40,13 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-	void addStudy(Study* study, QString uuid);
+    void addStudy(Stock* study, QString uuid);
 	void encode(QString& data);
 private:
-	QList<Study*> studies_;
+    QList<Stock*> studies_;
 	int severalPatient_;
 	std::map<QString, int> patientMap_;
-	std::map<QString, Study*> studyMap_;
+    std::map<QString, Stock*> studyMap_;
     //std::map<QString, Volume*> serieMap_;
 
 	QDateTime computedatetime(QString date, QString time);

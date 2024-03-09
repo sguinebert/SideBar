@@ -155,13 +155,13 @@ Q_INVOKABLE void TableModelProxy::setFilters() //need to determine if the filter
 
     //setFilterString("a");
     {
-        QJsonObject obj;
-        obj["query"] = "studies";
-        obj["name"] = m_source->filter(TableModel::PatientName);
-        obj["pid"] = m_source->filter(TableModel::PatientID);
-        obj["datetime"] = m_source->filter(TableModel::Datetime);
-        obj["description"] = m_source->filter(TableModel::StudyDescription);
-        emit newRequest(obj);
+        // QJsonObject obj;
+        // obj["query"] = "studies";
+        // obj["name"] = m_source->filter(TableModel::PatientName);
+        // obj["pid"] = m_source->filter(TableModel::PatientID);
+        // obj["datetime"] = m_source->filter(TableModel::Datetime);
+        // obj["description"] = m_source->filter(TableModel::StudyDescription);
+        // emit newRequest(obj);
     }
 
      //qDebug() << "setFilters()";
@@ -248,35 +248,35 @@ bool TableModelProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceP
             QModelIndex sourceIndex = model->index(sourceRow, 0, sourceParent);
 
             switch(it.key()) {
-            case TableModel::StudyRoles::Datetime:
-            {
-                auto datetime = qvariant_cast<QDateTime>(model->data(sourceIndex, it.key()));
-                if(!datetimeInRange(datetime))
-                    accepted = false;
-            }
-                break;
-            case TableModel::StudyRoles::PatientBirthDate:
-            {
-                auto date = qvariant_cast<QDate>(model->data(sourceIndex, it.key()));
-                if(!dateInRange(date))
-                    accepted = false;
-            }
-                break;
-            case TableModel::StudyRoles::AccessionNumber:
-            case TableModel::StudyRoles::BodyPartExamined:
-            case TableModel::StudyRoles::InstitutionName:
-            case TableModel::StudyRoles::Manufacturer:
-            case TableModel::StudyRoles::Modality:
-            case TableModel::StudyRoles::PatientName:
-            case TableModel::StudyRoles::PatientSex:
-            case TableModel::StudyRoles::PatientID:
-            case TableModel::StudyRoles::StudyDescription:
-            case TableModel::StudyRoles::PerformedProcedureStepDescription:
-            case TableModel::StudyRoles::NameOfPhysiciansReadingStudy:
-            case TableModel::StudyRoles::RequestedProcedureDescription:
-            case TableModel::StudyRoles::PerformingPhysicianName:
-            case TableModel::StudyRoles::ReferringPhysicianName:
-            case TableModel::StudyRoles::StationName:
+            // case TableModel::StockRoles::Datetime:
+            // {
+            //     auto datetime = qvariant_cast<QDateTime>(model->data(sourceIndex, it.key()));
+            //     if(!datetimeInRange(datetime))
+            //         accepted = false;
+            // }
+            //     break;
+            // case TableModel::StockRoles::PatientBirthDate:
+            // {
+            //     auto date = qvariant_cast<QDate>(model->data(sourceIndex, it.key()));
+            //     if(!dateInRange(date))
+            //         accepted = false;
+            // }
+            //    break;
+            // case TableModel::StockRoles::AccessionNumber:
+            // case TableModel::StockRoles::BodyPartExamined:
+            // case TableModel::StockRoles::InstitutionName:
+            // case TableModel::StockRoles::Manufacturer:
+            // case TableModel::StockRoles::Modality:
+            // case TableModel::StockRoles::PatientName:
+            // case TableModel::StockRoles::PatientSex:
+            // case TableModel::StockRoles::PatientID:
+            // case TableModel::StockRoles::StudyDescription:
+            // case TableModel::StockRoles::PerformedProcedureStepDescription:
+            // case TableModel::StockRoles::NameOfPhysiciansReadingStudy:
+            // case TableModel::StockRoles::RequestedProcedureDescription:
+            // case TableModel::StockRoles::PerformingPhysicianName:
+            // case TableModel::StockRoles::ReferringPhysicianName:
+            // case TableModel::StockRoles::StationName:
             {
                 QString key = model->data(sourceIndex, it.key()).toString();
                 auto filter = m_source->regex(it.key());

@@ -6,7 +6,7 @@
 #include <QDate>
 #include <QDateTime>
 
-class Study : public QObject
+class Stock : public QObject
 {
     Q_OBJECT // Macro for signals and slots
 	Q_PROPERTY(QString pid READ pid NOTIFY pidChanged)
@@ -40,10 +40,10 @@ class Study : public QObject
     QML_ELEMENT
 
 public:
-	Study(QObject *parent = 0);
-	Study(QJsonObject json, QObject *parent = 0);
-    Study(int pid, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject *parent = 0, QString report = QString());
-    virtual ~Study() { }
+    Stock(QObject *parent = 0);
+    Stock(QJsonObject json, QObject *parent = 0);
+    Stock(int pid, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject *parent = 0, QString report = QString());
+    virtual ~Stock() { }
 
 	QVariantList series() const { return series_; };
 
@@ -136,4 +136,4 @@ private:
     referringPhysicianName_;
 };
 
-Q_DECLARE_METATYPE(Study);
+Q_DECLARE_METATYPE(Stock);

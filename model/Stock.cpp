@@ -1,12 +1,12 @@
-#include "Study.h"
+#include "Stock.h"
 
 #include <QJsonObject>
 
-Study::Study(QObject *parent) : QObject(parent)
+Stock::Stock(QObject *parent) : QObject(parent)
 {
 }
 
-Study::Study(QJsonObject json, QObject* parent): QObject(parent), separator_(false)
+Stock::Stock(QJsonObject json, QObject* parent): QObject(parent), separator_(false)
 {
 //    for(const auto& key : json.keys()){
 //        auto value = json.value(key);
@@ -73,7 +73,7 @@ Study::Study(QJsonObject json, QObject* parent): QObject(parent), separator_(fal
 	}
 }
 
-Study::Study(int pid, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject* parent, QString report) :
+Stock::Stock(int pid, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject* parent, QString report) :
     QObject(parent), pid_(QString::number(pid)), name_(name), user_id_(user_id), uuid_(uuid), datetime_(datetime), separator_(true), report_(report)
 {
 	description_ = datetime.toString("dd/MM/yyyy") + " - " + description;
@@ -81,7 +81,7 @@ Study::Study(int pid, QString name, QString description, QString user_id, QStrin
 
 
 
-void Study::setName(const QString& name)
+void Stock::setName(const QString& name)
 {
 	if (name_ != name) {
 		name_ = name;
@@ -89,7 +89,7 @@ void Study::setName(const QString& name)
 	}
 }
 
-void Study::setDescription(const QString& description)
+void Stock::setDescription(const QString& description)
 {
 	if (description_ != description) {
 		description_ = description;
@@ -97,7 +97,7 @@ void Study::setDescription(const QString& description)
 	}
 }
 
-void Study::setUserid(const QString& userid)
+void Stock::setUserid(const QString& userid)
 {
 	if (user_id_ != userid) {
 		user_id_ = userid;
@@ -105,7 +105,7 @@ void Study::setUserid(const QString& userid)
 	}
 }
 
-void Study::setUuid(const QString& uuid)
+void Stock::setUuid(const QString& uuid)
 {
 	if (uuid_ != uuid) {
 		uuid_ = uuid;
@@ -113,7 +113,7 @@ void Study::setUuid(const QString& uuid)
 	}
 }
 
-void Study::setReport(const QString& report)
+void Stock::setReport(const QString& report)
 {
 	if (report_ != report) {
 		report_ = report;
@@ -122,7 +122,7 @@ void Study::setReport(const QString& report)
 
 }
 
-void Study::appendSDescription(const QString& sdescription, int numSerie)
+void Stock::appendSDescription(const QString& sdescription, int numSerie)
 {
 	if (series_.size() <= numSerie) {
 		sdescription_.append(sdescription);
@@ -133,7 +133,7 @@ void Study::appendSDescription(const QString& sdescription, int numSerie)
 	emit sdescriptionChanged();
 }
 
-void Study::setDatetime(const QDateTime& datetime)
+void Stock::setDatetime(const QDateTime& datetime)
 {
 	if (datetime_ != datetime) {
 		datetime_ = datetime;
@@ -141,7 +141,7 @@ void Study::setDatetime(const QDateTime& datetime)
 	}
 }
 
-void Study::setSeparator(const bool separator)
+void Stock::setSeparator(const bool separator)
 {
 	if (separator_ != separator) {
 		separator_ = separator;
@@ -149,7 +149,7 @@ void Study::setSeparator(const bool separator)
     }
 }
 
-void Study::setSelected(const bool selected)
+void Stock::setSelected(const bool selected)
 {
     selected_ = selected;
 }

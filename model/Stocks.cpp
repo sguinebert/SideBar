@@ -1,21 +1,21 @@
-#include "Studies.h"
+#include "Stocks.h"
 
-Studies::Studies(QObject *parent) : QAbstractListModel(parent), severalPatient_(0)
+Stocks::Stocks(QObject *parent) : QAbstractListModel(parent), severalPatient_(0)
 {
 }
 
-Studies::~Studies()
+Stocks::~Stocks()
 {
 }
 
-void Studies::addStudy(Study* study, QString uuid)
+void Stocks::addStudy(Stock* study, QString uuid)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     studies_ << study;
     endInsertRows();
     studyMap_.emplace(uuid, study);
 }
-void Studies::encode(QString& data)
+void Stocks::encode(QString& data)
 {
     data.replace("&amp;", "&");
     data.replace("&quot;", "\"");
@@ -85,18 +85,18 @@ void Studies::encode(QString& data)
 //    }
 //}
 
-int Studies::rowCount(const QModelIndex& parent) const
+int Stocks::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	return studies_.count();
 }
 
-QVariant Studies::data(const QModelIndex& index, int role) const
+QVariant Stocks::data(const QModelIndex& index, int role) const
 {
     if (index.row() < 0 || index.row() >= studies_.count())
         return QVariant();
 
-    const Study* study = studies_[index.row()];
+    const Stock* study = studies_[index.row()];
     if (role == NameRole)
         return study->name();
     else if (role == UuidRole)
@@ -114,7 +114,7 @@ QVariant Studies::data(const QModelIndex& index, int role) const
 
 
 
-Q_INVOKABLE Study* Studies::get(quint32 index) const
+Q_INVOKABLE Stock* Stocks::get(quint32 index) const
 {
     if (index  >= studies_.size())
         return nullptr;
@@ -122,7 +122,7 @@ Q_INVOKABLE Study* Studies::get(quint32 index) const
     return studies_[index];
 }
 
-void Studies::clear()
+void Stocks::clear()
 {
     beginResetModel();
     studies_.clear();
@@ -134,7 +134,7 @@ void Studies::clear()
     //serieMap_.clear();
 }
 
-Q_INVOKABLE bool Studies::removeRows(int row, int count, const QModelIndex& parent) 
+Q_INVOKABLE bool Stocks::removeRows(int row, int count, const QModelIndex& parent)
 {
     Q_UNUSED(parent);
     beginRemoveRows(QModelIndex(), row, row + count - 1);
@@ -144,7 +144,7 @@ Q_INVOKABLE bool Studies::removeRows(int row, int count, const QModelIndex& pare
 }
 
 
-QHash<int, QByteArray> Studies::roleNames() const
+QHash<int, QByteArray> Stocks::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[pid] = "pid";
@@ -156,7 +156,7 @@ QHash<int, QByteArray> Studies::roleNames() const
     return roles;
 }
 
-QDateTime Studies::computedatetime(QString date, QString time)
+QDateTime Stocks::computedatetime(QString date, QString time)
 {
     QDate sdate(std::stoi(date.toStdString().substr(0, 4)), std::stoi(date.toStdString().substr(4, 2)), std::stoi(date.toStdString().substr(6, 2)));
     QTime stime(std::stoi(time.toStdString().substr(0, 2)), std::stoi(date.toStdString().substr(2, 2)));
@@ -165,7 +165,7 @@ QDateTime Studies::computedatetime(QString date, QString time)
 }
 
 
-QDateTime Studies::computedatetime(QString datetime)
+QDateTime Stocks::computedatetime(QString datetime)
 {
     auto str = datetime.toStdString();
     QDate sdate(std::stoi(str.substr(0, 4)), std::stoi(str.substr(4, 2)), std::stoi(str.substr(6, 2)));

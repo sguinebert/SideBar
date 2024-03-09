@@ -7,42 +7,63 @@
 #include <set>
 #include "model/HeaderListProxy.h"
 #include "model/FiltersList.h"
-#include "model/Study.h"
+#include "model/Stock.h"
+#include "model/DataProvider.h"
+// id SERIAL PRIMARY KEY,
+//     abbrev VARCHAR(255),
+//     name VARCHAR(255),
+//     ib_name VARCHAR(255),
+//     state VARCHAR(255),
+//     city VARCHAR(255)
 
+// -- Create 'contract' table
+//     CREATE TABLE contract (
+//         id SERIAL PRIMARY KEY,
+//         exchange_id INTEGER REFERENCES exchange(id),
+//         ib_conid VARCHAR(255),
+//         symbol VARCHAR(255),
+//         security_type VARCHAR(255),
+//         currency VARCHAR(255),
+//         company VARCHAR(255),
+//         industry VARCHAR(255)
+//         );
+
+// -- Create 'fundamental' table
+//     CREATE TABLE fundamental (
+//         contract_id INTEGER REFERENCES contract(id),
+//         date DATE PRIMARY KEY,
+//         market_cap NUMERIC,
+//         pe_ratio NUMERIC,
+//         roe NUMERIC,
+//         free_cash_flow NUMERIC,
+//         pb_ratio NUMERIC,
+//         debt_to_equity NUMERIC,
+//         eps NUMERIC,
+//         ps_ratio NUMERIC,
+//         dividend_yield NUMERIC
+//         );
 class TableModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    enum StudyRoles {
-        Uuid = Qt::UserRole + 1,
-        PatientName,
-        PatientID,
-        PatientSex,
-        PatientBirthDate,
-        Datetime,
-        StudyID,
-        StudyInstanceUID,
-        AccessionNumber,
-        Modality,
-        InstitutionName,
-        Manufacturer,
-        StationName,
-        StudyDescription,
-        RequestedProcedureDescription,
-        BodyPartExamined,
-
-        PerformingPhysicianName,
-        NameOfPhysiciansReadingStudy,
-        PerformedProcedureStepDescription,
-        ReferringPhysicianName,
-
-        StudyNumber,
-        Series,
+    enum StockRoles {
+        id = Qt::UserRole + 1,
+        Name,
+        ib_name,
+        state,
+        city,
+        contract_id,
+        ib_conid,
+        symbol,
+        security_type,
+        currency,
+        company,
+        industry,
         //RegexFilter,
         selected
     };
-    explicit TableModel(QObject* parent = nullptr);
+    explicit TableModel(DataProvider* dataprovider = nullptr, QObject* parent = nullptr);
     Q_INVOKABLE QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     //Q_INVOKABLE void selectRow(int row, bool shift = false, bool ctr = false);
     
@@ -90,15 +111,15 @@ public:
 
     QHash<int, QByteArray> roleNames() const override;
 
-    StudyRoles role(int column) {
+    StockRoles role(int column) {
         auto it = std::find(m_columnOrder.cbegin(), m_columnOrder.cend(), column);
         if(it != m_columnOrder.cend())
-            return (StudyRoles)it.key();
+            return (StockRoles)it.key();
 //        for(const auto &key : m_columnOrder.keys()) {
 //            if(m_columnOrder.value(key) == column)
 //                return (StudyRoles)key;
 //        }
-        return (StudyRoles)Qt::DisplayRole;
+        return (StockRoles)Qt::DisplayRole;
     }
 
     Header::Type type(int column) const {
@@ -128,50 +149,50 @@ public:
     FiltersList* filters() const { return m_filters; }
 
 signals:
-    void loadStudy(Study *study);
+    void loadStudy(Stock *study);
 private:
-    void addStudy(Study* study, std::string uuid);
-    QString header2string(TableModel::StudyRoles role) {
-        switch (role) {
-        case TableModel::PatientName:
-            return tr("Name");
-        case TableModel::PatientID:
-            return tr("Patient ID");
-        case TableModel::Datetime:
-            return tr("Date");
-        case TableModel::StudyDescription:
-            return tr("Description");
-        case TableModel::PatientSex:
-            return tr("Patient Sex");
-        case TableModel::PatientBirthDate:
-            return tr("Birth Date");
-        case TableModel::Modality:
-            return tr("Modality");
-        case TableModel::StationName:
-            return tr("Station Name");
-        case TableModel::InstitutionName:
-            return tr("Institution Name");
-        case TableModel::AccessionNumber:
-            return tr("Accession Number");
-        case TableModel::PerformingPhysicianName:
-            return tr("Performing Physician");
-        case TableModel::NameOfPhysiciansReadingStudy:
-            return tr("Physicians Reading Study");
-        case TableModel::PerformedProcedureStepDescription:
-            return tr("Procedure Description");
-        case TableModel::Manufacturer:
-            return tr("Manufacturer");
-        case TableModel::BodyPartExamined:
-            return tr("Body Part Examined");
-        case TableModel::RequestedProcedureDescription:
-            return tr("Requested Procedure");
-        default:
-            break;
-        }
+    void addStudy(Stock* study, std::string uuid);
+    QString header2string(TableModel::StockRoles role) {
+        // switch (role) {
+        // case TableModel::PatientName:
+        //     return tr("Name");
+        // case TableModel::PatientID:
+        //     return tr("Patient ID");
+        // case TableModel::Datetime:
+        //     return tr("Date");
+        // case TableModel::StudyDescription:
+        //     return tr("Description");
+        // case TableModel::PatientSex:
+        //     return tr("Patient Sex");
+        // case TableModel::PatientBirthDate:
+        //     return tr("Birth Date");
+        // case TableModel::Modality:
+        //     return tr("Modality");
+        // case TableModel::StationName:
+        //     return tr("Station Name");
+        // case TableModel::InstitutionName:
+        //     return tr("Institution Name");
+        // case TableModel::AccessionNumber:
+        //     return tr("Accession Number");
+        // case TableModel::PerformingPhysicianName:
+        //     return tr("Performing Physician");
+        // case TableModel::NameOfPhysiciansReadingStudy:
+        //     return tr("Physicians Reading Study");
+        // case TableModel::PerformedProcedureStepDescription:
+        //     return tr("Procedure Description");
+        // case TableModel::Manufacturer:
+        //     return tr("Manufacturer");
+        // case TableModel::BodyPartExamined:
+        //     return tr("Body Part Examined");
+        // case TableModel::RequestedProcedureDescription:
+        //     return tr("Requested Procedure");
+        // default:
+        //     break;
+        // }
         return "";
     }
 private:
-    QList<Study*> studies_;
+    QList<Stock*> studies_;
     std::set<std::string> uuids_;
     //int selectedRowUp_, selectedRowDown_;
     std::set<int> selectedRows_;
@@ -182,4 +203,6 @@ private:
     QHash<int, int> m_columnOrder;
 
     QLocale m_currentLocale;
+
+    DataProvider* m_dataprovider = nullptr;
 };

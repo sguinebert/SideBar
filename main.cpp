@@ -13,7 +13,7 @@
 
 //#include <QtQml/qqmlextensionplugin.h>
 //#include "QWKWidgets/widgetwindowagent.h"
-#include "qwindowkit/src/widgets/widgetwindowagent.h"
+//#include "qwindowkit/src/widgets/widgetwindowagent.h"
 //#include <qwindowkit/src/widgets/widgetwindowagent.h>
 
 int main(int argc, char *argv[]) {
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterType<FiltersList>("FiltersList", 1, 0, "FiltersList");
     qmlRegisterType<TableModel>("TableModel", 1, 0, "TableModel");
     qmlRegisterType<TableModelProxy>("TableModelProxy", 1, 0, "TableModelProxy");
-    qmlRegisterType<Study>("Study", 1, 0, "Study");
+    qmlRegisterType<Stock>("Study", 1, 0, "Study");
 
 //    qmlRegisterType<Property>       ("App.Class", 0, 1, "Property");
     qmlRegisterUncreatableMetaObject(MetaTypeNamespace::staticMetaObject, "App.Class", 0, 1, "MetaType", "Access to enums & flags only");
@@ -53,7 +53,11 @@ int main(int argc, char *argv[]) {
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    TableModel tablemodel_(app.parent());
+    auto dataprovider = new DataProvider();
+
+    dataprovider->getStockHistory("ACC", QDateTime::currentDateTime().addDays(-3));
+
+    TableModel tablemodel_(nullptr, app.parent());
     TableModelProxy tablemodelproxy_(app.parent());
     tablemodelproxy_.setSource(&tablemodel_);
 

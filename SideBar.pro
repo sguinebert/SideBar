@@ -3,7 +3,8 @@ QT += core gui widgets
 QT += core qml quick #quickwidgets
 #QT += opengl
 #QT += svg
-#QT += websockets network
+QT += websockets network
+QT += sql
 
 
 #CONFIG += release  # Use release mode, which omits debugging symbols
@@ -26,8 +27,8 @@ SOURCES += \
         model/Header.cpp \
         model/HeaderList.cpp \
         model/HeaderListProxy.cpp \
-        model/Studies.cpp \
-        model/Study.cpp \
+        model/Stock.cpp \
+        model/Stocks.cpp \
         model/TableModel.cpp \
         model/TableModelProxy.cpp
 
@@ -47,13 +48,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     MyType.h \
     Property.h \
+    model/DataProvider.h \
     model/Filter.h \
     model/FilterListProxy.h \
     model/FiltersList.h \
     model/Header.h \
     model/HeaderList.h \
     model/HeaderListProxy.h \
-    model/Studies.h \
-    model/Study.h \
+    model/Stock.h \
+    model/Stocks.h \
     model/TableModel.h \
     model/TableModelProxy.h
