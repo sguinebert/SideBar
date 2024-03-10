@@ -53,18 +53,18 @@ country_ = json["description"].toString();
     symbol_ = json["sd"].toString();
 currency_ = json["uuid"].toString();
     modality_ = json["modality"].toString();
-    sex_ = json["PatientSex"].toString();
+    //sex_ = json["PatientSex"].toString();
     modality_ = json["Modality"].toString();
-    stationName_ = json["StationName"].toString();
+    city_ = json["StationName"].toString();
     accessionNumber_ = json["AccessionNumber"].toString();
-    manufacturer_ = json["Manufacturer"].toString();
-    institutionName_ = json["InstitutionName"].toString();
+    company_ = json["Manufacturer"].toString();
+    security_type_ = json["InstitutionName"].toString();
     performingPhysicianName_ = json["PerformingPhysicianName"].toString();
     referringPhysicianName_ = json["ReferringPhysicianName"].toString();
     performedProcedureStepDescription_ = json["PerformedProcedureStepDescription"].toString();
 
     auto bday = json["bday"].toString();
-    birthDate_.setDate(bday.mid(4, 4).toInt(), bday.mid(2, 2).toInt(), bday.mid(0, 2).toInt());
+    founded_.setDate(bday.mid(4, 4).toInt(), bday.mid(2, 2).toInt(), bday.mid(0, 2).toInt());
 
     auto str = json["datetime"].toString();
     if (str.size() > 7) {
@@ -72,11 +72,10 @@ currency_ = json["uuid"].toString();
         datetime_.setTime(str.size() > 8 ? QTime(str.mid(8, 2).toInt(), str.mid(10, 2).toInt()) : QTime());
 	}
 }
-
-Stock::Stock(int pid, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject* parent, QString report) :
-    QObject(parent), id_(QString::number(pid)), name_(name), symbol_(user_id), currency_(uuid), datetime_(datetime), separator_(true), employees_(report)
+Stock::Stock(QString id, QString name, QString country, QString symbol, QString currency, QString industry, QObject *parent) :
+    QObject(parent), id_(id), name_(name), country_(country), symbol_(symbol), currency_(currency), industry_(industry)
 {
-    country_ = datetime.toString("dd/MM/yyyy") + " - " + description;
+    //country_ = datetime.toString("dd/MM/yyyy") + " - " + description;
 }
 
 
@@ -89,48 +88,48 @@ void Stock::setName(const QString& name)
 	}
 }
 
-void Stock::setCountry(const QString& description)
+void Stock::setCountry(const QString& country)
 {
-    if (country_ != description) {
-        country_ = description;
-		emit descriptionChanged();
+    if (country_ != country) {
+        country_ = country;
+        emit countryChanged();
 	}
 }
 
-void Stock::setSymbol(const QString& userid)
+void Stock::setSymbol(const QString& symbol)
 {
-    if (symbol_ != userid) {
-        symbol_ = userid;
-		emit useridChanged();
+    if (symbol_ != symbol) {
+        symbol_ = symbol;
+        emit symbolChanged();
 	}
 }
 
-void Stock::setCurrency(const QString& uuid)
+void Stock::setCurrency(const QString& currency)
 {
-    if (currency_ != uuid) {
-        currency_ = uuid;
-		emit uuidChanged();
+    if (currency_ != currency) {
+        currency_ = currency;
+        emit currencyChanged();
 	}
 }
 
-void Stock::setEmployees(const QString& report)
+void Stock::setEmployees(const QString& employees)
 {
-    if (employees_ != report) {
-        employees_ = report;
-		emit reportChanged();
+    if (employees_ != employees) {
+        employees_ = employees;
+        emit employeesChanged();
 	}
 
 }
 
-void Stock::setIndustries(const QString& sdescription, int numSerie)
+void Stock::setIndustries(const QString& industries, int numSerie)
 {
     if (symbols_.size() <= numSerie) {
-        industries_.append(sdescription);
+        industries_.append(industries);
 	}
 	else
-        industries_.insert(numSerie, sdescription);
+        industries_.insert(numSerie, industries);
 	//sdescription_.append(sdescription);
-	emit sdescriptionChanged();
+    emit industriesChanged();
 }
 
 void Stock::setDatetime(const QDateTime& datetime)
@@ -145,13 +144,17 @@ void Stock::setSeparator(const bool separator)
 {
 	if (separator_ != separator) {
 		separator_ = separator;
-		emit separatorChanged();
+        //emit separatorChanged();
     }
 }
 
 void Stock::setSelected(const bool selected)
 {
-    selected_ = selected;
+    if (separator_ != selected) {
+        selected_ = selected;
+        emit selectedChanged();
+    }
+
 }
 
 //Q_INVOKABLE void Study::appendSerie(Volume* volume)

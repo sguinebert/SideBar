@@ -43,10 +43,10 @@ private:
     Q_PROPERTY(QString symbol READ symbol WRITE setSymbol NOTIFY symbolChanged)
     Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
     Q_PROPERTY(QStringList industries READ industries NOTIFY industriesChanged)
-    //Q_PROPERTY(QDateTime founded READ founded WRITE setFounded NOTIFY foundedChanged)
+    //
     Q_PROPERTY(QString employees READ employees WRITE setEmployees NOTIFY employeesChanged)
     Q_PROPERTY(bool selected READ selected WRITE setSelected NOTIFY selectedChanged)
-        Q_PROPERTY(QVector<apiprovider> symbols READ symbols NOTIFY symbolsChanged)
+        Q_PROPERTY(QList<apiprovider> symbols READ symbols NOTIFY symbolsChanged)
 
     // ib_name,
     // state,
@@ -65,11 +65,19 @@ private:
     Q_PROPERTY(QString security_type READ security_type CONSTANT)
     Q_PROPERTY(QString company READ company CONSTANT)
     Q_PROPERTY(QString industry READ industry CONSTANT)
-    // Q_PROPERTY(QString institutionName READ institutionName CONSTANT)
-    // Q_PROPERTY(QString manufacturer READ manufacturer CONSTANT)
-    // Q_PROPERTY(QString stationName READ stationName CONSTANT)
-    // Q_PROPERTY(QString requestedProcedureDescription READ requestedProcedureDescription CONSTANT)
-    // Q_PROPERTY(QString bodyPartExamined READ bodyPartExamined CONSTANT)
+    //OHLCV
+    // auto datetime = QDateTime::fromSecsSinceEpoch(dtsec);
+    // auto openf = open[i].toDouble();
+    // auto highf = high[i].toDouble();
+    // auto lowf = low[i].toDouble();
+    // auto closef = close[i].toDouble();
+    // auto volumef = volume[i].toInteger();
+    Q_PROPERTY(QDateTime datetime READ datetime CONSTANT)
+    Q_PROPERTY(double open READ open CONSTANT)
+    Q_PROPERTY(double high READ high CONSTANT)
+    Q_PROPERTY(double low READ low CONSTANT)
+    Q_PROPERTY(double close READ close CONSTANT)
+    Q_PROPERTY(qint64 volume READ volume CONSTANT)
     // Q_PROPERTY(QString performingPhysicianName READ performingPhysicianName CONSTANT)
     // Q_PROPERTY(QString nameOfPhysiciansReadingStudy READ nameOfPhysiciansReadingStudy CONSTANT)
     // Q_PROPERTY(QString performedProcedureStepDescription READ performedProcedureStepDescription CONSTANT)
@@ -81,24 +89,25 @@ private:
 public:
     Stock(QObject *parent = 0);
     Stock(QJsonObject json, QObject *parent = 0);
-    Stock(int id, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject *parent = 0, QString report = QString());
+    Stock(QString id, QString name, QString country, QString symbol, QString currency, QString industry, QObject *parent = 0);
     virtual ~Stock() { }
 
-    QVector<apiprovider> symbols() const { return symbols_; };
+    QList<apiprovider> symbols() const { return symbols_; };
 
     QString id() const { return id_; }
+    QDate founded() const { return founded_; }
 
-    QString sex() const { return sex_; }
-    QDate birthDate() const { return birthDate_; }
-    QString studyID() const { return studyID_; }
-    QString studyInstanceUID() const { return studyInstanceUID_; }
-    QString accessionNumber() const { return accessionNumber_; }
-    QString modality() const { return modality_; }
-    QString institutionName() const { return institutionName_; }
-    QString manufacturer() const { return manufacturer_; }
-    QString stationName() const { return stationName_; }
-    QString requestedProcedureDescription() const { return requestedProcedureDescription_; }
-    QString bodyPartExamined() const { return bodyPartExamined_; }
+    double open() const { return open_; }
+    double high() const { return high_; }
+    double low() const { return low_; }
+    double close() const { return close_; }
+    qint64 volume() const { return volume_; }
+
+    QString security_type() const { return security_type_; }
+    QString company() const { return company_; }
+    QString city() const { return city_; }
+    QString industry() const { return industry_; }
+    QString ib_name() const { return ib_name_; }
     QString performingPhysicianName() const { return performingPhysicianName_; }
     QString nameOfPhysiciansReadingStudy() const { return nameOfPhysiciansReadingStudy_; }
     QString performedProcedureStepDescription() const { return performedProcedureStepDescription_; }
@@ -133,19 +142,18 @@ public:
     void setSelected(const bool selected);
 
 //	Q_INVOKABLE void appendSerie(Volume *volume);
-//	Q_INVOKABLE Volume* getSerie(quint32 index);
-
+//	Q_INVOKABLE Volume* getSerie(quint32 index)
 signals:
-	void pidChanged();
-	void nameChanged();
-	void descriptionChanged();
-	void useridChanged();
-	void uuidChanged();
-	void sdescriptionChanged();
+    void idChanged();
+    void countryChanged();
+    void symbolChanged();
+    void currencyChanged();
+    void industriesChanged();
+    void employeesChanged();
 	void datetimeChanged();
-	void seriesChanged();
-	void separatorChanged();
-	void reportChanged();
+    void symbolsChanged();
+    void selectedChanged();
+    void nameChanged();
 
 private:
     QString id_;
@@ -154,21 +162,25 @@ private:
     QStringList industries_;
     QString employees_;
 	QDateTime datetime_;
-    QVector<apiprovider> symbols_;
+    QList<apiprovider> symbols_;
 	bool separator_;
     bool selected_ = false;
 
-    QString sex_;
-    QDate birthDate_;
+    //QString sex_;
+    QDate founded_;
+
+    double open_, high_, low_, close_;
+    qint64 volume_;
+
     QString studyID_,
     studyInstanceUID_,
     accessionNumber_,
     modality_,
-    institutionName_,
-    manufacturer_,
-    stationName_,
-    requestedProcedureDescription_,
-    bodyPartExamined_,
+        security_type_,
+        company_,
+        city_,
+        industry_,
+        ib_name_,
     performingPhysicianName_,
     nameOfPhysiciansReadingStudy_,
     performedProcedureStepDescription_,

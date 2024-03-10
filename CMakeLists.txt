@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(myTemplateWindow VERSION 0.1 LANGUAGES CXX)
+project(qtBourse VERSION 0.1 LANGUAGES CXX)
 
 # Enable C++ latest standard
 set(CMAKE_CXX_STANDARD 20)

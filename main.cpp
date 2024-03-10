@@ -9,6 +9,7 @@
 //#include "Property.h"
 #include "MyType.h"
 
+#include "model/Stocks.h"
 #include "model/TableModelProxy.h"
 
 //#include <QtQml/qqmlextensionplugin.h>
@@ -55,7 +56,10 @@ int main(int argc, char *argv[]) {
 
     auto dataprovider = new DataProvider();
 
-    dataprovider->getStocksSymbols();
+    auto stockslist = new Stocks(dataprovider);
+
+    engine.rootContext()->setContextProperty("stockslist", stockslist);
+    //dataprovider->getStocksSymbols();
     //dataprovider->getStockHistory("ACC", QDateTime::currentDateTime().addDays(-3));
 
     TableModel tablemodel_(nullptr, app.parent());

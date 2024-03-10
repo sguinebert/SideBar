@@ -132,8 +132,8 @@ TableModel::TableModel(DataProvider* dataprovider, QObject* parent) :
 
     m_currentLocale = QLocale::system();
 
-    auto study = new Stock(21313212, "test","description", "user_id", "5896468465156341354", QDateTime::currentDateTime(), 0);
-    addStudy(study, "joijioj");
+    //auto study = new Stock(21313212, "test","description", "user_id", "5896468465156341354", QDateTime::currentDateTime(), 0);
+    //addStudy(study, "joijioj");
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const

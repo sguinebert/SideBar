@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 
+#include "model/DataProvider.h"
 #include "model/Stock.h"
 
 class Stocks : public QAbstractListModel
@@ -19,9 +20,10 @@ public:
         founded,
         employees,
         industries,
+        industry,
         symbols
 	};
-    Stocks(QObject* parent = 0);
+    explicit Stocks(DataProvider* dataprovider, QObject* parent = 0);
     ~Stocks();
 
 
@@ -45,7 +47,8 @@ private:
     void addStock(Stock* stock/*, QString uuid*/);
 	void encode(QString& data);
 private:
-    QList<Stock*> stocks_;
+    QList<Stock*> m_stocks;
+    DataProvider* m_dataprovider;
     //int severalPatient_;
     //std::map<QString, int> patientMap_;
     //std::map<QString, Stock*> studyMap_;

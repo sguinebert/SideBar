@@ -178,141 +178,222 @@ ApplicationWindow {
                 Item {
                     id: homeTab
 
-                    GroupBox {
-                        id: control
-                        title: qsTr("GroupBox")
-                        anchors.top: parent.top
-                        width: parent.width
-                        //height: 300
-                        anchors.topMargin:boxtitle.height/2
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 10
 
-                        background: Rectangle {
-                            y: control.topPadding - control.padding
-                            width: parent.width
-                            height: parent.height - control.topPadding + control.padding
-                            color: "transparent"
-                            border.color: "#ff0000"
-                            radius: 2
-                        }
+                        GroupBox {
+                            id: control
+                            title: qsTr("GroupBox")
+                            Layout.fillWidth: true
+                            anchors.top: parent.top
+                            //width: parent.width
+                            //height: 300
+                            anchors.topMargin:boxtitle.height/2
 
-                        ListModel {
-                            id: indices
-                            ListElement {
-                                name: "AEX"
-                                checked: false
+                            background: Rectangle {
+                                y: control.topPadding - control.padding
+                                width: parent.width
+                                height: parent.height - control.topPadding + control.padding
+                                color: "transparent"
+                                border.color: "#ff0000"
+                                radius: 2
                             }
-                            ListElement {
-                                name: "BEL 20"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "CAC 40"
-                                checked: true
-                            }
-                            ListElement {
-                                name: "DAX"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "DOW JONES"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "FTSE 100"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "IBEX 35"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "MDAX"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "NASDAQ 100"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "OMX Helsinki 15"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "OMX Helsinki 25"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "OMX Stockholm 30"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "S&P 100"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "S&P 500"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "SDAX"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "SMI"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "TECDAX"
-                                checked: false
-                            }
-                            ListElement {
-                                name: "MOEX"
-                                checked: false
-                            }
-                        }
-                        Flow {
-                            id:flow
-                            anchors.fill: parent
 
-                            Repeater {
-                                model:indices
-                                delegate: ToggleCb {
-                                    text:name
+                            ListModel {
+                                id: indices
+                                ListElement {
+                                    name: "AEX"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "BEL 20"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "CAC 40"
+                                    checked: true
+                                }
+                                ListElement {
+                                    name: "DAX"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "DOW JONES"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "FTSE 100"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "IBEX 35"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "MDAX"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "NASDAQ 100"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "OMX Helsinki 15"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "OMX Helsinki 25"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "OMX Stockholm 30"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "S&P 100"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "S&P 500"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "SDAX"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "SMI"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "TECDAX"
+                                    checked: false
+                                }
+                                ListElement {
+                                    name: "MOEX"
+                                    checked: false
+                                }
+                            }
+                            Flow {
+                                id:flow
+                                anchors.fill: parent
+
+                                Repeater {
+                                    model:indices
+                                    delegate: ToggleCb {
+                                        text:name
+                                    }
+                                }
+                            }
+
+
+
+                            // Button {
+                            //     id:testButton
+                            //     anchors.centerIn: parent
+                            //     text: qsTr("Click me!")
+                            //     onPressed: {
+                            //         console.log("Pressed!");
+                            //     }
+                            //     onClicked: {
+                            //         console.log("Clicked!");
+                            //         //studyproxy.switchColumn(6, 4);
+
+                            //     }
+                            // }
+
+                            label: Rectangle {
+                                id:boxtitle
+                                anchors.horizontalCenter: parent.left + width / 2
+                                anchors.bottom: parent.top
+                                anchors.bottomMargin: -height/2
+                                //color: "#21be2b"                  //set this to the background color
+                                width: title.width
+                                height: title.font.pixelSize
+
+                                Text {
+                                    id: title
+                                    text: qsTr("Indices")
+                                    anchors.centerIn: parent
+                                    font.pixelSize: 20
                                 }
                             }
                         }
+                        Component {
+                          id: listHeaderComponent
 
-
-
-                        // Button {
-                        //     id:testButton
-                        //     anchors.centerIn: parent
-                        //     text: qsTr("Click me!")
-                        //     onPressed: {
-                        //         console.log("Pressed!");
-                        //     }
-                        //     onClicked: {
-                        //         console.log("Clicked!");
-                        //         //studyproxy.switchColumn(6, 4);
-
-                        //     }
-                        // }
-
-                        label: Rectangle {
-                            id:boxtitle
-                            anchors.horizontalCenter: parent.left + width / 2
-                            anchors.bottom: parent.top
-                            anchors.bottomMargin: -height/2
-                            //color: "#21be2b"                  //set this to the background color
-                            width: title.width
-                            height: title.font.pixelSize
-
-                            Text {
-                                id: title
-                                text: qsTr("Indices")
-                                anchors.centerIn: parent
-                                font.pixelSize: 20
+                          Item {
+                            id: headerItem
+                            width: listView.width;
+                            height: 30
+                            z:100
+                            //Component.onCompleted: rootWindow.listHeaderItem = headerItem
+                            Rectangle {
+                                width: parent.width
+                                //width: 250;
+                                height: 30
+                                radius: 5
+                                color:"red"
                             }
+                          }
+                        }
+
+                        Component {
+                            id: listDelegate
+                            Rectangle {
+                                width: parent.width
+                                //width: 250;
+                                height: 50
+                                radius: 5
+                                color:"yellow"
+
+                                Row {
+                                    CheckBox {
+                                        anchors.verticalCenter: parent.Center
+                                        // contentItem: Text {
+                                        //     text: control.text
+                                        //     font: control.font
+                                        //     opacity: 1.0
+                                        //     color: control.down ? "#17a81a" : "#21be2b"
+                                        //     verticalAlignment: Text.AlignVCenter
+                                        //     leftPadding: control.indicator.width + control.spacing
+                                        // }
+                                    }
+
+                                    Column {
+                                        width: 200
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        Text { text: name }
+                                        Text { text: symbol }
+                                    }
+                                    Text {
+                                        text: country
+                                    }
+                                    Text {
+                                        text: currency
+                                    }
+                                    Text {
+                                        text: industry
+                                    }
+                                }
+                            }
+                        }
+                        ListView {
+                            id: listView
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            //anchors.top: control.bottom;
+                            anchors.margins: 5
+                            height: parent.height
+                            width:parent.width
+                            headerPositioning :ListView.OverlayHeader
+                            model: stockslist
+
+                            header: listHeaderComponent
+                            delegate: listDelegate
+                            focus: true
+                            clip: true
                         }
                     }
 
@@ -333,6 +414,7 @@ ApplicationWindow {
 
                         //ScrollBar.horizontal: ScrollBar{}
                     }
+
 
 //                    HorizontalHeaderView {
 //                        id: horizontalHeader

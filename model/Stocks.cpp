@@ -1,7 +1,53 @@
 #include "Stocks.h"
 
-Stocks::Stocks(QObject *parent) : QAbstractListModel(parent)//, severalPatient_(0)
+Stocks::Stocks(DataProvider* dataprovider, QObject *parent) :
+    QAbstractListModel(parent),
+    m_dataprovider(dataprovider)
 {
+    auto stockslist = m_dataprovider->getStocksSymbols();
+    auto companies = stockslist["companies"].toArray();
+
+    for(const auto& company : companies) {
+        auto comp = company.toObject();
+        auto name = comp["name"].toString();
+        auto symbol = comp["symbol"].toString();
+        auto country = comp["country"].toString();
+
+        auto industries = comp["industries"].toArray();
+        QString concatindustry;
+        for(const auto&industry : industries)
+        {
+            auto ids = industry.toString();
+            if(!concatindustry.isEmpty())
+                concatindustry.append(", ");
+            concatindustry.append(ids);
+        }
+
+        //indices
+        auto indices = comp["indices"].toArray();
+        auto indicesstr = indices.toVariantList();
+        //indicesstr.to
+
+        //metadata
+        auto metadata = comp["metadata"].toObject();
+        auto employees = metadata["employees"].toInt();
+        auto founded = metadata["founded"].toInt();
+
+        //symbols used by internet data providers
+        auto symbols = comp["symbols"].toArray();
+        for(const auto& sym : symbols) {
+            auto s = sym.toObject();
+            auto currency = s["currency"].toString();
+            auto google = s["google"].toString();
+            auto yahoo = s["yahoo"].toString();
+        }
+        //ring id, QString name, QString country, QString symbol, QString currency, QObject *paren
+        auto stock = new Stock(symbol, name, country, symbol, "US", concatindustry, this);
+        addStock(stock);
+        //m_stocks.emplaceBack(stock);
+    }
+    qDebug() << "m_stocks num : " << m_stocks.size();
+
 }
 
 Stocks::~Stocks()
@@ -11,7 +57,7 @@ Stocks::~Stocks()
 void Stocks::addStock(Stock* stock/*, QString uuid*/)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    stocks_ << stock;
+    m_stocks << stock;
     endInsertRows();
     //studyMap_.emplace(uuid, stock);
 }
@@ -88,43 +134,46 @@ void Stocks::encode(QString& data)
 int Stocks::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-    return stocks_.count();
+    return m_stocks.count();
 }
 
 QVariant Stocks::data(const QModelIndex& index, int role) const
 {
-    if (index.row() < 0 || index.row() >= stocks_.count())
+    if (index.row() < 0 || index.row() >= m_stocks.count())
         return QVariant();
 
-    const Stock* stock = stocks_[index.row()];
+    const Stock* stock = m_stocks[index.row()];
 
     switch (role) {
     case id:
-
+        return stock->id();
         break;
     case name:
         return stock->name();
         break;
     case country:
-
+        return stock->country();
         break;
     case symbol:
-
+        return stock->symbol();
         break;
     case founded:
-
+        return stock->founded();
         break;
     case currency:
-
+        return stock->currency();
         break;
     case employees:
-
+        return stock->employees();
         break;
     case industries:
-
+        return stock->industries();
+        break;
+    case industry:
+        return stock->industry();
         break;
     case symbols:
-
+        //return stock->symbols();
         break;
     default:
         break;
@@ -136,17 +185,17 @@ QVariant Stocks::data(const QModelIndex& index, int role) const
 
 Q_INVOKABLE Stock* Stocks::get(quint32 index) const
 {
-    if (index  >= stocks_.size())
+    if (index  >= m_stocks.size())
         return nullptr;
     //auto de = conversations_[index];
-    return stocks_[index];
+    return m_stocks[index];
 }
 
 void Stocks::clear()
 {
     beginResetModel();
-    stocks_.clear();
-    qDeleteAll(stocks_);
+    m_stocks.clear();
+    qDeleteAll(m_stocks);
     endResetModel();
 
     // patientMap_.clear();
@@ -158,7 +207,7 @@ Q_INVOKABLE bool Stocks::removeRows(int row, int count, const QModelIndex& paren
 {
     Q_UNUSED(parent);
     beginRemoveRows(QModelIndex(), row, row + count - 1);
-    while (count--) delete stocks_.takeAt(row);
+    while (count--) delete m_stocks.takeAt(row);
     endRemoveRows();
     return true;
 }
@@ -174,6 +223,7 @@ QHash<int, QByteArray> Stocks::roleNames() const
     roles[founded] = "founded";
     roles[employees] = "employees";
     roles[industries] = "industries";
+    roles[industry] = "industry";
     roles[symbols] = "symbols";
     return roles;
 }
