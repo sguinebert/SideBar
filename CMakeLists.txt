@@ -9,13 +9,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # Find the necessary Qt packages
-find_package(Qt6 COMPONENTS Core Quick QuickControls2 REQUIRED)
+find_package(Qt6 COMPONENTS Core Quick QuickWidgets QuickControls2 REQUIRED)
 
 # Uncomment the following lines if those modules are needed
 # find_package(Qt6 COMPONENTS OpenGL REQUIRED)
 # find_package(Qt6 COMPONENTS Svg REQUIRED)
-# find_package(Qt6 COMPONENTS WebSockets REQUIRED)
-# find_package(Qt6 COMPONENTS Network REQUIRED)
+find_package(Qt6 COMPONENTS WebSockets REQUIRED)
+find_package(Qt6 COMPONENTS Network REQUIRED)
+find_package(Qt6 COMPONENTS Sql REQUIRED)
 
 # Set the module path so CMake can find FindQWindowKit.cmake
 #list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -44,7 +45,7 @@ add_subdirectory(RibbonUI)
 set(QWindowKit_DIR "${CMAKE_BINARY_DIR}/qwindowkit/src")
 set(QWindowKit_INCLUDE "${CMAKE_BINARY_DIR}/qwindowkit/include")
 
-find_package(QWindowKit REQUIRED)
+# find_package(QWindowKit REQUIRED)
 
 # Include directories
 include_directories(
@@ -67,8 +68,8 @@ set(SOURCES
     model/Header.cpp
     model/HeaderList.cpp
     model/HeaderListProxy.cpp
-    model/Studies.cpp
-    model/Study.cpp
+    model/Stocks.cpp
+    model/Stock.cpp
     model/TableModel.cpp
     model/TableModelProxy.cpp
 )
@@ -83,31 +84,37 @@ set(HEADERS
     model/Header.h
     model/HeaderList.h
     model/HeaderListProxy.h
-    model/Studies.h
-    model/Study.h
+    model/Stocks.h
+    model/Stock.h
     model/TableModel.h
     model/TableModelProxy.h
+    model/DataProvider.h
 )
 
 # Add your QML files
 set(RESOURCES qml.qrc)
 
 # Define your executable and link the necessary Qt libraries
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES}
+    )
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-    Qt6::Core Qt6::Quick Qt6::QuickControls2)
+    Qt6::Core
+    Qt6::Quick
+    Qt6::QuickWidgets
+    Qt6::QuickControls2)
 # Uncomment the following lines if those modules are needed
-# target_link_libraries(${PROJECT_NAME} Qt6::OpenGL)
-# target_link_libraries(${PROJECT_NAME} Qt6::Svg)
-# target_link_libraries(${PROJECT_NAME} Qt6::WebSockets)
-# target_link_libraries(${PROJECT_NAME} Qt6::Network)
-target_include_directories(${PROJECT_NAME} PUBLIC ${QWindowKit_INCLUDE})
+# target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::OpenGL)
+# target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Svg)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::WebSockets)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Network)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Sql)
 
-
-add_dependencies(${PROJECT_NAME} QWKCore)
-target_link_libraries(${PROJECT_NAME} PUBLIC QWindowKit::Widgets)
+# add_dependencies(${PROJECT_NAME} QWKCore)
+# target_link_libraries(${PROJECT_NAME} PUBLIC QWindowKit::Widgets)
 #target_link_libraries(${PROJECT_NAME} PUBLIC QWindowKit::Quick)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${QWindowKit_INCLUDE})
 
 if(RIBBONUI_BUILD_STATIC_LIB)
     add_definitions(-DRIBBONUI_BUILD_STATIC_LIB)

@@ -206,6 +206,33 @@ public:
         return QJsonArray();
     }
 
+    inline QJsonObject getStocksSymbols()
+    {
+        QFile jsonfile(":/data/stocks_symbols.json");
+        jsonfile.open(QIODevice::ReadOnly|QIODevice::Text);
+        QByteArray data = jsonfile.readAll();
+        jsonfile.close();
+
+        QJsonParseError errorPtr;
+        QJsonDocument doc = QJsonDocument::fromJson(data, &errorPtr);
+        if (doc.isNull()) {
+            qDebug() << "Parse failed "  << errorPtr.offset << " - " << errorPtr.errorString();
+            return QJsonObject();
+        }
+        QJsonObject rootObj = doc.object();
+
+        // QFile file("stock_nice.json");
+        // if (file.open(QIODevice::WriteOnly)) {
+        //     file.write(doc.toJson());
+        //     file.close();
+        //     qDebug() << "Stock data downloaded successfully!";
+        // } else {
+        //     qDebug() << "Failed to open file for writing";
+        // }
+
+        return rootObj;
+    }
+
     void getStockHistory(QString symbol,
                          QDateTime startTime,
                          QDateTime endTime = QDateTime::currentDateTime(),

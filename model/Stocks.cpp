@@ -1,6 +1,6 @@
 #include "Stocks.h"
 
-Stocks::Stocks(QObject *parent) : QAbstractListModel(parent), severalPatient_(0)
+Stocks::Stocks(QObject *parent) : QAbstractListModel(parent)//, severalPatient_(0)
 {
 }
 
@@ -8,12 +8,12 @@ Stocks::~Stocks()
 {
 }
 
-void Stocks::addStudy(Stock* study, QString uuid)
+void Stocks::addStock(Stock* stock/*, QString uuid*/)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    studies_ << study;
+    stocks_ << stock;
     endInsertRows();
-    studyMap_.emplace(uuid, study);
+    //studyMap_.emplace(uuid, stock);
 }
 void Stocks::encode(QString& data)
 {
@@ -88,27 +88,47 @@ void Stocks::encode(QString& data)
 int Stocks::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
-	return studies_.count();
+    return stocks_.count();
 }
 
 QVariant Stocks::data(const QModelIndex& index, int role) const
 {
-    if (index.row() < 0 || index.row() >= studies_.count())
+    if (index.row() < 0 || index.row() >= stocks_.count())
         return QVariant();
 
-    const Stock* study = studies_[index.row()];
-    if (role == NameRole)
-        return study->name();
-    else if (role == UuidRole)
-        return study->uuid();
-    else if (role == pid)
-        return study->pid();
-    else if (role == datetime)
-        return study->datetime();
-    //else if (role == UuidRole)
-    //    return volume->uuid();
-    else if (role == series)
-        return study->series();
+    const Stock* stock = stocks_[index.row()];
+
+    switch (role) {
+    case id:
+
+        break;
+    case name:
+        return stock->name();
+        break;
+    case country:
+
+        break;
+    case symbol:
+
+        break;
+    case founded:
+
+        break;
+    case currency:
+
+        break;
+    case employees:
+
+        break;
+    case industries:
+
+        break;
+    case symbols:
+
+        break;
+    default:
+        break;
+    }
     return QVariant();
 }
 
@@ -116,21 +136,21 @@ QVariant Stocks::data(const QModelIndex& index, int role) const
 
 Q_INVOKABLE Stock* Stocks::get(quint32 index) const
 {
-    if (index  >= studies_.size())
+    if (index  >= stocks_.size())
         return nullptr;
     //auto de = conversations_[index];
-    return studies_[index];
+    return stocks_[index];
 }
 
 void Stocks::clear()
 {
     beginResetModel();
-    studies_.clear();
-    qDeleteAll(studies_);
+    stocks_.clear();
+    qDeleteAll(stocks_);
     endResetModel();
 
-    patientMap_.clear();
-    studyMap_.clear();
+    // patientMap_.clear();
+    // studyMap_.clear();
     //serieMap_.clear();
 }
 
@@ -138,21 +158,23 @@ Q_INVOKABLE bool Stocks::removeRows(int row, int count, const QModelIndex& paren
 {
     Q_UNUSED(parent);
     beginRemoveRows(QModelIndex(), row, row + count - 1);
-    while (count--) delete studies_.takeAt(row);
+    while (count--) delete stocks_.takeAt(row);
     endRemoveRows();
     return true;
 }
 
-
 QHash<int, QByteArray> Stocks::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[pid] = "pid";
-    roles[datetime] = "datetime";
-    roles[NameRole] = "username";
-    roles[UuidRole] = "uuid";
-    roles[StudyDescription] = "studyDescription";
-    roles[series] = "series";
+    roles[id] = "id";
+    roles[name] = "name";
+    roles[country] = "country";
+    roles[symbol] = "symbol";
+    roles[currency] = "currency";
+    roles[founded] = "founded";
+    roles[employees] = "employees";
+    roles[industries] = "industries";
+    roles[symbols] = "symbols";
     return roles;
 }
 

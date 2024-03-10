@@ -11,13 +11,15 @@ class Stocks : public QAbstractListModel
 
 public:
     enum StocksRoles {
-		UuidRole = Qt::UserRole + 1,
-		pid,
-		datetime,
-		NameRole,
-		StudyDescription,
-		StudyNumber,
-        series,
+        id = Qt::UserRole + 1,
+        name,
+        country,
+        symbol,
+        currency,
+        founded,
+        employees,
+        industries,
+        symbols
 	};
     Stocks(QObject* parent = 0);
     ~Stocks();
@@ -40,13 +42,13 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    void addStudy(Stock* study, QString uuid);
+    void addStock(Stock* stock/*, QString uuid*/);
 	void encode(QString& data);
 private:
-    QList<Stock*> studies_;
-	int severalPatient_;
-	std::map<QString, int> patientMap_;
-    std::map<QString, Stock*> studyMap_;
+    QList<Stock*> stocks_;
+    //int severalPatient_;
+    //std::map<QString, int> patientMap_;
+    //std::map<QString, Stock*> studyMap_;
     //std::map<QString, Volume*> serieMap_;
 
 	QDateTime computedatetime(QString date, QString time);

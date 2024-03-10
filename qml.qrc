@@ -40,5 +40,7 @@
         <file>qml/delegate/DatetimeDialog.qml</file>
         <file>qml/delegate/TumblerDelegate.qml</file>
         <file>ribbonbar/ribbon.qml</file>
+        <file>qml/ToggleCb.qml</file>
+        <file>data/stocks_symbols.json</file>
     </qresource>
 </RCC>

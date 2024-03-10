@@ -47,11 +47,11 @@ Stock::Stock(QJsonObject json, QObject* parent): QObject(parent), separator_(fal
 //        referringPhysicianName_
 
 	patientID_ = json["pid"].toString();
-	pid_ = patientID_;
-	name_ = json["name"].toString(); 
-	description_ = json["description"].toString(); 
-	user_id_ = json["sd"].toString();
-	uuid_ = json["uuid"].toString();
+id_ = patientID_;
+    name_ = json["name"].toString();
+country_ = json["description"].toString();
+    symbol_ = json["sd"].toString();
+currency_ = json["uuid"].toString();
     modality_ = json["modality"].toString();
     sex_ = json["PatientSex"].toString();
     modality_ = json["Modality"].toString();
@@ -74,9 +74,9 @@ Stock::Stock(QJsonObject json, QObject* parent): QObject(parent), separator_(fal
 }
 
 Stock::Stock(int pid, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject* parent, QString report) :
-    QObject(parent), pid_(QString::number(pid)), name_(name), user_id_(user_id), uuid_(uuid), datetime_(datetime), separator_(true), report_(report)
+    QObject(parent), id_(QString::number(pid)), name_(name), symbol_(user_id), currency_(uuid), datetime_(datetime), separator_(true), employees_(report)
 {
-	description_ = datetime.toString("dd/MM/yyyy") + " - " + description;
+    country_ = datetime.toString("dd/MM/yyyy") + " - " + description;
 }
 
 
@@ -89,46 +89,46 @@ void Stock::setName(const QString& name)
 	}
 }
 
-void Stock::setDescription(const QString& description)
+void Stock::setCountry(const QString& description)
 {
-	if (description_ != description) {
-		description_ = description;
+    if (country_ != description) {
+        country_ = description;
 		emit descriptionChanged();
 	}
 }
 
-void Stock::setUserid(const QString& userid)
+void Stock::setSymbol(const QString& userid)
 {
-	if (user_id_ != userid) {
-		user_id_ = userid;
+    if (symbol_ != userid) {
+        symbol_ = userid;
 		emit useridChanged();
 	}
 }
 
-void Stock::setUuid(const QString& uuid)
+void Stock::setCurrency(const QString& uuid)
 {
-	if (uuid_ != uuid) {
-		uuid_ = uuid;
+    if (currency_ != uuid) {
+        currency_ = uuid;
 		emit uuidChanged();
 	}
 }
 
-void Stock::setReport(const QString& report)
+void Stock::setEmployees(const QString& report)
 {
-	if (report_ != report) {
-		report_ = report;
+    if (employees_ != report) {
+        employees_ = report;
 		emit reportChanged();
 	}
 
 }
 
-void Stock::appendSDescription(const QString& sdescription, int numSerie)
+void Stock::setIndustries(const QString& sdescription, int numSerie)
 {
-	if (series_.size() <= numSerie) {
-		sdescription_.append(sdescription);
+    if (symbols_.size() <= numSerie) {
+        industries_.append(sdescription);
 	}
 	else
-		sdescription_.insert(numSerie, sdescription);
+        industries_.insert(numSerie, sdescription);
 	//sdescription_.append(sdescription);
 	emit sdescriptionChanged();
 }

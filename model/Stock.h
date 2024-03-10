@@ -5,36 +5,75 @@
 #include <QQmlComponent>
 #include <QDate>
 #include <QDateTime>
+    // id = Qt::UserRole + 1,
+    // Name,
+    // ib_name,
+    // state,
+    // city,
+    // contract_id,
+    // ib_conid,
+    // symbol,
+    // security_type,
+    // currency,
+    // company,
+    // industry,
+    // selected
 
+    // name,
+    // country,
+    // symbol,
+    // currency,
+    // founded,
+    // employees,
+    // industries,
+    // symbols
 class Stock : public QObject
 {
+public:
+    enum Provider {
+        Yahoo,
+        Google
+    };
+    typedef std::pair<Provider, QString> apiprovider;
+private:
     Q_OBJECT // Macro for signals and slots
-	Q_PROPERTY(QString pid READ pid NOTIFY pidChanged)
+    Q_PROPERTY(QString id READ id NOTIFY idChanged)
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-	Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
-	Q_PROPERTY(QString userid READ userid WRITE setUserid NOTIFY useridChanged)
-	Q_PROPERTY(QString uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
-	Q_PROPERTY(QStringList sdescription READ sdescription NOTIFY sdescriptionChanged)
-	Q_PROPERTY(QDateTime datetime READ datetime WRITE setDatetime NOTIFY datetimeChanged)
-	Q_PROPERTY(QString report READ report WRITE setReport NOTIFY reportChanged)
-	Q_PROPERTY(bool separator READ separator WRITE setSeparator NOTIFY separatorChanged)
-		Q_PROPERTY(QVariantList series READ series NOTIFY seriesChanged)
+    Q_PROPERTY(QString country READ country WRITE setCountry NOTIFY countryChanged)
+    Q_PROPERTY(QString symbol READ symbol WRITE setSymbol NOTIFY symbolChanged)
+    Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
+    Q_PROPERTY(QStringList industries READ industries NOTIFY industriesChanged)
+    //Q_PROPERTY(QDateTime founded READ founded WRITE setFounded NOTIFY foundedChanged)
+    Q_PROPERTY(QString employees READ employees WRITE setEmployees NOTIFY employeesChanged)
+    Q_PROPERTY(bool selected READ selected WRITE setSelected NOTIFY selectedChanged)
+        Q_PROPERTY(QVector<apiprovider> symbols READ symbols NOTIFY symbolsChanged)
 
-    Q_PROPERTY(QString sex READ sex CONSTANT)
-    Q_PROPERTY(QDate birthDate READ birthDate CONSTANT)
-    Q_PROPERTY(QString studyID READ studyID CONSTANT)
-    Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID CONSTANT)
-    Q_PROPERTY(QString accessionNumber READ accessionNumber CONSTANT)
-    Q_PROPERTY(QString modality READ modality CONSTANT)
-    Q_PROPERTY(QString institutionName READ institutionName CONSTANT)
-    Q_PROPERTY(QString manufacturer READ manufacturer CONSTANT)
-    Q_PROPERTY(QString stationName READ stationName CONSTANT)
-    Q_PROPERTY(QString requestedProcedureDescription READ requestedProcedureDescription CONSTANT)
-    Q_PROPERTY(QString bodyPartExamined READ bodyPartExamined CONSTANT)
-    Q_PROPERTY(QString performingPhysicianName READ performingPhysicianName CONSTANT)
-    Q_PROPERTY(QString nameOfPhysiciansReadingStudy READ nameOfPhysiciansReadingStudy CONSTANT)
-    Q_PROPERTY(QString performedProcedureStepDescription READ performedProcedureStepDescription CONSTANT)
-    Q_PROPERTY(QString referringPhysicianName READ referringPhysicianName CONSTANT)
+    // ib_name,
+    // state,
+    // city,
+    // contract_id,
+    // ib_conid,
+    // symbol,
+    // security_type,
+    // currency,
+    // company,
+    // industry,
+    // selected
+    Q_PROPERTY(QString ib_name READ ib_name CONSTANT)
+    Q_PROPERTY(QDate founded READ founded CONSTANT)
+    Q_PROPERTY(QString city READ city CONSTANT)
+    Q_PROPERTY(QString security_type READ security_type CONSTANT)
+    Q_PROPERTY(QString company READ company CONSTANT)
+    Q_PROPERTY(QString industry READ industry CONSTANT)
+    // Q_PROPERTY(QString institutionName READ institutionName CONSTANT)
+    // Q_PROPERTY(QString manufacturer READ manufacturer CONSTANT)
+    // Q_PROPERTY(QString stationName READ stationName CONSTANT)
+    // Q_PROPERTY(QString requestedProcedureDescription READ requestedProcedureDescription CONSTANT)
+    // Q_PROPERTY(QString bodyPartExamined READ bodyPartExamined CONSTANT)
+    // Q_PROPERTY(QString performingPhysicianName READ performingPhysicianName CONSTANT)
+    // Q_PROPERTY(QString nameOfPhysiciansReadingStudy READ nameOfPhysiciansReadingStudy CONSTANT)
+    // Q_PROPERTY(QString performedProcedureStepDescription READ performedProcedureStepDescription CONSTANT)
+    // Q_PROPERTY(QString referringPhysicianName READ referringPhysicianName CONSTANT)
 
 
     QML_ELEMENT
@@ -42,12 +81,12 @@ class Stock : public QObject
 public:
     Stock(QObject *parent = 0);
     Stock(QJsonObject json, QObject *parent = 0);
-    Stock(int pid, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject *parent = 0, QString report = QString());
+    Stock(int id, QString name, QString description, QString user_id, QString uuid, QDateTime datetime, QObject *parent = 0, QString report = QString());
     virtual ~Stock() { }
 
-	QVariantList series() const { return series_; };
+    QVector<apiprovider> symbols() const { return symbols_; };
 
-	QString pid() const { return pid_; }
+    QString id() const { return id_; }
 
     QString sex() const { return sex_; }
     QDate birthDate() const { return birthDate_; }
@@ -69,20 +108,20 @@ public:
 	QString name() const { return name_; }
 	void setName(const QString& name);
 
-	QString description() const { return description_; }
-	void setDescription(const QString& description);
+    QString country() const { return country_; }
+    void setCountry(const QString& country);
 
-	QString userid() const { return user_id_; }
-	void setUserid(const QString& userid); 
+    QString symbol() const { return symbol_; }
+    void setSymbol(const QString& symbol);
 
-	QString uuid() const { return uuid_; }
-	void setUuid(const QString& uuid);
+    QString currency() const { return currency_; }
+    void setCurrency(const QString& currency);
 
-	QString report() const { return report_; }
-	void setReport(const QString& report);
+    QString employees() const { return employees_; }
+    void setEmployees(const QString& employees);
 
-	QStringList sdescription() const { return sdescription_; }
-	void appendSDescription(const QString& sdescription, int numSerie);
+    QStringList industries() const { return industries_; }
+    void setIndustries(const QString& industries, int numSerie);
 
 	QDateTime datetime() const { return datetime_; }
 	void setDatetime(const QDateTime& datetime);
@@ -109,13 +148,13 @@ signals:
 	void reportChanged();
 
 private:
-	QString pid_;
-	QString user_id_, uuid_;
-	QString name_, description_, patientID_;
-	QStringList sdescription_;
-	QString report_;
+    QString id_;
+    QString symbol_, currency_;
+    QString name_, country_, patientID_;
+    QStringList industries_;
+    QString employees_;
 	QDateTime datetime_;
-	QVariantList series_;
+    QVector<apiprovider> symbols_;
 	bool separator_;
     bool selected_ = false;
 

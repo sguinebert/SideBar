@@ -178,6 +178,147 @@ ApplicationWindow {
                 Item {
                     id: homeTab
 
+                    GroupBox {
+                        id: control
+                        title: qsTr("GroupBox")
+                        anchors.top: parent.top
+                        width: parent.width
+                        //height: 300
+                        anchors.topMargin:boxtitle.height/2
+
+                        background: Rectangle {
+                            y: control.topPadding - control.padding
+                            width: parent.width
+                            height: parent.height - control.topPadding + control.padding
+                            color: "transparent"
+                            border.color: "#ff0000"
+                            radius: 2
+                        }
+
+                        ListModel {
+                            id: indices
+                            ListElement {
+                                name: "AEX"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "BEL 20"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "CAC 40"
+                                checked: true
+                            }
+                            ListElement {
+                                name: "DAX"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "DOW JONES"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "FTSE 100"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "IBEX 35"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "MDAX"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "NASDAQ 100"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "OMX Helsinki 15"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "OMX Helsinki 25"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "OMX Stockholm 30"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "S&P 100"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "S&P 500"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "SDAX"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "SMI"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "TECDAX"
+                                checked: false
+                            }
+                            ListElement {
+                                name: "MOEX"
+                                checked: false
+                            }
+                        }
+                        Flow {
+                            id:flow
+                            anchors.fill: parent
+
+                            Repeater {
+                                model:indices
+                                delegate: ToggleCb {
+                                    text:name
+                                }
+                            }
+                        }
+
+
+
+                        // Button {
+                        //     id:testButton
+                        //     anchors.centerIn: parent
+                        //     text: qsTr("Click me!")
+                        //     onPressed: {
+                        //         console.log("Pressed!");
+                        //     }
+                        //     onClicked: {
+                        //         console.log("Clicked!");
+                        //         //studyproxy.switchColumn(6, 4);
+
+                        //     }
+                        // }
+
+                        label: Rectangle {
+                            id:boxtitle
+                            anchors.horizontalCenter: parent.left + width / 2
+                            anchors.bottom: parent.top
+                            anchors.bottomMargin: -height/2
+                            //color: "#21be2b"                  //set this to the background color
+                            width: title.width
+                            height: title.font.pixelSize
+
+                            Text {
+                                id: title
+                                text: qsTr("Indices")
+                                anchors.centerIn: parent
+                                font.pixelSize: 20
+                            }
+                        }
+                    }
+
+                }
+
+
                     ResizableColumnHeader {             // COLUMN HEADER
                         id: horizontalHeader
                         Layout.fillWidth: true
@@ -316,55 +457,7 @@ ApplicationWindow {
 //                            text: qsTr("Content goes here!")
 //                        }
 //                    }
-                    GroupBox {
-                        id: control
-                        title: qsTr("GroupBox")
-                        anchors.centerIn: parent
-                        width: 300
-                        height: 150
 
-                        background: Rectangle {
-                            y: control.topPadding - control.padding
-                            width: parent.width
-                            height: parent.height - control.topPadding + control.padding
-                            color: "transparent"
-                            border.color: "#21be2b"
-                            radius: 2
-
-
-                        }
-
-                        Button {
-                            id:testButton
-                            anchors.centerIn: parent
-                            text: qsTr("Click me!")
-                            onPressed: {
-                                console.log("Pressed!");
-                            }
-                            onClicked: {
-                                console.log("Clicked!");
-                                //studyproxy.switchColumn(6, 4);
-
-                            }
-                        }
-
-                        label: Rectangle {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.bottom: parent.top
-                            anchors.bottomMargin: -height/2
-                            color: "white"                  //set this to the background color
-                            width: parent.width * 0.7
-                            height: title.font.pixelSize
-                            Text {
-                                id: title
-                                text: qsTr("My Tilte")
-                                anchors.centerIn: parent
-                                font.pixelSize: 32
-                            }
-                        }
-                    }
-
-                }
                 Item {
                     id: discoverTab
                 }

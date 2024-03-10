@@ -55,7 +55,8 @@ int main(int argc, char *argv[]) {
 
     auto dataprovider = new DataProvider();
 
-    dataprovider->getStockHistory("ACC", QDateTime::currentDateTime().addDays(-3));
+    dataprovider->getStocksSymbols();
+    //dataprovider->getStockHistory("ACC", QDateTime::currentDateTime().addDays(-3));
 
     TableModel tablemodel_(nullptr, app.parent());
     TableModelProxy tablemodelproxy_(app.parent());
