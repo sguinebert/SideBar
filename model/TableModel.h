@@ -49,7 +49,7 @@ class TableModel : public QAbstractTableModel
 public:
     enum StockRoles {
         id = Qt::UserRole + 1,
-        Name,
+        name,
         ib_name,
         state,
         city,
@@ -60,6 +60,12 @@ public:
         currency,
         company,
         industry,
+        datetime,
+        open,
+        high,
+        low,
+        close,
+        volume,
         //RegexFilter,
         selected
     };
@@ -152,6 +158,56 @@ signals:
     void loadStudy(Stock *study);
 private:
     void addStudy(Stock* study, std::string uuid);
+    void addStock(const QString& name, QJsonObject& chart)
+    {
+        auto results = chart["result"].toArray();
+
+        for(const auto& result : results) {
+            auto r = result.toObject();
+
+            auto indicators = r["indicators"].toObject();
+            auto timestamp = r["timestamp"].toArray();
+
+            auto quotes = indicators["quote"].toArray();
+
+            for(const auto& quote : quotes) {
+                auto q = quote.toObject();
+                auto open = q["open"].toArray();
+                auto high = q["high"].toArray();
+                auto low = q["low"].toArray();
+                auto close = q["close"].toArray();
+                auto volume = q["volume"].toArray();
+
+                auto meta = r["meta"].toObject();
+                auto currency = meta["currency"].toString();
+                auto dataGranularity = meta["dataGranularity"].toString();
+                auto exchangeName = meta["exchangeName"].toString();
+                auto symbol = meta["symbol"].toString();
+
+                for(int i(0); i < open.size(); i++) {
+
+                    auto dtsec = timestamp[i].toInt();
+                    auto datetime = QDateTime::fromSecsSinceEpoch(dtsec);
+
+                    auto openf = open[i].toDouble();
+                    auto highf = high[i].toDouble();
+                    auto lowf = low[i].toDouble();
+                    auto closef = close[i].toDouble();
+                    auto volumef = volume[i].toInteger();
+
+                    qDebug() << "OHLCV : " << openf << " - " << highf << " - " << lowf << " - " << closef << " - " << volumef;
+                    auto stock = new Stock(symbol, name, symbol, currency, datetime, openf, highf, lowf, closef, volumef);
+
+                    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+                    stocks_ << stock;
+                    endInsertRows();
+                }
+
+            }
+            //auto adjclose = obj["adjclose"].toArray();
+        }
+
+    }
     QString header2string(TableModel::StockRoles role) {
         // switch (role) {
         // case TableModel::PatientName:
@@ -192,7 +248,7 @@ private:
         return "";
     }
 private:
-    QList<Stock*> studies_;
+    QList<Stock*> stocks_;
     std::set<std::string> uuids_;
     //int selectedRowUp_, selectedRowDown_;
     std::set<int> selectedRows_;

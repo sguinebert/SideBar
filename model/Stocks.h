@@ -20,6 +20,7 @@ public:
         founded,
         employees,
         industries,
+        indices,
         industry,
         symbols
 	};
@@ -39,6 +40,21 @@ public:
 
 	void clear();
 	Q_INVOKABLE bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex()) Q_DECL_OVERRIDE;
+
+    Q_INVOKABLE void getData(quint32 index)
+    {
+        if (index  >= m_stocks.size())
+            return;
+        //auto de = conversations_[index];
+        auto name = m_stocks[index]->name();
+        auto symbols = m_stocks[index]->symbols();
+        // if(symbols.isEmpty())
+        //     return;
+        auto obj = symbols[0].toObject();
+        auto currency = obj["currency"].toString();
+        auto yahoo = obj["yahoo"].toString();
+        m_dataprovider->getStockHistory(name, yahoo, QDateTime::currentDateTime().addDays(-20));
+    }
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

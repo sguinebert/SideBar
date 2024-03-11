@@ -3,6 +3,7 @@ import QtQuick.Controls 6.4
 import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
 import Qt.labs.qmlmodels 1.0
+import QtCharts 2.6
 import "./qml"
 import "./qml/delegate"
 import "./ribbonbar"
@@ -348,6 +349,14 @@ ApplicationWindow {
                                 radius: 5
                                 color:"yellow"
 
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        console.log("test : ", index)
+                                        stockslist.getData(index);
+                                    }
+                                }
+
                                 Row {
                                     CheckBox {
                                         anchors.verticalCenter: parent.Center
@@ -362,19 +371,34 @@ ApplicationWindow {
                                     }
 
                                     Column {
-                                        width: 200
+                                        width: 300
                                         anchors.verticalCenter: parent.verticalCenter
-                                        Text { text: name }
-                                        Text { text: symbol }
+                                        Text {
+                                            text: name
+                                            width: 290
+                                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                                        }
+                                        Text { text: symbol
+                                            font.pointSize: 5
+                                            font.pixelSize: 8
+                                        }
                                     }
                                     Text {
                                         text: country
+                                        width: 130
+                                        anchors.verticalCenter: parent.verticalCenter
                                     }
                                     Text {
                                         text: currency
+                                        width: 100
+                                        anchors.verticalCenter: parent.verticalCenter
                                     }
                                     Text {
                                         text: industry
+                                        width: 400
+                                        clip: true
+                                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                                        anchors.verticalCenter: parent.verticalCenter
                                     }
                                 }
                             }
@@ -387,6 +411,7 @@ ApplicationWindow {
                             anchors.margins: 5
                             height: parent.height
                             width:parent.width
+                            spacing: 3
                             headerPositioning :ListView.OverlayHeader
                             model: stockslist
 
@@ -400,20 +425,6 @@ ApplicationWindow {
                 }
 
 
-                    ResizableColumnHeader {             // COLUMN HEADER
-                        id: horizontalHeader
-                        Layout.fillWidth: true
-                        height: 60
-                        defaultWidth: 200
-                        spacing: 1
-                        headermodel: headerproxy
-                        tablemodel: studyproxy
-                        tableview: tableView
-
-                        Layout.alignment: Qt.AlignTop
-
-                        //ScrollBar.horizontal: ScrollBar{}
-                    }
 
 
 //                    HorizontalHeaderView {
@@ -485,6 +496,49 @@ ApplicationWindow {
 //                        clip: true
 //                    }
 
+//                    GroupBox {
+//                        id: control2
+//                        title: qsTr("GroupBox")
+
+//                        background: Rectangle {
+//                            y: control2.topPadding - control2.bottomPadding
+//                            width: parent.width
+//                            height: parent.height - control2.topPadding + control2.bottomPadding
+//                            color: "transparent"
+//                            border.color: "#21be2b"
+//                            radius: 2
+//                        }
+
+//                        label: Label {
+//                            x: control2.leftPadding
+//                            width: control2.availableWidth
+//                            text: control2.title
+//                            color: "#21be2b"
+//                            elide: Text.ElideRight
+//                        }
+
+//                        Label {
+//                            text: qsTr("Content goes here!")
+//                        }
+//                    }
+
+                Item {
+                    id: discoverTab
+
+                    ResizableColumnHeader {             // COLUMN HEADER
+                        id: horizontalHeader
+                        Layout.fillWidth: true
+                        height: 60
+                        defaultWidth: 200
+                        spacing: 1
+                        headermodel: headerproxy
+                        tablemodel: studyproxy
+                        tableview: tableView
+
+                        Layout.alignment: Qt.AlignTop
+
+                        //ScrollBar.horizontal: ScrollBar{}
+                    }
                     TableView {
                         id: tableView
                         //anchors.left: verticalHeader.right
@@ -514,37 +568,28 @@ ApplicationWindow {
                         ScrollBar.horizontal:   ScrollBar { orientation: Qt.Horizontal }
                         ScrollBar.vertical:     ScrollBar { }
                     }
-//                    GroupBox {
-//                        id: control2
-//                        title: qsTr("GroupBox")
-
-//                        background: Rectangle {
-//                            y: control2.topPadding - control2.bottomPadding
-//                            width: parent.width
-//                            height: parent.height - control2.topPadding + control2.bottomPadding
-//                            color: "transparent"
-//                            border.color: "#21be2b"
-//                            radius: 2
-//                        }
-
-//                        label: Label {
-//                            x: control2.leftPadding
-//                            width: control2.availableWidth
-//                            text: control2.title
-//                            color: "#21be2b"
-//                            elide: Text.ElideRight
-//                        }
-
-//                        Label {
-//                            text: qsTr("Content goes here!")
-//                        }
-//                    }
-
-                Item {
-                    id: discoverTab
                 }
                 Item {
                     id: activityTab
+
+                    ChartView {
+                        objectName: "myChart"
+
+                        title: "Line Chart"
+                        anchors.fill: parent
+                        antialiasing: true
+
+                        LineSeries {
+                            name: "Line"
+                            XYPoint { x: 0; y: 0 }
+                            XYPoint { x: 1.1; y: 2.1 }
+                            XYPoint { x: 1.9; y: 3.3 }
+                            XYPoint { x: 2.1; y: 2.1 }
+                            XYPoint { x: 2.9; y: 4.9 }
+                            XYPoint { x: 3.4; y: 3.0 }
+                            XYPoint { x: 4.1; y: 3.3 }
+                        }
+                    }
                 }
             }
         }

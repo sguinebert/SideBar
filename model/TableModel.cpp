@@ -65,16 +65,19 @@ TableModel::TableModel(DataProvider* dataprovider, QObject* parent) :
 
     QJsonObject headtemplate;
     if(m_dataprovider) {
-        // headtemplate["PatientName"] = QJsonArray({ PatientName, 0, 200, 0, true});
-        // headtemplate["PatientSex"] = QJsonArray({PatientSex, 4, 200, 0, true});
-        // headtemplate["PatientBirthDate"] = QJsonArray({PatientBirthDate, 5, 200, 1, true});
-        // headtemplate["PatientId"] = QJsonArray({ PatientID, 1, 200, 0, true});
-        // headtemplate["Datetime"] = QJsonArray({ Datetime, 2, 200, 2, true});
-        // headtemplate["Modality"] = QJsonArray({Modality, 6, 200, 0, true});
+        headtemplate["Name"] = QJsonArray({ name, 0, 200, Header::Text, true});
+        headtemplate["Symbol"] = QJsonArray({ symbol, 1, 200, Header::Text, true});
+        headtemplate["Datetime"] = QJsonArray({ datetime, 2, 200, Header::DateTime, true});
+        headtemplate["Open"] = QJsonArray({ open, 3, 200, Header::Text, true});
+        headtemplate["High"] = QJsonArray({ high, 4, 200, Header::Text, true});
+        headtemplate["Low"] = QJsonArray({ low, 5, 200, Header::Text, true});
+        headtemplate["Close"] = QJsonArray({ close, 6, 200, Header::Text, true});
+        headtemplate["Volume"] = QJsonArray({ volume, 7, 200, Header::Text, true});
         // headtemplate["StudyDescription"] = QJsonArray({StudyDescription, 3, 200, 0, true});
         // headtemplate["StationName"] = QJsonArray({StationName, 7, 200, 0, true});
 
     }
+    connect(m_dataprovider, &DataProvider::dataReceived, this, &TableModel::addStock);
 
     //headtemplate["AET"] = "caveo";
 
@@ -99,30 +102,35 @@ TableModel::TableModel(DataProvider* dataprovider, QObject* parent) :
 //    });
     // int hsize = ReferringPhysicianName - PatientName;
 
-    // for(int i = 0; i < hsize; i++) {
-    //     auto role = (TableModel::StockRoles)(PatientName + i);
-    //     auto key = header2key(role);
-    //     const auto& value = headtemplate.value(key).toArray();
-    //     auto title = header2string(role);
+    for(auto it = headtemplate.begin(); it != headtemplate.end(); it++) {
+        auto key = it.key();
+        auto value = it.value().toArray();
+        // auto role = (TableModel::StockRoles)(PatientName + i);
+        // auto key = header2key(role);
+        //auto k = key.toString();
 
-    //     if(!value.isEmpty())
-    //         m_headers->addHeader(title, //title
-    //                              key,
-    //                              i, //original index
-    //                              value[1].toInt(), //position
-    //                              value[2].toInt(), //width
-    //                              (Header::Type)value[3].toInt(), //type
-    //                              value[4].toBool()); //visibility
-    //     else
-    //         m_headers->addHeader(title, //title
-    //                              key,
-    //                              i, //original index
-    //                              -1, //position
-    //                              200, //width
-    //                              Header::Type::Text, //type
-    //                              false); //visibility
+        //const auto& value = headtemplate.value(key).toArray();
+        //auto title = header2string(role);
+        auto title = key;
 
-    // }
+        if(!value.isEmpty())
+            m_headers->addHeader(title, //title
+                                 key,
+                                 0, //original index
+                                 value[1].toInt(), //position
+                                 value[2].toInt(), //width
+                                 (Header::Type)value[3].toInt(), //type
+                                 value[4].toBool()); //visibility
+        else
+            m_headers->addHeader(title, //title
+                                 key,
+                                 0, //original index
+                                 -1, //position
+                                 200, //width
+                                 Header::Type::Text, //type
+                                 false); //visibility
+
+    }
 
     QJsonObject obj;
     obj["test"] = "test";
@@ -152,7 +160,7 @@ int TableModel::rowCount(const QModelIndex& parent) const
 {
     if (parent.isValid())
         return 0;
-    return studies_.size();
+    return stocks_.size();
 }
 
 int TableModel::columnCount(const QModelIndex& parent) const
@@ -164,39 +172,85 @@ int TableModel::columnCount(const QModelIndex& parent) const
 
 QVariant TableModel::data(const QModelIndex& index, int role) const
 {
-    if (!index.isValid() || index.row() >= studies_.size())
+    if (!index.isValid() || index.row() >= stocks_.size())
         return QVariant();
 
-    const Stock* study = studies_[index.row()];
+    const Stock* stock = stocks_[index.row()];
     switch (role)
     {
+        // name,
+        // ib_name,
+        // state,
+        // city,
+        // contract_id,
+        // ib_conid,
+        // symbol,
+        // security_type,
+        // currency,
+        // company,
+        // industry,
+        // datetime,
+        // open,
+        // high,
+        // low,
+        // close,
+        // volume,
     case Qt::DisplayRole:
-        switch (index.column() + Name) {
+        switch (index.column() + id) {
         case StockRoles::id:
+            return stock->id();
             break;
-        case StockRoles::Name:
+        case StockRoles::name:
+            return stock->name();
             break;
         case StockRoles::ib_name:
+            return stock->ib_name();
             break;
         case StockRoles::state:
+            return stock->country();
             break;
         case StockRoles::city:
+            return stock->city();
             break;
         case StockRoles::contract_id:
+            //return stock->contract_id();
             break;
         case StockRoles::ib_conid:
             break;
         case StockRoles::symbol:
+            return stock->symbol();
             break;
         case StockRoles::security_type:
             break;
         case StockRoles::currency:
+            return stock->currency();
             break;
         case StockRoles::company:
+            return stock->company();
             break;
         case StockRoles::industry:
+            return stock->industry();
+            break;
+        case StockRoles::datetime:
+            return stock->datetime();
+            break;
+        case StockRoles::open:
+            return stock->open();
+            break;
+        case StockRoles::high:
+            return stock->high();
+            break;
+        case StockRoles::low:
+            return stock->low();
+            break;
+        case StockRoles::close:
+            return stock->close();
+            break;
+        case StockRoles::volume:
+            return stock->volume();
             break;
         case StockRoles::selected:
+            return stock->selected();
             break;
         default:
             // Handle unknown roles
@@ -204,30 +258,59 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
         }
         break;
     case StockRoles::id:
+        return stock->id();
         break;
-    case StockRoles::Name:
+    case StockRoles::name:
+        return stock->name();
         break;
     case StockRoles::ib_name:
+        return stock->ib_name();
         break;
     case StockRoles::state:
+        return stock->country();
         break;
     case StockRoles::city:
+        return stock->city();
         break;
     case StockRoles::contract_id:
+        //return stock->contract_id();
         break;
     case StockRoles::ib_conid:
         break;
     case StockRoles::symbol:
+        return stock->symbol();
         break;
     case StockRoles::security_type:
         break;
     case StockRoles::currency:
+        return stock->currency();
         break;
     case StockRoles::company:
+        return stock->company();
         break;
     case StockRoles::industry:
+        return stock->industry();
+        break;
+    case StockRoles::datetime:
+        return stock->datetime();
+        break;
+    case StockRoles::open:
+        return stock->open();
+        break;
+    case StockRoles::high:
+        return stock->high();
+        break;
+    case StockRoles::low:
+        return stock->low();
+        break;
+    case StockRoles::close:
+        return stock->close();
+        break;
+    case StockRoles::volume:
+        return stock->volume();
         break;
     case StockRoles::selected:
+        return stock->selected();
         break;
 
     case Qt::DecorationRole:
@@ -277,55 +360,6 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
         break;
     }
 
-
-//    if (index.row() < studies_.size()) {
-//        const Study* study = studies_[index.row()];
-//        if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Name]) || role == Name) //index.column() == 0
-//            return study->name();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Pid]) || role == Pid) //index.column() == 1
-//            return study->pid();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Datetime]))
-//            return  study->datetime().toString(m_currentLocale.dateTimeFormat(QLocale::ShortFormat));
-//        else if(role == Datetime)
-//            return  study->datetime();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StudyDescription]) || role == StudyDescription)
-//            return study->description();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PatientSex]) || role == PatientSex)
-//            return study->sex();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PatientBirthDate]))
-//            return study->birthDate().toString(m_currentLocale.dateFormat(QLocale::ShortFormat));
-//        else if (role == PatientBirthDate)
-//            return  study->birthDate();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StudyInstanceUID]) || role == StudyInstanceUID)
-//            return study->studyInstanceUID();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[AccessionNumber]) || role == AccessionNumber)
-//            return study->accessionNumber();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Modality]) || role == Modality)
-//            return study->modality();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[InstitutionName]) || role == InstitutionName)
-//            return study->institutionName();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[Manufacturer]) || role == Manufacturer)
-//            return study->manufacturer();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[StationName]) || role == StationName)
-//            return study->stationName();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[BodyPartExamined]) || role == BodyPartExamined)
-//            return study->bodyPartExamined();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[RequestedProcedureDescription]) || role == RequestedProcedureDescription)
-//            return study->requestedProcedureDescription();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PerformingPhysicianName]) || role == PerformingPhysicianName)
-//            return study->performingPhysicianName();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[NameOfPhysiciansReadingStudy]) || role == NameOfPhysiciansReadingStudy)
-//            return study->nameOfPhysiciansReadingStudy();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[PerformedProcedureStepDescription]) || role == PerformedProcedureStepDescription)
-//            return study->performedProcedureStepDescription();
-//        else if ((role == Qt::DisplayRole && index.column() == m_columnOrder[ReferringPhysicianName]) || role == ReferringPhysicianName)
-//            return study->referringPhysicianName();
-//        else if (role == Qt::DecorationRole && index.row() >= 0 && index.row() < rowCount() && index.column() >= 0 && index.column() < columnCount()) {
-//            if (std::find(selectedRows_.begin(), selectedRows_.end(), index.row()) != selectedRows_.end()) //(selectedRowUp_ <= index.row() && index.row() <= selectedRowDown_) ||
-//                return "#80DEEA";
-//            return index.row() % 2 == 0 ? "white" : "#EEEEEE";
-//        }
-//    }
     return QVariant();
 }
 void findKey(const QString& query, const QJsonValue& value, std::vector<QString>& keys, std::vector<QJsonObject>& vec, const QString& oldkey) {
@@ -383,7 +417,7 @@ void TableModel::addStudy(Stock* study, std::string uuid)
 {
     if (uuids_.find(uuid) == uuids_.end()) {
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        studies_ << study;
+        stocks_ << study;
         endInsertRows();
 
         uuids_.emplace(uuid);
@@ -428,7 +462,7 @@ QHash<int, QByteArray> TableModel::roleNames() const
 
 Q_INVOKABLE void TableModel::loadstudy(int index)
 {
-    emit loadStudy(studies_[index]);
+    emit loadStudy(stocks_[index]);
 }
 
 void TableModel::selectFilter(int index)

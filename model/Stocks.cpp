@@ -41,8 +41,9 @@ Stocks::Stocks(DataProvider* dataprovider, QObject *parent) :
             auto google = s["google"].toString();
             auto yahoo = s["yahoo"].toString();
         }
+        QString ccc("EUR/USD");
         //ring id, QString name, QString country, QString symbol, QString currency, QObject *paren
-        auto stock = new Stock(symbol, name, country, symbol, "US", concatindustry, this);
+        auto stock = new Stock(symbol, name, country, symbol, ccc, concatindustry, indices, symbols, this);
         addStock(stock);
         //m_stocks.emplaceBack(stock);
     }
@@ -172,8 +173,11 @@ QVariant Stocks::data(const QModelIndex& index, int role) const
     case industry:
         return stock->industry();
         break;
+    case indices:
+        return stock->indices();
+        break;
     case symbols:
-        //return stock->symbols();
+        return stock->symbols();
         break;
     default:
         break;

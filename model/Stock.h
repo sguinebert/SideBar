@@ -5,28 +5,9 @@
 #include <QQmlComponent>
 #include <QDate>
 #include <QDateTime>
-    // id = Qt::UserRole + 1,
-    // Name,
-    // ib_name,
-    // state,
-    // city,
-    // contract_id,
-    // ib_conid,
-    // symbol,
-    // security_type,
-    // currency,
-    // company,
-    // industry,
-    // selected
+#include <QJsonArray>
 
-    // name,
-    // country,
-    // symbol,
-    // currency,
-    // founded,
-    // employees,
-    // industries,
-    // symbols
+
 class Stock : public QObject
 {
 public:
@@ -46,7 +27,8 @@ private:
     //
     Q_PROPERTY(QString employees READ employees WRITE setEmployees NOTIFY employeesChanged)
     Q_PROPERTY(bool selected READ selected WRITE setSelected NOTIFY selectedChanged)
-        Q_PROPERTY(QList<apiprovider> symbols READ symbols NOTIFY symbolsChanged)
+
+    Q_PROPERTY(QJsonArray symbols READ symbols NOTIFY symbolsChanged)
 
     // ib_name,
     // state,
@@ -66,19 +48,13 @@ private:
     Q_PROPERTY(QString company READ company CONSTANT)
     Q_PROPERTY(QString industry READ industry CONSTANT)
     //OHLCV
-    // auto datetime = QDateTime::fromSecsSinceEpoch(dtsec);
-    // auto openf = open[i].toDouble();
-    // auto highf = high[i].toDouble();
-    // auto lowf = low[i].toDouble();
-    // auto closef = close[i].toDouble();
-    // auto volumef = volume[i].toInteger();
     Q_PROPERTY(QDateTime datetime READ datetime CONSTANT)
     Q_PROPERTY(double open READ open CONSTANT)
     Q_PROPERTY(double high READ high CONSTANT)
     Q_PROPERTY(double low READ low CONSTANT)
     Q_PROPERTY(double close READ close CONSTANT)
     Q_PROPERTY(qint64 volume READ volume CONSTANT)
-    // Q_PROPERTY(QString performingPhysicianName READ performingPhysicianName CONSTANT)
+    Q_PROPERTY(QJsonArray indices READ indices CONSTANT)
     // Q_PROPERTY(QString nameOfPhysiciansReadingStudy READ nameOfPhysiciansReadingStudy CONSTANT)
     // Q_PROPERTY(QString performedProcedureStepDescription READ performedProcedureStepDescription CONSTANT)
     // Q_PROPERTY(QString referringPhysicianName READ referringPhysicianName CONSTANT)
@@ -89,10 +65,29 @@ private:
 public:
     Stock(QObject *parent = 0);
     Stock(QJsonObject json, QObject *parent = 0);
-    Stock(QString id, QString name, QString country, QString symbol, QString currency, QString industry, QObject *parent = 0);
+    Stock(QString& id,
+          QString& name,
+          QString& country,
+          QString& symbol,
+          QString& currency,
+          QString& industry,
+          QJsonArray& indices,
+          QJsonArray& symbols,
+          QObject *parent = 0);
+    Stock(const QString& id,
+          const QString& name,
+          const QString& symbol,
+          const QString& currency,
+          QDateTime& datetime,
+          double openf,
+          double highf,
+          double lowf,
+          double closef,
+          qint64 volumef,
+          QObject *parent = 0);
     virtual ~Stock() { }
 
-    QList<apiprovider> symbols() const { return symbols_; };
+    QJsonArray symbols() const { return symbols_; };
 
     QString id() const { return id_; }
     QDate founded() const { return founded_; }
@@ -108,7 +103,7 @@ public:
     QString city() const { return city_; }
     QString industry() const { return industry_; }
     QString ib_name() const { return ib_name_; }
-    QString performingPhysicianName() const { return performingPhysicianName_; }
+    QJsonArray indices() const { return indices_; }
     QString nameOfPhysiciansReadingStudy() const { return nameOfPhysiciansReadingStudy_; }
     QString performedProcedureStepDescription() const { return performedProcedureStepDescription_; }
     QString referringPhysicianName() const { return referringPhysicianName_; }
@@ -162,7 +157,8 @@ private:
     QStringList industries_;
     QString employees_;
 	QDateTime datetime_;
-    QList<apiprovider> symbols_;
+    QJsonArray symbols_;
+    QJsonArray indices_;
 	bool separator_;
     bool selected_ = false;
 

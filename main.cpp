@@ -3,6 +3,16 @@
 #include <QQmlApplicationEngine>
 #include <QSurfaceFormat>
 #include <QQmlContext>
+
+//chart related
+#include <QChart>
+#include <QLineSeries>
+#include <QVXYModelMapper>
+#include <QCandlestickSeries>
+#include <QCandlestickModelMapper>
+#include <QBarSeries>
+#include <QBarModelMapper>
+
 //#include <QQuickStyle>
 
 //#include "TableModel.h"
@@ -26,7 +36,7 @@ int main(int argc, char *argv[]) {
    // auto agent = new QWK::WidgetWindowAgent();
 
 
-   QGuiApplication app(argc, argv);
+   QApplication app(argc, argv);
 
     QSurfaceFormat format;
     format.setSamples(8);
@@ -62,9 +72,23 @@ int main(int argc, char *argv[]) {
     //dataprovider->getStocksSymbols();
     //dataprovider->getStockHistory("ACC", QDateTime::currentDateTime().addDays(-3));
 
-    TableModel tablemodel_(nullptr, app.parent());
+    TableModel tablemodel_(dataprovider, app.parent());
     TableModelProxy tablemodelproxy_(app.parent());
     tablemodelproxy_.setSource(&tablemodel_);
+
+    QLineSeries lineseries;
+    QVXYModelMapper mapper;
+    mapper.setModel(&tablemodel_);
+    mapper.setXColumn(12);
+    mapper.setYColumn(15);
+    mapper.setSeries(&lineseries);
+
+    //now add to chart
+    QObject *rootObject = engine.rootObjects().first();
+    auto myChart = rootObject->findChild<QChart*>("myChart");
+    if (myChart) {
+        myChart->addSeries(&lineseries);
+    }
 
     engine.rootContext()->setContextProperty("studymodel", &tablemodel_);
     engine.rootContext()->setContextProperty("studyproxy", &tablemodelproxy_);

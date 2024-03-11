@@ -17,7 +17,7 @@ find_package(Qt6 COMPONENTS Core Quick QuickWidgets QuickControls2 REQUIRED)
 find_package(Qt6 COMPONENTS WebSockets REQUIRED)
 find_package(Qt6 COMPONENTS Network REQUIRED)
 find_package(Qt6 COMPONENTS Sql REQUIRED)
-
+find_package(Qt6 REQUIRED COMPONENTS Charts)
 # Set the module path so CMake can find FindQWindowKit.cmake
 #list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(QWINDOWKIT_BUILD_QUICK ON CACHE BOOL "Build quick module" FORCE)
@@ -96,6 +96,7 @@ set(RESOURCES qml.qrc)
 
 # Define your executable and link the necessary Qt libraries
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES}
+    model/StocksProxyModel.h model/StocksProxyModel.cpp
     )
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
@@ -109,7 +110,7 @@ target_link_libraries(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::WebSockets)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Network)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Sql)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Charts)
 # add_dependencies(${PROJECT_NAME} QWKCore)
 # target_link_libraries(${PROJECT_NAME} PUBLIC QWindowKit::Widgets)
 #target_link_libraries(${PROJECT_NAME} PUBLIC QWindowKit::Quick)

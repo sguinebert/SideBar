@@ -233,7 +233,8 @@ public:
         return rootObj;
     }
 
-    void getStockHistory(QString symbol,
+    void getStockHistory(QString name,
+                         QString symbol,
                          QDateTime startTime,
                          QDateTime endTime = QDateTime::currentDateTime(),
                          QString interval = "1d")
@@ -258,10 +259,10 @@ public:
         QString url = yahooAPI + queryString;
 
         qDebug() << "URL : " << url;
-        downloadStockData(url, "test.json");
+        downloadStockData(url, name, symbol);
     }
 
-    void parseOHLCV(QJsonObject& obj/*, std::vector<std::tuple<double, double, double, double>>& tt*/)
+    void parseOHLCV(QJsonObject& obj, const QString& name)
     {
 
         auto chart = obj["chart"].toObject();
@@ -270,6 +271,8 @@ public:
             qDebug() << "Error : " << chart;
             return;
         }
+
+        emit dataReceived(name, chart);
 
         auto results = chart["result"].toArray();
 
@@ -318,11 +321,11 @@ public:
 
     }
 
-    void downloadStockData(const QString& url, const QString& filename) {
+    void downloadStockData(const QString& url, const QString& name, const QString& symbol) {
         QNetworkAccessManager* manager = new QNetworkAccessManager();
         QNetworkReply* reply = manager->get(QNetworkRequest(QUrl(url)));
 
-        connect(reply, &QNetworkReply::finished, [this, reply, filename]() {
+        connect(reply, &QNetworkReply::finished, [this, reply, name, symbol]() {
             if (reply->error() == QNetworkReply::NoError) {
 
                 QJsonParseError error;
@@ -331,7 +334,7 @@ public:
                 if (!document.isEmpty()) {
                     if (document.isObject()) {
                         auto object = document.object();
-                        this->parseOHLCV(object);
+                        this->parseOHLCV(object, name);
                         //qDebug() << "object : " << object;
                         // Access object elements here using keys (e.g., object["key"])
                     } else {
@@ -344,7 +347,7 @@ public:
                     // Handle parsing error
                 }
 
-                QFile file(filename);
+                QFile file(symbol + ".json");
                 if (file.open(QIODevice::WriteOnly)) {
                     file.write(document.toJson());
                     file.close();
@@ -358,6 +361,8 @@ public:
             reply->deleteLater();
         });
     }
+signals:
+    void dataReceived(const QString&, QJsonObject& obj);
 
 private:
     QSqlDatabase m_db;

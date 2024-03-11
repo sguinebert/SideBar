@@ -47,11 +47,11 @@ Stock::Stock(QJsonObject json, QObject* parent): QObject(parent), separator_(fal
 //        referringPhysicianName_
 
 	patientID_ = json["pid"].toString();
-id_ = patientID_;
+    id_ = patientID_;
     name_ = json["name"].toString();
-country_ = json["description"].toString();
+    country_ = json["description"].toString();
     symbol_ = json["sd"].toString();
-currency_ = json["uuid"].toString();
+    currency_ = json["uuid"].toString();
     modality_ = json["modality"].toString();
     //sex_ = json["PatientSex"].toString();
     modality_ = json["Modality"].toString();
@@ -72,10 +72,52 @@ currency_ = json["uuid"].toString();
         datetime_.setTime(str.size() > 8 ? QTime(str.mid(8, 2).toInt(), str.mid(10, 2).toInt()) : QTime());
 	}
 }
-Stock::Stock(QString id, QString name, QString country, QString symbol, QString currency, QString industry, QObject *parent) :
-    QObject(parent), id_(id), name_(name), country_(country), symbol_(symbol), currency_(currency), industry_(industry)
+Stock::Stock(QString& id,
+             QString& name,
+             QString& country,
+             QString& symbol,
+             QString& currency,
+             QString& industry,
+             QJsonArray& indices,
+             QJsonArray& symbols,
+             QObject *parent) :
+    QObject(parent),
+    id_(id),
+    name_(name),
+    country_(country),
+    symbol_(symbol),
+    currency_(currency),
+    industry_(industry),
+    indices_(indices),
+    symbols_(symbols)
 {
     //country_ = datetime.toString("dd/MM/yyyy") + " - " + description;
+}
+
+Stock::Stock(const QString &id,
+             const QString &name,
+             const QString &symbol,
+             const QString &currency,
+             QDateTime& datetime,
+             double open,
+             double high,
+             double low,
+             double close,
+             qint64 volume,
+             QObject *parent):
+    QObject(parent),
+    id_(id),
+    name_(name),
+    symbol_(symbol),
+    currency_(currency),
+    datetime_(datetime),
+    open_(open),
+    high_(high),
+    low_(low),
+    close_(close),
+    volume_(volume)
+{
+
 }
 
 
