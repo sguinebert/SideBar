@@ -573,11 +573,13 @@ ApplicationWindow {
                     id: activityTab
 
                     ChartView {
+                        id:chart
                         objectName: "myChart"
 
                         title: "Line Chart"
                         anchors.fill: parent
                         antialiasing: true
+
                         Component.onCompleted: {
                             //studymodel.onRowCountChanged.connect(updateAxisRanges)
                         }
@@ -598,6 +600,7 @@ ApplicationWindow {
                            lineVisible: true
                            titleText: "Date"
                            titleFont.pointSize: 10
+                           //rubberBand: ChartView.RectangleRubberBand
                         }
 
                         ValueAxis {
@@ -622,21 +625,38 @@ ApplicationWindow {
                         //     XYPoint { x: 3.4; y: 3.0 }
                         //     XYPoint { x: 4.1; y: 3.3 }
                         // }
+                        function updateHighlightPoint(highlightX, highlightY) {
+                            scatterSeries.clear(); // Remove any existing points
+                            scatterSeries.append(highlightX, highlightY); // Add the new point
+                        }
                         LineSeries {
-                             name: "My Data"
-                             axisX: chartXAxis
-                             axisY: axisY
-                             VXYModelMapper  {
-                                 model: studymodel // This is your C++ model
-                                 xColumn: 12 // Assuming the first column is the X axis
-                                 yColumn: 16 // Assuming the second column is the Y axis
-                             }
-                         }
+                            id:lineSeries
+                            name: "My Data"
+                            axisX: chartXAxis
+                            axisY: axisY
+                            VXYModelMapper  {
+                                model: studymodel // This is your C++ model
+                                xColumn: 12 // Assuming the first column is the X axis
+                                yColumn: 16 // Assuming the second column is the Y axis
+                                // firstRow: 0   // Start of range for Line 1
+                                // rowCount: 5   // Number of rows for Line 1
+                            }
+                        }
+                        // Scatter series for highlighting a point
+                        ScatterSeries {
+                            id: scatterSeries
+                            axisX: chartXAxis
+                            axisY: axisY
+                            markerShape: ScatterSeries.MarkerShapeCircle // customize the marker shape
+                            markerSize: 8 // adjust the size of the marker
+                        }
 
                         Canvas {
                             id: projectionCanvas
+                            property var selectedPoint: Qt.point(1, 2)
                             anchors.fill: parent
                             onPaint: {
+                                return; // Disable the canvas for now
                                 var ctx = getContext("2d");
                                 ctx.clearRect(0, 0, width, height);
                                 ctx.beginPath();
@@ -644,28 +664,151 @@ ApplicationWindow {
                                 // Assume 'selectedPoint' is the point you're focusing on, mapped to pixel coordinates
                                 ctx.moveTo(selectedPoint.x, 0);
                                 ctx.lineTo(selectedPoint.x, height);
-                                ctx.moveTo(0, selectedPoint.y);
-                                ctx.lineTo(width, selectedPoint.y);
+                                ctx.moveTo(0, height - selectedPoint.y);
+                                ctx.lineTo(width, height - selectedPoint.y);
                                 ctx.stroke();
                             }
                         }
 
-                        MouseArea {
+                        PinchArea{
+                            id: pa
                             anchors.fill: parent
-                            hoverEnabled: true
-                            onPositionChanged: {
-                                var point = chart.mapToValue(mouseX, mouseY, lineSeries);
-                                // Assuming you have a function to find the nearest data point to 'point'
-                                selectedPoint = findNearestDataPoint(point, lineSeries);
-                                projectionCanvas.requestPaint();
-                                // Position and show the tooltip
-                                tooltip.x = mouseX;
-                                tooltip.y = mouseY - tooltip.height - 10; // Adjust as needed
-                                tooltip.text = "X: " + selectedPoint.x + ", Y: " + selectedPoint.y;
-                                tooltip.visible = true;
+                            property real currentPinchScaleX: 1
+                            property real currentPinchScaleY: 1
+                            property real pinchStartX : 0
+                            property real pinchStartY : 0
+
+                            onPinchStarted: {
+                                // Pinching has started. Record the initial center of the pinch
+                                // so relative motions can be reversed in the pinchUpdated signal
+                                // handler
+                                pinchStartX = pinch.center.x;
+                                pinchStartY = pinch.center.y;
                             }
-                            onExited: {
-                                tooltip.visible = false;
+
+                            onPinchUpdated: {
+                                chart.zoomReset();
+
+                                // Reverse pinch center motion direction
+                                var center_x = pinchStartX + (pinchStartX - pinch.center.x);
+                                var center_y = pinchStartY + (pinchStartY - pinch.center.y);
+
+                                // Compound pinch.scale with prior pinch scale level and apply
+                                // scale in the absolute direction of the pinch gesture
+                                var scaleX = currentPinchScaleX * (1 + (pinch.scale - 1) * Math.abs(Math.cos(pinch.angle * Math.PI / 180)));
+                                var scaleY = currentPinchScaleY * (1 + (pinch.scale - 1) * Math.abs(Math.sin(pinch.angle * Math.PI / 180)));
+
+                                // Apply scale to zoom levels according to pinch angle
+                                var width_zoom = height / scaleX;
+                                var height_zoom = width / scaleY;
+
+                                var r = Qt.rect(center_x - width_zoom / 2, center_y - height_zoom / 2, width_zoom, height_zoom);
+                                chart.zoomIn(r);
+                            }
+
+                            onPinchFinished: {
+                                // Pinch finished. Record compounded pinch scale.
+                                currentPinchScaleX = currentPinchScaleX * (1 + (pinch.scale - 1) * Math.abs(Math.cos(pinch.angle * Math.PI / 180)));
+                                currentPinchScaleY = currentPinchScaleY * (1 + (pinch.scale - 1) * Math.abs(Math.sin(pinch.angle * Math.PI / 180)));
+                            }
+                            MouseArea {
+                                id:mousearea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                drag.target: dragTarget // dragTarget is the id of the virtual item (the goal is not to really drag it, just use it to move chart)
+                                drag.axis: Drag.XAndYAxis
+                                //property var selectedPoint: undefined
+                                function findNearestDataPoint(point, series) {
+                                    var minDistance = Number.MAX_VALUE;
+                                    var nearestPoint = null;
+                                    for (var i = 0; i < series.count; ++i) {
+                                        var dataPoint = series.at(i); // Assuming `at` method exists to get the data point at index `i`
+                                        var distance = Math.sqrt(Math.pow(dataPoint.x - point.x, 2) + Math.pow(dataPoint.y - point.y, 2));
+                                        if (distance < minDistance) {
+                                            minDistance = distance;
+                                            nearestPoint = dataPoint;
+                                        }
+                                    }
+                                    return nearestPoint;
+                                }
+                                onPositionChanged: (mouse) => {
+                                                       //console.log( "onPositionChanged: ", mouse.x, mouse.y );
+                                                       var point = chart.mapToValue(mouse, lineSeries);
+                                                       // Assuming you have a function to find the nearest data point to 'point'
+                                                       projectionCanvas.selectedPoint = findNearestDataPoint(point, lineSeries);
+                                                       chart.updateHighlightPoint(projectionCanvas.selectedPoint.x, projectionCanvas.selectedPoint.y);
+                                                       //console.log("nearest points : ", projectionCanvas.selectedPoint)
+                                                       projectionCanvas.requestPaint();
+                                                       // Position and show the tooltip
+                                                       tooltip.x = mouse.x;
+                                                       tooltip.y = mouse.y - tooltip.height - 10; // Adjust as needed
+                                                       tooltip.text = "X: " + projectionCanvas.selectedPoint.x + ", Y: " + projectionCanvas.selectedPoint.y;
+                                                       tooltip.visible = true;
+
+                                                       chart.updateHighlightPoint(projectionCanvas.selectedPoint.x, projectionCanvas.selectedPoint.y);
+
+                                                   }
+                                onWheel: (wheel)=> {
+                                             //chart.zoomReset();
+                                    let gamma = 0.5;
+                                    let cd = (wheel.angleDelta.y / 120);
+
+
+                                    //chart.zoom(cd)
+                                    let scale = 1.0 - cd * 0.2;
+                                 if((wheel.x <= chart.plotArea.x + chart.plotArea.width) && (wheel.x >= chart.plotArea.x) && // zoom
+                                    (wheel.y <= chart.plotArea.y + chart.plotArea.height) && (wheel.y >= chart.plotArea.y)){
+                                     if(wheel.angleDelta.y >= 0) { // wheel
+                                         chart.zoomIn(Qt.rect(wheel.x, wheel.y, (chart.plotArea.width*scale), (chart.plotArea.height*scale)));
+                                         chart.scrollLeft(wheel.x - chart.plotArea.x);
+                                         chart.scrollDown(- wheel.y + chart.plotArea.y);
+                                     }
+                                     else { // wheel
+                                         //console.log(wheel.y, chart.plotArea.y)
+                                         chart.zoomIn(Qt.rect(wheel.x, wheel.y, (chart.plotArea.width*scale), (chart.plotArea.height*scale)));
+                                         chart.scrollLeft(wheel.x - chart.plotArea.x);
+                                         chart.scrollDown(- wheel.y + chart.plotArea.y);
+                                     }
+                                 }
+                                    //chart.zoomIn(rect)
+                                    if (wheel.modifiers & Qt.ControlModifier){
+                                        if (wheel.angleDelta.y > 0)
+                                        {
+                                            //chart.scrollRight(5)
+                                        }
+                                        else
+                                        {
+                                            //chart.scrollLeft(5)
+                                            //chart.zoomIn(Qt.rect(p1.x, p1.y-h, w, h))
+
+                                        }
+                                        wheel.accepted=true
+                                    }
+                                    else{
+                                        wheel.accepted=false
+                                    }
+                                }
+                                onExited: {
+                                    tooltip.visible = false;
+                                }
+                            }
+                            Item {
+                                // A virtual item to receive drag signals from the MouseArea.
+                                // When x or y properties are changed by the MouseArea's
+                                // drag signals, the ChartView is scrolled accordingly.
+                                id: dragTarget
+
+                                property real oldX : x
+                                property real oldY : y
+
+                                onXChanged: {
+                                    chart.scrollLeft( x - oldX );
+                                    oldX = x;
+                                }
+                                onYChanged: {
+                                    chart.scrollUp( y - oldY );
+                                    oldY = y;
+                                }
                             }
                         }
 
