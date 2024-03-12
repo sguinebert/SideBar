@@ -5,7 +5,7 @@
 #include <QQmlContext>
 
 //chart related
-#include <QChart>
+#include <QChartView>
 #include <QLineSeries>
 #include <QVXYModelMapper>
 #include <QCandlestickSeries>
@@ -85,9 +85,11 @@ int main(int argc, char *argv[]) {
 
     //now add to chart
     QObject *rootObject = engine.rootObjects().first();
-    auto myChart = rootObject->findChild<QChart*>("myChart");
+    auto myChart = rootObject->findChild<QObject*>("myChart");
     if (myChart) {
-        myChart->addSeries(&lineseries);
+        // auto chart = static_cast<QChartView*>(myChart);
+        // chart->chart()->addSeries(&lineseries);
+        qDebug() << "myChart found";
     }
 
     engine.rootContext()->setContextProperty("studymodel", &tablemodel_);

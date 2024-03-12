@@ -578,16 +578,103 @@ ApplicationWindow {
                         title: "Line Chart"
                         anchors.fill: parent
                         antialiasing: true
+                        Component.onCompleted: {
+                            //studymodel.onRowCountChanged.connect(updateAxisRanges)
+                        }
+                        ValueAxis {
+                            id: axisX
+                            min: 50
+                            max: 500
+                            tickCount: 5
+                        }
+                        DateTimeAxis {
+                           id: chartXAxis
+                           min: new Date(2024, 1, 1, 0, 0, 0, 0) // 00:00
+                           max: new Date(2024, 03, 12, 5, 0, 0, 0) // 05:00
+                           format: "dd/MM"
+                           tickCount: 6
+                           labelsColor: "white"
+                           gridVisible: false
+                           lineVisible: true
+                           titleText: "Date"
+                           titleFont.pointSize: 10
+                        }
 
+                        ValueAxis {
+                            id: axisY
+                            min: 120
+                            max: 250
+                        }
+
+                        // function updateAxisRanges() {
+                        //     xAxis.min = /* Your logic to find min X */;
+                        //     xAxis.max = /* Your logic to find max X */;
+                        //     yAxis.min = /* Your logic to find min Y */;
+                        //     yAxis.max = /* Your logic to find max Y */;
+                        // }
+                        // LineSeries {
+                        //     name: "Line"
+                        //     XYPoint { x: 0; y: 0 }
+                        //     XYPoint { x: 1.1; y: 2.1 }
+                        //     XYPoint { x: 1.9; y: 3.3 }
+                        //     XYPoint { x: 2.1; y: 2.1 }
+                        //     XYPoint { x: 2.9; y: 4.9 }
+                        //     XYPoint { x: 3.4; y: 3.0 }
+                        //     XYPoint { x: 4.1; y: 3.3 }
+                        // }
                         LineSeries {
-                            name: "Line"
-                            XYPoint { x: 0; y: 0 }
-                            XYPoint { x: 1.1; y: 2.1 }
-                            XYPoint { x: 1.9; y: 3.3 }
-                            XYPoint { x: 2.1; y: 2.1 }
-                            XYPoint { x: 2.9; y: 4.9 }
-                            XYPoint { x: 3.4; y: 3.0 }
-                            XYPoint { x: 4.1; y: 3.3 }
+                             name: "My Data"
+                             axisX: chartXAxis
+                             axisY: axisY
+                             VXYModelMapper  {
+                                 model: studymodel // This is your C++ model
+                                 xColumn: 12 // Assuming the first column is the X axis
+                                 yColumn: 16 // Assuming the second column is the Y axis
+                             }
+                         }
+
+                        Canvas {
+                            id: projectionCanvas
+                            anchors.fill: parent
+                            onPaint: {
+                                var ctx = getContext("2d");
+                                ctx.clearRect(0, 0, width, height);
+                                ctx.beginPath();
+                                ctx.strokeStyle = "#888";
+                                // Assume 'selectedPoint' is the point you're focusing on, mapped to pixel coordinates
+                                ctx.moveTo(selectedPoint.x, 0);
+                                ctx.lineTo(selectedPoint.x, height);
+                                ctx.moveTo(0, selectedPoint.y);
+                                ctx.lineTo(width, selectedPoint.y);
+                                ctx.stroke();
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onPositionChanged: {
+                                var point = chart.mapToValue(mouseX, mouseY, lineSeries);
+                                // Assuming you have a function to find the nearest data point to 'point'
+                                selectedPoint = findNearestDataPoint(point, lineSeries);
+                                projectionCanvas.requestPaint();
+                                // Position and show the tooltip
+                                tooltip.x = mouseX;
+                                tooltip.y = mouseY - tooltip.height - 10; // Adjust as needed
+                                tooltip.text = "X: " + selectedPoint.x + ", Y: " + selectedPoint.y;
+                                tooltip.visible = true;
+                            }
+                            onExited: {
+                                tooltip.visible = false;
+                            }
+                        }
+
+                        ToolTip {
+                            id: tooltip
+                            visible: false
+                            delay: 0
+                            timeout: 1000
+                            // Additional styling here...
                         }
                     }
                 }

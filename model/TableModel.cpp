@@ -6,9 +6,10 @@
 
 #include <iostream>
 
-
+#include "magic_enum/magic_enum.hpp"
 
 QString header2key(TableModel::StockRoles role) {
+
     // switch (role) {
     // case TableModel::PatientName:
     //     return "PatientName";
@@ -65,14 +66,14 @@ TableModel::TableModel(DataProvider* dataprovider, QObject* parent) :
 
     QJsonObject headtemplate;
     if(m_dataprovider) {
-        headtemplate["Name"] = QJsonArray({ name, 0, 200, Header::Text, true});
-        headtemplate["Symbol"] = QJsonArray({ symbol, 1, 200, Header::Text, true});
-        headtemplate["Datetime"] = QJsonArray({ datetime, 2, 200, Header::DateTime, true});
-        headtemplate["Open"] = QJsonArray({ open, 3, 200, Header::Text, true});
-        headtemplate["High"] = QJsonArray({ high, 4, 200, Header::Text, true});
-        headtemplate["Low"] = QJsonArray({ low, 5, 200, Header::Text, true});
-        headtemplate["Close"] = QJsonArray({ close, 6, 200, Header::Text, true});
-        headtemplate["Volume"] = QJsonArray({ volume, 7, 200, Header::Text, true});
+        headtemplate["name"] = QJsonArray({ name, 0, 200, Header::Text, true});
+        headtemplate["symbol"] = QJsonArray({ symbol, 1, 200, Header::Text, true});
+        headtemplate["datetime"] = QJsonArray({ datetime, 2, 200, Header::DateTime, true});
+        headtemplate["open"] = QJsonArray({ open, 3, 200, Header::Text, true});
+        headtemplate["high"] = QJsonArray({ high, 4, 200, Header::Text, true});
+        headtemplate["low"] = QJsonArray({ low, 5, 200, Header::Text, true});
+        headtemplate["close"] = QJsonArray({ close, 6, 200, Header::Text, true});
+        headtemplate["volume"] = QJsonArray({ volume, 7, 200, Header::Text, true});
         // headtemplate["StudyDescription"] = QJsonArray({StudyDescription, 3, 200, 0, true});
         // headtemplate["StationName"] = QJsonArray({StationName, 7, 200, 0, true});
 
@@ -100,23 +101,22 @@ TableModel::TableModel(DataProvider* dataprovider, QObject* parent) :
 //    {"Visibility", true},
 //    {"Type", 0},
 //    });
-    // int hsize = ReferringPhysicianName - PatientName;
 
-    for(auto it = headtemplate.begin(); it != headtemplate.end(); it++) {
-        auto key = it.key();
-        auto value = it.value().toArray();
-        // auto role = (TableModel::StockRoles)(PatientName + i);
-        // auto key = header2key(role);
-        //auto k = key.toString();
 
-        //const auto& value = headtemplate.value(key).toArray();
+    constexpr auto count = magic_enum::enum_count<StockRoles>();
+    for(int i(0); i < count; i++) {
+        auto cc = magic_enum::enum_name(static_cast<StockRoles>(id + i));
+        QString key = QString::fromUtf8(cc.data(), cc.size());
+        //auto key = names[i];
+
+        const auto& value = headtemplate.value(key.data()).toArray();
         //auto title = header2string(role);
         auto title = key;
 
         if(!value.isEmpty())
             m_headers->addHeader(title, //title
                                  key,
-                                 0, //original index
+                                 i, //original index
                                  value[1].toInt(), //position
                                  value[2].toInt(), //width
                                  (Header::Type)value[3].toInt(), //type
@@ -124,7 +124,7 @@ TableModel::TableModel(DataProvider* dataprovider, QObject* parent) :
         else
             m_headers->addHeader(title, //title
                                  key,
-                                 0, //original index
+                                 i, //original index
                                  -1, //position
                                  200, //width
                                  Header::Type::Text, //type
@@ -174,7 +174,7 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid() || index.row() >= stocks_.size())
         return QVariant();
-
+    qDebug() << "role : " << role << " - " << " index : " << index.row() << " - " << index.column();
     const Stock* stock = stocks_[index.row()];
     switch (role)
     {
