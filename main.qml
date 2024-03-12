@@ -581,7 +581,11 @@ ApplicationWindow {
                         antialiasing: true
 
                         Component.onCompleted: {
-                            //studymodel.onRowCountChanged.connect(updateAxisRanges)
+                            studymodel.onNewData.connect(updateAxisRanges)
+                        }
+                        Connections {
+                            target: studymodel
+                            onNewData: updateAxisRanges()
                         }
                         ValueAxis {
                             id: axisX
@@ -593,7 +597,7 @@ ApplicationWindow {
                            id: chartXAxis
                            min: new Date(2024, 1, 1, 0, 0, 0, 0) // 00:00
                            max: new Date(2024, 03, 12, 5, 0, 0, 0) // 05:00
-                           format: "dd/MM"
+                           format: "dd.MM.yy"
                            tickCount: 6
                            labelsColor: "white"
                            gridVisible: false
@@ -609,12 +613,13 @@ ApplicationWindow {
                             max: 250
                         }
 
-                        // function updateAxisRanges() {
-                        //     xAxis.min = /* Your logic to find min X */;
-                        //     xAxis.max = /* Your logic to find max X */;
-                        //     yAxis.min = /* Your logic to find min Y */;
-                        //     yAxis.max = /* Your logic to find max Y */;
-                        // }
+                        function updateAxisRanges() {
+                            console.log("updateAxisRanges")
+                            chartXAxis.min = studymodel.getDateMin() /* Your logic to find min X */;
+                            chartXAxis.max = studymodel.getDateMax()/* Your logic to find max X */;
+                            axisY.min = studymodel.getMinVal()/* Your logic to find min Y */;
+                            axisY.max = studymodel.getMaxVal() /* Your logic to find max Y */;
+                        }
                         // LineSeries {
                         //     name: "Line"
                         //     XYPoint { x: 0; y: 0 }
@@ -656,6 +661,8 @@ ApplicationWindow {
                             property var selectedPoint: Qt.point(1, 2)
                             anchors.fill: parent
                             onPaint: {
+                                //chart.updateAxisRanges()
+                                //console.log("test : ", chart.width, chart.height, chart.plotArea)
                                 return; // Disable the canvas for now
                                 var ctx = getContext("2d");
                                 ctx.clearRect(0, 0, width, height);
@@ -756,20 +763,34 @@ ApplicationWindow {
 
                                     //chart.zoom(cd)
                                     let scale = 1.0 - cd * 0.2;
-                                 if((wheel.x <= chart.plotArea.x + chart.plotArea.width) && (wheel.x >= chart.plotArea.x) && // zoom
-                                    (wheel.y <= chart.plotArea.y + chart.plotArea.height) && (wheel.y >= chart.plotArea.y)){
-                                     if(wheel.angleDelta.y >= 0) { // wheel
-                                         chart.zoomIn(Qt.rect(wheel.x, wheel.y, (chart.plotArea.width*scale), (chart.plotArea.height*scale)));
-                                         chart.scrollLeft(wheel.x - chart.plotArea.x);
-                                         chart.scrollDown(- wheel.y + chart.plotArea.y);
+                                     if((wheel.x <= chart.plotArea.x + chart.plotArea.width) && (wheel.x >= chart.plotArea.x) && // zoom
+                                        (wheel.y <= chart.plotArea.y + chart.plotArea.height) && (wheel.y >= chart.plotArea.y)){
+                                         if(wheel.angleDelta.y >= 0) { // wheel
+                                             chart.zoomIn(Qt.rect(wheel.x, wheel.y, (chart.plotArea.width*scale), (chart.plotArea.height*scale)));
+                                             chart.scrollLeft(wheel.x - chart.plotArea.x);
+                                             chart.scrollDown(- wheel.y + chart.plotArea.y);
+                                         }
+                                         else { // wheel
+                                             //console.log(wheel.y, chart.plotArea.y)
+                                             chart.zoomIn(Qt.rect(wheel.x, wheel.y, (chart.plotArea.width*scale), (chart.plotArea.height*scale)));
+                                             chart.scrollLeft(wheel.x - chart.plotArea.x);
+                                             chart.scrollDown(- wheel.y + chart.plotArea.y);
+                                         }
                                      }
-                                     else { // wheel
+                                     else if((wheel.x <= chart.plotArea.x) /*&& (wheel.x >= chart.plotArea.x)*/) // scroll
+                                     {
                                          //console.log(wheel.y, chart.plotArea.y)
-                                         chart.zoomIn(Qt.rect(wheel.x, wheel.y, (chart.plotArea.width*scale), (chart.plotArea.height*scale)));
-                                         chart.scrollLeft(wheel.x - chart.plotArea.x);
+                                         chart.zoomIn(Qt.rect(0, wheel.y, (chart.plotArea.width), (chart.plotArea.height*scale)));
+                                         //chart.scrollLeft(wheel.x - chart.plotArea.x);
                                          chart.scrollDown(- wheel.y + chart.plotArea.y);
                                      }
-                                 }
+                                     else if((wheel.y >= chart.plotArea.y) /*&& (wheel.x >= chart.plotArea.x)*/) // scroll
+                                     {
+                                         //console.log(wheel.y, chart.plotArea.y)
+                                         chart.zoomIn(Qt.rect(0, 0, (chart.plotArea.width*scale), (chart.plotArea.height)));
+                                         //chart.scrollLeft(wheel.x - chart.plotArea.x);
+                                         //chart.scrollDown(- wheel.y + chart.plotArea.y);
+                                     }
                                     //chart.zoomIn(rect)
                                     if (wheel.modifiers & Qt.ControlModifier){
                                         if (wheel.angleDelta.y > 0)

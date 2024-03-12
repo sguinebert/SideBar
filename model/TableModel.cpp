@@ -174,7 +174,7 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid() || index.row() >= stocks_.size())
         return QVariant();
-    qDebug() << "role : " << role << " - " << " index : " << index.row() << " - " << index.column();
+    //qDebug() << "role : " << role << " - " << " index : " << index.row() << " - " << index.column();
     const Stock* stock = stocks_[index.row()];
     switch (role)
     {
@@ -413,11 +413,11 @@ void TableModel::addFilter(QJsonObject json)
 
 
 }
-void TableModel::addStudy(Stock* study, std::string uuid)
+void TableModel::addStudy(Stock* stock, std::string uuid)
 {
     if (uuids_.find(uuid) == uuids_.end()) {
         beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        stocks_ << study;
+        stocks_ << stock;
         endInsertRows();
 
         uuids_.emplace(uuid);

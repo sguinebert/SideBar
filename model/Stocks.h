@@ -53,7 +53,7 @@ public:
         auto obj = symbols[0].toObject();
         auto currency = obj["currency"].toString();
         auto yahoo = obj["yahoo"].toString();
-        m_dataprovider->getStockHistory(name, yahoo, QDateTime::currentDateTime().addDays(-20));
+        m_dataprovider->getStockHistory(name, yahoo, QDateTime::currentDateTime().addDays(-1000));
     }
 
 protected:

@@ -153,8 +153,14 @@ public:
     HeaderList* headers() const { return m_headers; }
     HeaderListProxy* headerproxy() const { return m_headerproxy; }
     FiltersList* filters() const { return m_filters; }
+    Q_INVOKABLE double getMinVal() const { return m_valmin;}
+    Q_INVOKABLE double getMaxVal() const { return m_valmax;}
+
+    Q_INVOKABLE QDateTime getDateMin() const { return m_datemin;}
+    Q_INVOKABLE QDateTime getDateMax() const { return m_datemax;}
 
 signals:
+    void onNewData();
     void loadStudy(Stock *study);
 private:
     void addStudy(Stock* study, std::string uuid);
@@ -188,12 +194,19 @@ private:
 
                     auto dtsec = timestamp[i].toInt();
                     auto datetime = QDateTime::fromSecsSinceEpoch(dtsec);
+                    if(datetime < m_datemin)
+                        m_datemin = datetime;
 
                     auto openf = open[i].toDouble();
                     auto highf = high[i].toDouble();
                     auto lowf = low[i].toDouble();
                     auto closef = close[i].toDouble();
                     auto volumef = volume[i].toInteger();
+
+                    if(closef < m_valmin)
+                        m_valmin = closef;
+                    if(closef > m_valmax)
+                        m_valmax = closef;
 
                     qDebug() << "OHLCV : " << openf << " - " << highf << " - " << lowf << " - " << closef << " - " << volumef;
                     auto stock = new Stock(symbol, name, symbol, currency, datetime, openf, highf, lowf, closef, volumef);
@@ -206,7 +219,7 @@ private:
             }
             //auto adjclose = obj["adjclose"].toArray();
         }
-
+        emit onNewData();
     }
     QString header2string(TableModel::StockRoles role) {
         // switch (role) {
@@ -247,6 +260,8 @@ private:
         // }
         return "";
     }
+
+
 private:
     QList<Stock*> stocks_;
     std::set<std::string> uuids_;
@@ -261,4 +276,7 @@ private:
     QLocale m_currentLocale;
 
     DataProvider* m_dataprovider = nullptr;
+
+    QDateTime m_datemin = QDateTime::currentDateTime(), m_datemax = QDateTime::currentDateTime();
+    double m_valmin = 100000000000, m_valmax = 0;
 };
