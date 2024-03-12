@@ -343,7 +343,7 @@ ApplicationWindow {
                         Component {
                             id: listDelegate
                             Rectangle {
-                                width: parent.width
+                                width: listView.width
                                 //width: 250;
                                 height: 50
                                 radius: 5
@@ -379,7 +379,7 @@ ApplicationWindow {
                                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                                         }
                                         Text { text: symbol
-                                            font.pointSize: 5
+                                            //font.pointSize: 5
                                             font.pixelSize: 8
                                         }
                                     }
