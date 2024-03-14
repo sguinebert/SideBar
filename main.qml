@@ -599,7 +599,7 @@ ApplicationWindow {
                            max: new Date(2024, 03, 12, 5, 0, 0, 0) // 05:00
                            format: "dd.MM.yy"
                            tickCount: 6
-                           labelsColor: "white"
+                           //labelsColor: "white"
                            gridVisible: false
                            lineVisible: true
                            titleText: "Date"
@@ -611,6 +611,7 @@ ApplicationWindow {
                             id: axisY
                             min: 120
                             max: 250
+                            //tickType : ValueAxis.TicksDynamic
                         }
 
                         function updateAxisRanges() {
@@ -647,6 +648,7 @@ ApplicationWindow {
                         // Scatter series for highlighting a point
                         ScatterSeries {
                             id: scatterSeries
+
                             axisX: chartXAxis
                             axisY: axisY
                             //useOpenGL: true
