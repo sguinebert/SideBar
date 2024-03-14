@@ -13,6 +13,7 @@
 #include "model/FiltersList.h"
 #include "model/Stock.h"
 #include "model/DataProvider.h"
+#include "model/StocksProxyModel.h"
 // id SERIAL PRIMARY KEY,
 //     abbrev VARCHAR(255),
 //     name VARCHAR(255),
@@ -233,18 +234,18 @@ private:
                     //qDebug() << "OHLCV : " << openf << " - " << highf << " - " << lowf << " - " << closef << " - " << volumef;
                     auto stock = new Stock(symbol, name, symbol, currency, datetime, openf, highf, lowf, closef, volumef);
 
-                    if(auto it = m_xymaps.find(symbol.toStdString()); it != m_xymaps.end()) { // found: add new values
-                        auto mapper = it->second;
-                        auto lastrow = mapper->firstRow() + mapper->rowCount();
-                        beginInsertRows(QModelIndex(), lastrow + i, lastrow + i);
-                        stocks_.insert(lastrow + i, stock);
-                        endInsertRows();
-                    }
-                    else { //new stock
+                    // if(auto it = m_xymaps.find(symbol.toStdString()); it != m_xymaps.end()) { // found: add new values
+                    //     auto mapper = it->second;
+                    //     auto lastrow = mapper->firstRow() + mapper->rowCount();
+                    //     beginInsertRows(QModelIndex(), lastrow + i, lastrow + i);
+                    //     stocks_.insert(lastrow + i, stock);
+                    //     endInsertRows();
+                    // }
+                    // else { //new stock
                         beginInsertRows(QModelIndex(), rowCount(), rowCount());
                         stocks_ << stock;
                         endInsertRows();
-                    }
+                    // }
                 }
 
                 if(auto it = m_xymaps.find(symbol.toStdString()); it != m_xymaps.end()) { // found: add new values
@@ -258,7 +259,7 @@ private:
                     }
                 }
                 else {
-                    addSeriesToChart(symbol.toStdString(), rowCount() - open.size(), open.size());
+                    addSeriesToChart(symbol, rowCount() - open.size(), open.size());
                 }
 
             }
@@ -267,7 +268,41 @@ private:
         setCount(0);
         //emit onNewData();
     }
-    void addSeriesToChart(std::string symbol, int firstRow, int rowCount);
+    void addSeriesToChart(QString& symbol, int firstRow, int rowCount) {
+
+        // Now, trigger the QML function to add this series to the chart
+        QVariant returnedValue;
+        //QVariant var = QVariant::fromValue(symbol);
+        //QString qString = QString::fromStdString(symbol);
+        QMetaObject::invokeMethod(m_chartView, "addSeries", Q_RETURN_ARG(QVariant, returnedValue), Q_ARG(QVariant, symbol));
+
+        QLineSeries* lineSeries = nullptr;
+        if (returnedValue.canConvert<QLineSeries*>()) {
+            qDebug() << "Returned value is a QLineSeries*";
+            lineSeries = qvariant_cast<QLineSeries*>(returnedValue);
+            //lineSeries->setUseOpenGL(true);
+            // Now you can use 'lineSeries' as needed
+            //auto* series = new QLineSeries(m_chartView);
+            auto* mapper = new QVXYModelMapper(m_chartView);
+
+            m_xymaps[symbol.toStdString()] = mapper;
+
+            auto proxy = new StocksProxyModel(symbol, this, lineSeries);
+
+            //connect(this, &TableModel::dataChanged, proxy, &StocksProxyModel::dataChanged);
+
+            mapper->setModel(proxy); // todo : use a proxy model to filter the rows or range ?
+            mapper->setXColumn(m_xColumn);
+            mapper->setYColumn(m_yColumn);
+            mapper->setSeries(lineSeries);
+
+            mapper->setFirstRow(firstRow);
+            mapper->setRowCount(rowCount);
+
+            proxy->invalidate();
+            //emit mapper->rowCountChanged();
+        }
+    }
     // void updateRanges() {
 
     // }

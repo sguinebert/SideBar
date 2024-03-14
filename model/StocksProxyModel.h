@@ -4,13 +4,25 @@
 #include <QSortFilterProxyModel>
 #include <QDateTime>
 
-#include "model/TableModel.h"
+
+class TableModel;
 
 class StocksProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    StocksProxyModel(TableModel* tablemodel, QObject *parent = 0): QSortFilterProxyModel(parent), m_tablemodel(tablemodel)  {}
+    StocksProxyModel(const QString& symbol, TableModel* tablemodel, QObject *parent = 0):
+        QSortFilterProxyModel(parent),
+        m_tablemodel(tablemodel),
+        m_symbol(symbol)
+    {
+        // connect(this, &QSortFilterProxyModel::rowsInserted, this, &StocksProxyModel::);
+        // connect(this, &QSortFilterProxyModel::rowsRemoved, this, &StocksProxyModel::countChanged);
+        setFilterCaseSensitivity(Qt::CaseInsensitive);
+        setSortCaseSensitivity(Qt::CaseInsensitive);
+        setDynamicSortFilter(true);
+        sort(0, Qt::AscendingOrder);
+    }
 
     void setIndices(QStringList& indices) {
         m_indices = indices;
@@ -28,38 +40,20 @@ protected:
         return QHash<int, QByteArray>();
     }
 
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override
-    {
-        if(m_symbol.isEmpty())
-            return true;
+    QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override {
+        qDebug() << "StocksProxyModel::data()";
+        if (!proxyIndex.isValid())
+            return QVariant();
 
-        QModelIndex sourceIndex = sourceModel()->index(sourceRow, 0, sourceParent);
-        auto visible = m_symbol == sourceModel()->data(sourceIndex, 264);// sourceModel()->data(sourceIndex, FilterList::Visibility);
-        return visible;
+
+        QModelIndex sourceIndex = mapToSource(proxyIndex);
+        //QModelIndex sourceIndex = mapToSource(this->index(proxyIndex.row(), mapToSourceColumn(proxyIndex.column())));
+        return sourceModel()->data(sourceIndex, role);
     }
 
-    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
-    {
-        // Obtenez les valeurs pour la colonne "symbol" de chaque élément
-        auto leftSymbol = sourceModel()->data(sourceModel()->index(left.row(), 0, left.parent())).toString();
-        auto rightSymbol = sourceModel()->data(sourceModel()->index(right.row(), 0, right.parent())).toString();
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
-        // Compare d'abord les symboles
-        if (leftSymbol < rightSymbol)
-            return true;
-        if (leftSymbol > rightSymbol)
-            return false;
-
-        // Si les symboles sont égaux, compare les dates
-        QVariant leftDateTime = sourceModel()->data(sourceModel()->index(left.row(), 12, left.parent()));
-        QVariant rightDateTime = sourceModel()->data(sourceModel()->index(right.row(), 12, right.parent()));
-
-        QDateTime leftDate = leftDateTime.toDateTime();
-        QDateTime rightDate = rightDateTime.toDateTime();
-
-        return leftDate < rightDate;
-    }
-
+    //bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
 private:
     TableModel* m_tablemodel;
