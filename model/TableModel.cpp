@@ -425,6 +425,35 @@ void TableModel::addStudy(Stock* stock, std::string uuid)
     // }
     //studyMap_.emplace(uuid, study);
 }
+
+void TableModel::addSeriesToChart(std::string symbol, int firstRow, int rowCount) {
+
+    // Now, trigger the QML function to add this series to the chart
+    QVariant returnedValue;
+    //QVariant var = QVariant::fromValue(symbol);
+    QString qString = QString::fromStdString(symbol);
+    QMetaObject::invokeMethod(m_chartView, "addSeries", Q_RETURN_ARG(QVariant, returnedValue), Q_ARG(QVariant, qString));
+
+    QLineSeries* lineSeries = nullptr;
+    if (returnedValue.canConvert<QLineSeries*>()) {
+        qDebug() << "Returned value is a QLineSeries*";
+        lineSeries = qvariant_cast<QLineSeries*>(returnedValue);
+        //lineSeries->setUseOpenGL(true);
+        // Now you can use 'lineSeries' as needed
+        //auto* series = new QLineSeries(m_chartView);
+        auto* mapper = new QVXYModelMapper(m_chartView);
+
+        m_xymaps[symbol] = mapper;
+
+        mapper->setModel(this); // todo : use a proxy model to filter the rows or range ?
+        mapper->setXColumn(m_xColumn);
+        mapper->setYColumn(m_yColumn);
+        mapper->setSeries(lineSeries);
+
+        mapper->setFirstRow(firstRow);
+        mapper->setRowCount(rowCount);
+    }
+}
 void TableModel::addStudy(QJsonObject json)
 {
     auto study = new Stock(json, this);

@@ -239,7 +239,6 @@ private:
                         beginInsertRows(QModelIndex(), lastrow + i, lastrow + i);
                         stocks_.insert(lastrow + i, stock);
                         endInsertRows();
-                        mapper->setRowCount(mapper->rowCount() + open.size());
                     }
                     else { //new stock
                         beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -251,6 +250,7 @@ private:
                 if(auto it = m_xymaps.find(symbol.toStdString()); it != m_xymaps.end()) { // found: add new values
                     auto mapper = it->second;
                     auto numadded = open.size();
+                    mapper->setRowCount(mapper->rowCount() + open.size());
 
                     while(it != m_xymaps.end()) {
                         it->second->setRowCount(it->second->rowCount() + numadded);
@@ -267,34 +267,7 @@ private:
         setCount(0);
         //emit onNewData();
     }
-    void addSeriesToChart(std::string symbol, int firstRow, int rowCount) {
-
-        // Now, trigger the QML function to add this series to the chart
-        QVariant returnedValue;
-        //QVariant var = QVariant::fromValue(symbol);
-        QString qString = QString::fromStdString(symbol);
-        QMetaObject::invokeMethod(m_chartView, "addSeries", Q_RETURN_ARG(QVariant, returnedValue), Q_ARG(QVariant, qString));
-
-        QLineSeries* lineSeries = nullptr;
-        if (returnedValue.canConvert<QLineSeries*>()) {
-            qDebug() << "Returned value is a QLineSeries*";
-            lineSeries = qvariant_cast<QLineSeries*>(returnedValue);
-            //lineSeries->setUseOpenGL(true);
-            // Now you can use 'lineSeries' as needed
-            //auto* series = new QLineSeries(m_chartView);
-            auto* mapper = new QVXYModelMapper(m_chartView);
-
-            m_xymaps[symbol] = mapper;
-
-            mapper->setModel(this); // todo : use a proxy model to filter the rows or range ?
-            mapper->setXColumn(m_xColumn);
-            mapper->setYColumn(m_yColumn);
-            mapper->setSeries(lineSeries);
-
-            mapper->setFirstRow(firstRow);
-            mapper->setRowCount(rowCount);
-        }
-    }
+    void addSeriesToChart(std::string symbol, int firstRow, int rowCount);
     // void updateRanges() {
 
     // }

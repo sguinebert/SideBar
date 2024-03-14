@@ -180,6 +180,28 @@ protected:
         return sourceModel()->data(sourceIndex, role);
     }
 
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
+    {
+        // Obtenez les valeurs pour la colonne "symbol" de chaque élément
+        auto leftSymbol = sourceModel()->data(sourceModel()->index(left.row(), 0, left.parent())).toString();
+        auto rightSymbol = sourceModel()->data(sourceModel()->index(right.row(), 0, right.parent())).toString();
+
+        // Compare d'abord les symboles
+        if (leftSymbol < rightSymbol)
+            return true;
+        if (leftSymbol > rightSymbol)
+            return false;
+
+        // Si les symboles sont égaux, compare les dates
+        QVariant leftDateTime = sourceModel()->data(sourceModel()->index(left.row(), 12, left.parent()));
+        QVariant rightDateTime = sourceModel()->data(sourceModel()->index(right.row(), 12, right.parent()));
+
+        QDateTime leftDate = leftDateTime.toDateTime();
+        QDateTime rightDate = rightDateTime.toDateTime();
+
+        return leftDate < rightDate;
+    }
+
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override {
         return sourceModel()->index(proxyIndex.row(), m_headers->mapToSourceColumn(proxyIndex.column()));
     }

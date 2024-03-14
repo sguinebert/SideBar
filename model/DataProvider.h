@@ -239,7 +239,7 @@ public:
                          QDateTime endTime = QDateTime::currentDateTime(),
                          QString interval = "1d")
     {
-        symbol = "AAPL"; // Replace with desired stock symbol
+        //symbol = "AAPL"; // Replace with desired stock symbol
         // Handle time zone offset if necessary (consider UTC)
         // QTimeZone timeZone = startTime.timeZone();
 
