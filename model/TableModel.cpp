@@ -50,9 +50,10 @@ QString header2key(TableModel::StockRoles role) {
 }
 
 
-TableModel::TableModel(DataProvider* dataprovider, QObject* parent) :
+TableModel::TableModel(DataProvider* dataprovider, QQuickItem* chartView, QObject* parent) :
     QAbstractTableModel(parent),
-    m_dataprovider(dataprovider)
+    m_dataprovider(dataprovider),
+    m_chartView(chartView)
 {
     //cwidths_ = { 200, 200, 200, 100 };
 

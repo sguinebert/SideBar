@@ -71,30 +71,29 @@ int main(int argc, char *argv[]) {
     engine.rootContext()->setContextProperty("stockslist", stockslist);
     //dataprovider->getStocksSymbols();
     //dataprovider->getStockHistory("ACC", QDateTime::currentDateTime().addDays(-3));
+    QObject *rootObject = engine.rootObjects().first();
+    auto myChart = rootObject->findChild<QQuickItem*>("myChart");
+    if (myChart) {
+        qDebug() << "myChart found";
+    }
 
-    TableModel tablemodel_(dataprovider, app.parent());
-    TableModelProxy tablemodelproxy_(app.parent());
-    tablemodelproxy_.setSource(&tablemodel_);
+    TableModel tablemodel(dataprovider, myChart, app.parent());
+    TableModelProxy tablemodelproxy(app.parent());
+    tablemodelproxy.setSource(&tablemodel);
 
     QLineSeries lineseries;
     QVXYModelMapper mapper;
-    mapper.setModel(&tablemodel_);
+    mapper.setModel(&tablemodel);
     mapper.setXColumn(12);
     mapper.setYColumn(15);
     mapper.setSeries(&lineseries);
 
     //now add to chart
-    QObject *rootObject = engine.rootObjects().first();
-    auto myChart = rootObject->findChild<QObject*>("myChart");
-    if (myChart) {
-        // auto chart = static_cast<QChartView*>(myChart);
-        // chart->chart()->addSeries(&lineseries);
-        qDebug() << "myChart found";
-    }
 
-    engine.rootContext()->setContextProperty("studymodel", &tablemodel_);
-    engine.rootContext()->setContextProperty("studyproxy", &tablemodelproxy_);
-    engine.rootContext()->setContextProperty("headerproxy", tablemodel_.headerproxy());
+
+    engine.rootContext()->setContextProperty("studymodel", &tablemodel);
+    engine.rootContext()->setContextProperty("studyproxy", &tablemodelproxy);
+    engine.rootContext()->setContextProperty("headerproxy", tablemodel.headerproxy());
 
 
     return app.exec();

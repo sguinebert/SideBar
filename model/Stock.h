@@ -161,6 +161,7 @@ private:
     QJsonArray indices_;
 	bool separator_;
     bool selected_ = false;
+    QSet<QDateTime> m_datetimes; //set only on the first inserted element : check to avoid duplicate insertions
 
     //QString sex_;
     QDate founded_;

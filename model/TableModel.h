@@ -1,10 +1,14 @@
 #pragma once
 
 #include <QObject>
+#include <QQuickItem>
 #include <QAbstractTableModel>
 #include <QRegularExpression>
+#include <QLineSeries>
+#include <QVXYModelMapper>
 
 #include <set>
+#include <map>
 #include "model/HeaderListProxy.h"
 #include "model/FiltersList.h"
 #include "model/Stock.h"
@@ -45,6 +49,9 @@
 class TableModel : public QAbstractTableModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
+
+    int m_count;
 
 public:
     enum StockRoles {
@@ -69,10 +76,23 @@ public:
         //RegexFilter,
         selected
     };
-    explicit TableModel(DataProvider* dataprovider = nullptr, QObject* parent = nullptr);
+    explicit TableModel(DataProvider* dataprovider, QQuickItem* chartView, QObject* parent = nullptr);
     Q_INVOKABLE QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     //Q_INVOKABLE void selectRow(int row, bool shift = false, bool ctr = false);
     
+    int count() const
+    {
+        return m_count;
+    }
+    void setCount(int count)
+    {
+        // if (m_count == count)
+        //     return;
+
+        m_count = count;
+        emit countChanged();
+    }
+
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -160,7 +180,7 @@ public:
     Q_INVOKABLE QDateTime getDateMax() const { return m_datemax;}
 
 signals:
-    void onNewData();
+    void countChanged();
     void loadStudy(Stock *study);
 private:
     void addStudy(Stock* study, std::string uuid);
@@ -190,6 +210,9 @@ private:
                 auto exchangeName = meta["exchangeName"].toString();
                 auto symbol = meta["symbol"].toString();
 
+                // auto it = m_xymaps.find(symbol.toStdString());
+                // bool found = it != m_xymaps.end();
+
                 for(int i(0); i < open.size(); i++) {
 
                     auto dtsec = timestamp[i].toInt();
@@ -208,19 +231,53 @@ private:
                     if(closef > m_valmax)
                         m_valmax = closef;
 
-                    qDebug() << "OHLCV : " << openf << " - " << highf << " - " << lowf << " - " << closef << " - " << volumef;
+                    //qDebug() << "OHLCV : " << openf << " - " << highf << " - " << lowf << " - " << closef << " - " << volumef;
                     auto stock = new Stock(symbol, name, symbol, currency, datetime, openf, highf, lowf, closef, volumef);
 
-                    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-                    stocks_ << stock;
-                    endInsertRows();
+                    if(auto it = m_xymaps.find(symbol.toStdString()); it != m_xymaps.end()) {
+                        auto mapper = it->second;
+                        auto lastrow = mapper->firstRow() + mapper->rowCount();
+                        beginInsertRows(QModelIndex(), lastrow + i, lastrow + i);
+                        stocks_.insert(lastrow + i, stock);
+                        endInsertRows();
+                        mapper->setRowCount(mapper->rowCount() + open.size());
+                    }
+                    else {
+                        beginInsertRows(QModelIndex(), rowCount(), rowCount());
+                        stocks_ << stock;
+                        endInsertRows();
+                    }
                 }
 
             }
             //auto adjclose = obj["adjclose"].toArray();
         }
-        emit onNewData();
+        setCount(0);
+        //emit onNewData();
     }
+    void addSeriesToChart(std::string symbol, int firstRow, int rowCount) {
+        auto* series = new QLineSeries(m_chartView);
+        auto* mapper = new QVXYModelMapper(m_chartView);
+
+        m_xymaps[symbol] = mapper;
+
+        mapper->setModel(this);
+        mapper->setXColumn(m_xColumn);
+        mapper->setYColumn(m_yColumn);
+        mapper->setSeries(series);
+
+        mapper->setFirstRow(firstRow);
+        mapper->setRowCount(rowCount);
+
+        // Now, trigger the QML function to add this series to the chart
+        QVariant returnedValue;
+        QVariant var = QVariant::fromValue(series);
+        QMetaObject::invokeMethod(m_chartView, "addSeries", Q_RETURN_ARG(QVariant, returnedValue), Q_ARG(QVariant, var));
+    }
+    // void updateRanges() {
+
+    // }
+
     QString header2string(TableModel::StockRoles role) {
         // switch (role) {
         // case TableModel::PatientName:
@@ -264,7 +321,7 @@ private:
 
 private:
     QList<Stock*> stocks_;
-    std::set<std::string> uuids_;
+    std::map<std::string, QVXYModelMapper*> m_xymaps;
     //int selectedRowUp_, selectedRowDown_;
     std::set<int> selectedRows_;
     //std::vector<int> cwidths_;
@@ -273,9 +330,13 @@ private:
     FiltersList *m_filters = 0;
     QHash<int, int> m_columnOrder;
 
+    //chart and properties
+    QQuickItem* m_chartView;
+    int m_xColumn = 12, m_yColumn = 16;
+
     QLocale m_currentLocale;
 
-    DataProvider* m_dataprovider = nullptr;
+    DataProvider* m_dataprovider;
 
     QDateTime m_datemin = QDateTime::currentDateTime(), m_datemax = QDateTime::currentDateTime();
     double m_valmin = 100000000000, m_valmax = 0;

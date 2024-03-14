@@ -585,7 +585,7 @@ ApplicationWindow {
                         }
                         Connections {
                             target: studymodel
-                            onNewData: updateAxisRanges()
+                            onCountChanged: chart.updateAxisRanges()
                         }
                         ValueAxis {
                             id: axisX
@@ -615,21 +615,11 @@ ApplicationWindow {
 
                         function updateAxisRanges() {
                             console.log("updateAxisRanges")
-                            chartXAxis.min = studymodel.getDateMin() /* Your logic to find min X */;
-                            chartXAxis.max = studymodel.getDateMax()/* Your logic to find max X */;
-                            axisY.min = studymodel.getMinVal()/* Your logic to find min Y */;
-                            axisY.max = studymodel.getMaxVal() /* Your logic to find max Y */;
+                            chartXAxis.min = studymodel.getDateMin(); /* custom logic to find min X */
+                            chartXAxis.max = studymodel.getDateMax(); /* custom logic to find max X */
+                            axisY.min = studymodel.getMinVal(); /* custom logic to find min Y */
+                            axisY.max = studymodel.getMaxVal(); /* custom logic to find max Y */
                         }
-                        // LineSeries {
-                        //     name: "Line"
-                        //     XYPoint { x: 0; y: 0 }
-                        //     XYPoint { x: 1.1; y: 2.1 }
-                        //     XYPoint { x: 1.9; y: 3.3 }
-                        //     XYPoint { x: 2.1; y: 2.1 }
-                        //     XYPoint { x: 2.9; y: 4.9 }
-                        //     XYPoint { x: 3.4; y: 3.0 }
-                        //     XYPoint { x: 4.1; y: 3.3 }
-                        // }
                         function updateHighlightPoint(highlightX, highlightY) {
                             scatterSeries.clear(); // Remove any existing points
                             scatterSeries.append(highlightX, highlightY); // Add the new point
@@ -639,6 +629,9 @@ ApplicationWindow {
                             name: "My Data"
                             axisX: chartXAxis
                             axisY: axisY
+                            function addCurve(firstRow, rowCount) {
+
+                            }
                             VXYModelMapper  {
                                 model: studymodel // This is your C++ model
                                 xColumn: 12 // Assuming the first column is the X axis

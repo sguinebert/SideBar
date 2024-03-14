@@ -303,7 +303,7 @@ public:
                     auto closef = close[i].toDouble();
                     auto volumef = volume[i].toInteger();
 
-                    qDebug() << "OHLCV : " << openf << " - " << highf << " - " << lowf << " - " << closef << " - " << volumef;
+                    //qDebug() << "OHLCV : " << openf << " - " << highf << " - " << lowf << " - " << closef << " - " << volumef;
                 }
 
             }
