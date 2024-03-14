@@ -171,6 +171,7 @@ protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override {
+        //qDebug() << "datasdqccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
         if (!proxyIndex.isValid())
             return QVariant();
 

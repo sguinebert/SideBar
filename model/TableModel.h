@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+
 #include <QQuickItem>
 #include <QAbstractTableModel>
 #include <QRegularExpression>
@@ -269,7 +270,6 @@ private:
         //emit onNewData();
     }
     void addSeriesToChart(QString& symbol, int firstRow, int rowCount) {
-
         // Now, trigger the QML function to add this series to the chart
         QVariant returnedValue;
         //QVariant var = QVariant::fromValue(symbol);
@@ -288,6 +288,9 @@ private:
             m_xymaps[symbol.toStdString()] = mapper;
 
             auto proxy = new StocksProxyModel(symbol, this, lineSeries);
+            proxy->setSourceModel(this);
+            //engine->rootContext()->setContextProperty("v_proxy", proxy);
+
 
             //connect(this, &TableModel::dataChanged, proxy, &StocksProxyModel::dataChanged);
 
@@ -296,10 +299,10 @@ private:
             mapper->setYColumn(m_yColumn);
             mapper->setSeries(lineSeries);
 
-            mapper->setFirstRow(firstRow);
-            mapper->setRowCount(rowCount);
+            // mapper->setFirstRow(firstRow);
+            // mapper->setRowCount(rowCount);
 
-            proxy->invalidate();
+            //proxy->invalidate();
             //emit mapper->rowCountChanged();
         }
     }
@@ -346,7 +349,6 @@ private:
         // }
         return "";
     }
-
 
 private:
     QList<Stock*> stocks_;

@@ -175,7 +175,7 @@ QVariant TableModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid() || index.row() >= stocks_.size())
         return QVariant();
-    qDebug() << "role : " << role << " - " << " index : " << index.row() << " - " << index.column();
+    //qDebug() << "role : " << role << " - " << " index : " << index.row() << " - " << index.column();
     const Stock* stock = stocks_[index.row()];
     switch (role)
     {

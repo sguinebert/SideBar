@@ -22,26 +22,27 @@ public:
         setSortCaseSensitivity(Qt::CaseInsensitive);
         setDynamicSortFilter(true);
         sort(0, Qt::AscendingOrder);
+
     }
 
     void setIndices(QStringList& indices) {
         m_indices = indices;
     }
 protected:
-    int roleKey(const QByteArray &role) const
-    {
-        return roleNames().key(role, -1);
-    }
+    // int roleKey(const QByteArray &role) const
+    // {
+    //     return roleNames().key(role, -1);
+    // }
 
-    QHash<int, QByteArray> roleNames() const override
-    {
-        if (QAbstractItemModel *source = sourceModel())
-            return source->roleNames();
-        return QHash<int, QByteArray>();
-    }
+    // QHash<int, QByteArray> roleNames() const override
+    // {
+    //     if (QAbstractItemModel *source = sourceModel())
+    //         return source->roleNames();
+    //     return QHash<int, QByteArray>();
+    // }
 
     QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const override {
-        qDebug() << "StocksProxyModel::data()";
+        //qDebug() << "StocksProxyModel::data()";
         if (!proxyIndex.isValid())
             return QVariant();
 
@@ -53,7 +54,7 @@ protected:
 
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
-    //bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
 private:
     TableModel* m_tablemodel;

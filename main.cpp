@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterType<FiltersList>("FiltersList", 1, 0, "FiltersList");
     qmlRegisterType<TableModel>("TableModel", 1, 0, "TableModel");
     qmlRegisterType<TableModelProxy>("TableModelProxy", 1, 0, "TableModelProxy");
+    qmlRegisterType<StocksProxyModel>("StocksProxyModel", 1, 0, "StocksProxyModel");
     qmlRegisterType<Stock>("Study", 1, 0, "Study");
 
 //    qmlRegisterType<Property>       ("App.Class", 0, 1, "Property");
@@ -81,15 +82,9 @@ int main(int argc, char *argv[]) {
     TableModelProxy tablemodelproxy(app.parent());
     tablemodelproxy.setSource(&tablemodel);
 
-    QLineSeries lineseries;
-    QVXYModelMapper mapper;
-    mapper.setModel(&tablemodel);
-    mapper.setXColumn(12);
-    mapper.setYColumn(15);
-    mapper.setSeries(&lineseries);
-
     //now add to chart
-
+    // auto proxy = new StocksProxyModel("symbol", &tablemodel, 0);
+    // engine.rootContext()->setContextProperty("proxy", proxy);
 
     engine.rootContext()->setContextProperty("studymodel", &tablemodel);
     engine.rootContext()->setContextProperty("studyproxy", &tablemodelproxy);

@@ -637,7 +637,7 @@ ApplicationWindow {
                         //     axisY: axisY
 
                         //     VXYModelMapper  {
-                        //         model: studymodel // This is your C++ model
+                        //         model: studyproxy // This is your C++ model
                         //         xColumn: 12 // Assuming the first column is the X axis
                         //         yColumn: 16 // Assuming the second column is the Y axis
                         //         // firstRow: 0   // Start of range for Line 1
@@ -736,23 +736,23 @@ ApplicationWindow {
                                     }
                                     return nearestPoint;
                                 }
-                                onPositionChanged: (mouse) => {
-                                                       //console.log( "onPositionChanged: ", mouse.x, mouse.y );
-                                                       var point = chart.mapToValue(mouse, lineSeries);
-                                                       // Assuming you have a function to find the nearest data point to 'point'
-                                                       projectionCanvas.selectedPoint = findNearestDataPoint(point, lineSeries);
-                                                       chart.updateHighlightPoint(projectionCanvas.selectedPoint.x, projectionCanvas.selectedPoint.y);
-                                                       //console.log("nearest points : ", projectionCanvas.selectedPoint)
-                                                       projectionCanvas.requestPaint();
-                                                       // Position and show the tooltip
-                                                       tooltip.x = mouse.x;
-                                                       tooltip.y = mouse.y - tooltip.height - 10; // Adjust as needed
-                                                       tooltip.text = "X: " + projectionCanvas.selectedPoint.x + ", Y: " + projectionCanvas.selectedPoint.y;
-                                                       tooltip.visible = true;
+                                // onPositionChanged: (mouse) => {
+                                //                        //console.log( "onPositionChanged: ", mouse.x, mouse.y );
+                                //                        var point = chart.mapToValue(mouse, lineSeries);
+                                //                        // Assuming you have a function to find the nearest data point to 'point'
+                                //                        projectionCanvas.selectedPoint = findNearestDataPoint(point, lineSeries);
+                                //                        chart.updateHighlightPoint(projectionCanvas.selectedPoint.x, projectionCanvas.selectedPoint.y);
+                                //                        //console.log("nearest points : ", projectionCanvas.selectedPoint)
+                                //                        projectionCanvas.requestPaint();
+                                //                        // Position and show the tooltip
+                                //                        tooltip.x = mouse.x;
+                                //                        tooltip.y = mouse.y - tooltip.height - 10; // Adjust as needed
+                                //                        tooltip.text = "X: " + projectionCanvas.selectedPoint.x + ", Y: " + projectionCanvas.selectedPoint.y;
+                                //                        tooltip.visible = true;
 
-                                                       chart.updateHighlightPoint(projectionCanvas.selectedPoint.x, projectionCanvas.selectedPoint.y);
+                                //                        chart.updateHighlightPoint(projectionCanvas.selectedPoint.x, projectionCanvas.selectedPoint.y);
 
-                                                   }
+                                //                    }
                                 onWheel: (wheel)=> {
                                              //chart.zoomReset();
                                     let gamma = 0.5;
