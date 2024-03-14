@@ -624,27 +624,32 @@ ApplicationWindow {
                             scatterSeries.clear(); // Remove any existing points
                             scatterSeries.append(highlightX, highlightY); // Add the new point
                         }
-                        LineSeries {
-                            id:lineSeries
-                            name: "My Data"
-                            axisX: chartXAxis
-                            axisY: axisY
-                            function addCurve(firstRow, rowCount) {
-
-                            }
-                            VXYModelMapper  {
-                                model: studymodel // This is your C++ model
-                                xColumn: 12 // Assuming the first column is the X axis
-                                yColumn: 16 // Assuming the second column is the Y axis
-                                // firstRow: 0   // Start of range for Line 1
-                                // rowCount: 5   // Number of rows for Line 1
-                            }
+                        function addSeries(name) {
+                            //console.log("addSeries", name);
+                            var series = chart.createSeries(ChartView.SeriesTypeLine, name, chartXAxis, axisY);
+                            return series;
                         }
+
+                        // LineSeries {
+                        //     id:lineSeries
+                        //     name: "My Data"
+                        //     axisX: chartXAxis
+                        //     axisY: axisY
+
+                        //     VXYModelMapper  {
+                        //         model: studymodel // This is your C++ model
+                        //         xColumn: 12 // Assuming the first column is the X axis
+                        //         yColumn: 16 // Assuming the second column is the Y axis
+                        //         // firstRow: 0   // Start of range for Line 1
+                        //         // rowCount: 5   // Number of rows for Line 1
+                        //     }
+                        // }
                         // Scatter series for highlighting a point
                         ScatterSeries {
                             id: scatterSeries
                             axisX: chartXAxis
                             axisY: axisY
+                            //useOpenGL: true
                             markerShape: ScatterSeries.MarkerShapeCircle // customize the marker shape
                             markerSize: 8 // adjust the size of the marker
                         }

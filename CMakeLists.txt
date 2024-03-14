@@ -97,6 +97,7 @@ set(RESOURCES qml.qrc)
 # Define your executable and link the necessary Qt libraries
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES}
     model/StocksProxyModel.h model/StocksProxyModel.cpp
+    model/GraphList.h model/GraphList.cpp
     )
 target_link_libraries(${PROJECT_NAME}
     PRIVATE

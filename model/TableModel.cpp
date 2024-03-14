@@ -416,13 +416,13 @@ void TableModel::addFilter(QJsonObject json)
 }
 void TableModel::addStudy(Stock* stock, std::string uuid)
 {
-    if (uuids_.find(uuid) == uuids_.end()) {
-        beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        stocks_ << stock;
-        endInsertRows();
+    // if (uuids_.find(uuid) == uuids_.end()) {
+    //     beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    //     stocks_ << stock;
+    //     endInsertRows();
 
-        uuids_.emplace(uuid);
-    }
+    //     uuids_.emplace(uuid);
+    // }
     //studyMap_.emplace(uuid, study);
 }
 void TableModel::addStudy(QJsonObject json)
